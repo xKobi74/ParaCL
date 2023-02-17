@@ -4,6 +4,7 @@
 
 namespace ptree {
 class PTree {
+  public:
   PTree* parent;
   PTree *left, *right;
   virtual ~PTree();
