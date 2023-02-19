@@ -37,7 +37,6 @@ public:
   virtual std::string dump() const override {
     std::string parentname = parent->getname();
     std::string myname = getname();
-    std::string res = parentname + "->" + myname + ";\n";
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
     return res;
   }
@@ -54,7 +53,6 @@ public:
   virtual std::string dump() const override {
     std::string parentname = parent->getname();
     std::string myname = getname();
-    std::string res = parentname + "->" + myname + ";\n";
     res += myname + " [label=" + '"' + std::to_string(value) + '"' + "];\n";
     return res;
   }
@@ -71,7 +69,6 @@ public:
   virtual std::string dump() const override {
     std::string parentname = parent->getname();
     std::string myname = getname();
-    std::string res = parentname + "->" + myname + ";\n";
     res += myname + " [label=" + '"' + std::to_string(nameid) + '"' + "];\n";
     return res;
   }
