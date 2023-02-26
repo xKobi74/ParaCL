@@ -35,8 +35,10 @@ public:
     return "Smth strange";
   }
   virtual std::string dump() const override {
+    std::string res;
     std::string parentname = parent->getname();
     std::string myname = getname();
+    //TODO: res undefined here
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
     return res;
   }
@@ -51,6 +53,7 @@ public:
     return value;
   }
   virtual std::string dump() const override {
+    std::string res;
     std::string parentname = parent->getname();
     std::string myname = getname();
     res += myname + " [label=" + '"' + std::to_string(value) + '"' + "];\n";
@@ -67,6 +70,7 @@ public:
   Name(T _value) : value(_value) {};
   Name(T _value, int _nameid, int _offset) : value(_value), nameid(_nameid), offset(_offset) {};
   virtual std::string dump() const override {
+    std::string res;
     std::string parentname = parent->getname();
     std::string myname = getname();
     res += myname + " [label=" + '"' + std::to_string(nameid) + '"' + "];\n";

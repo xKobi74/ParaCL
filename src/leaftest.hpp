@@ -6,7 +6,7 @@
 
 TEST(PTree, MainTest) {
 	ptree::PTree pt;
-	int id = pt.getid();
+	std::string id = pt.getid();
 	std::string name = pt.getname();
 }
 
