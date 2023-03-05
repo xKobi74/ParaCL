@@ -7,6 +7,7 @@
 namespace ptree {
 class Leaf : public PTree {
 public:
+  Leaf(PTree* parent_ = nullptr): PTree(parent_, nullptr, nullptr) {};
   bool isLeaf() const override {
     return true;
   }
@@ -22,7 +23,7 @@ public:
     None
   };
   Types type;
-  Reserved(Types _type = Types::None) : type(_type) {}
+  Reserved(PTree* _parent = nullptr, Types _type = Types::None) : Leaf(_parent), type(_type) {}
   std::string typetostr() const {
     switch(type) {
       case Types::None:
@@ -48,7 +49,7 @@ template <typename T> class Imidiate : public Leaf {
 private:
   T value;
 public:
-  Imidiate(T _value) : value(_value) {}
+  Imidiate(PTree* _parent = nullptr, T _value = T()) : Leaf(_parent), value(_value) {}
   T getvalue() const{
     return value;
   }
@@ -67,8 +68,8 @@ public:
   T value;
   int nameid;
   int offset;
-  Name(T _value) : value(_value) {};
-  Name(T _value, int _nameid, int _offset) : value(_value), nameid(_nameid), offset(_offset) {};
+  Name(PTree* _parent = nullptr, T _value = T()) : Leaf(_parent), value(_value) {};
+  Name(PTree* _parent, T _value, int _nameid, int _offset) : Leaf(_parent), value(_value), nameid(_nameid), offset(_offset) {};
   virtual std::string dump() const override {
     std::string res;
     std::string parentname = parent->getname();

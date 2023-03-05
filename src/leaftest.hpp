@@ -17,16 +17,18 @@ TEST(Leaf, MainTest) {
 }
 
 TEST(LeafImidiate, ConstructorTestInt) {
-	ptree::Imidiate<int> x(10);
+	ptree::PTree pt;
+	ptree::Imidiate<int> x(&pt, 10);
 	ASSERT_STREQ(typeid(x.getvalue()).name(), typeid(static_cast<int>(10)).name());
 	ASSERT_EQ(x.getvalue(), 10);
+	ASSERT_EQ(x.parent, &pt);
 }
 
 TEST(LeafImidiate, DumpTest) {
 	ptree::PTree pt;
-	ptree::Imidiate<int> im(10);
-	im.parent = &pt;
+	ptree::Imidiate<int> im(&pt, 10);
 	std::string dump = im.dump();
+	ASSERT_EQ(im.parent, &pt);
 }
 
 
@@ -34,41 +36,50 @@ TEST(LeafReserved, ConstructorTestDefault) {
 	ptree::Reserved r;
 	ptree::Reserved::Types type = ptree::Reserved::Types::None;
 	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.parent, nullptr);
 }
 TEST(LeafReserved, ConstructorTestNone) {
-	ptree::Reserved r(ptree::Reserved::Types::None);
+	ptree::PTree pt;
+	ptree::Reserved r(&pt, ptree::Reserved::Types::None);
 	ptree::Reserved::Types type = ptree::Reserved::Types::None;
 	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.parent, &pt);
 }
 TEST(LeafReserved, ConstructorTestInput) {
-	ptree::Reserved r(ptree::Reserved::Types::Input);
+	ptree::PTree pt;
+	ptree::Reserved r(&pt, ptree::Reserved::Types::Input);
 	ptree::Reserved::Types type = ptree::Reserved::Types::Input;
 	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.parent, &pt);
 }
 
 TEST(LeafReserved, DumpTest) {
 	ptree::PTree pt;
-	ptree::Reserved r(ptree::Reserved::Types::Input);
-	r.parent = &pt;
+	ptree::Reserved r(&pt, ptree::Reserved::Types::Input);
 	std::string dump = r.dump();
+	ASSERT_EQ(r.parent, &pt);
 }
 
 TEST(LeafName, ConstructorTestInt1) {
-	ptree::Name<int> v(7);
+	ptree::PTree pt;
+	ptree::Name<int> v(&pt, 7);
 	ASSERT_STREQ(typeid(v.value).name(), typeid(static_cast<int>(7)).name());
 	ASSERT_EQ(v.value, 7);
+	ASSERT_EQ(v.parent, &pt);
 }
 TEST(LeafName, ConstructorTestInt2) {
-	ptree::Name<int> v(7, 11, 9);
+	ptree::PTree pt;
+	ptree::Name<int> v(&pt, 7, 11, 9);
 	ASSERT_STREQ(typeid(v.value).name(), typeid(static_cast<int>(7)).name());
 	ASSERT_EQ(v.value, 7);
 	ASSERT_EQ(v.nameid, 11);
 	ASSERT_EQ(v.offset, 9);
+	ASSERT_EQ(v.parent, &pt);
 }
 
 TEST(LeafName, DumpTest) {
 	ptree::PTree pt;
-	ptree::Imidiate<int> var(10);
-	var.parent = &pt;
+	ptree::Imidiate<int> var(&pt, 10);
 	std::string dump = var.dump();
+	ASSERT_EQ(var.parent, &pt);
 }
