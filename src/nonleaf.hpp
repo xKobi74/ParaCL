@@ -17,13 +17,6 @@ class NonLeaf: public PTree {
   
   NonLeaf(PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): PTree(parent_, left_, right_) {};
   
-  //TODO: implement this function into ptree (discuss with xKobi74)
-  std::string get_addr(const void* addr) const {
-    std::stringstream address;
-    address << addr;
-    return address.str();
-  }
-  
   std::string get_links() const {
     std::string res{""};
     if (left != nullptr) res += getname() + " -> " + left->getname() + "\n";

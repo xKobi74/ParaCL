@@ -5,6 +5,13 @@
 
 
 namespace ptree {
+
+std::string get_addr(const void* addr) {
+  std::stringstream address;
+  address << addr;
+  return address.str();
+}
+
 class PTree {
   public:
   PTree* parent;
@@ -20,11 +27,9 @@ class PTree {
   virtual std::string dump() const {
     return std::string{""};
   }
-  //TODO: test new getid() function
+  
   std::string getid() const {
-    std::stringstream address;
-    address << static_cast<const void*>(this);
-    return address.str();
+    return get_addr(this);
   }
   std::string getname() const {
     return "node" +  getid();
