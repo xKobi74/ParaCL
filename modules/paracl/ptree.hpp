@@ -24,9 +24,6 @@ public:
   virtual bool isLeaf() const {
     return 0;
   }
-  virtual std::string dump() const {
-    return std::string{""};
-  }
 
   void setparent(PTree *_parent) {
     parent = _parent;
@@ -45,6 +42,16 @@ public:
   }
   PTree *getright() const {
     return right;
+  }
+
+  virtual std::string dump() const {
+    std::string res = "graph program {";
+    if (getleft() != nullptr)
+      res += getleft()->dump();
+    if (getright() != nullptr)
+      res += getright()->dump();
+    res += "}";
+    return res;
   }
 
   std::string getid() const {

@@ -3,6 +3,7 @@
 #include "modules/paracl/paracl.hpp"
 
 int main() {
-	std::cout << "Test" << std::endl;
+	ptree::PTree root;
+	std::cout << root.dump() << std::endl;
 	return 0;
 }
