@@ -5,7 +5,7 @@
 
 #include <string>
 #include <sstream>
-
+//CPP20 is not needed because most compilators doesn`t accept format lib
 #ifdef CPP20
 #include <format>
 #endif
@@ -119,7 +119,6 @@ class UnOp: public Operation {
     return res;
   } 
 };
-//TODO: add right pointer as continuing of process
 /* left pointer - process inside block, right pointer - outer process, continuing of main programm
 */
 class Block: public NonLeaf {
@@ -129,8 +128,8 @@ class Block: public NonLeaf {
   offset_t offset_;
   block_id id_;
 
-  Block(offset_t offset = 0x0, block_id id = -1, PTree* parent_ = nullptr, PTree* left_ = nullptr):
-  NonLeaf(parent_, left_, nullptr), offset_(offset), id_(id) {};
+  Block(offset_t offset = 0x0, block_id id = -1, PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr):
+  NonLeaf(parent_, left_, right_), offset_(offset), id_(id) {};
 
   std::string get_blk_info() const {
     std::string res;
@@ -175,11 +174,30 @@ class IfBlk: public Branch {
     if (condition_ != nullptr) res += condition_->dump();
 
     res += getname() + "[shape = record, label=\"{If clause \\n |" +
-    "{ " + get_addr(left) + "\\n (else case) | " + get_addr(right) + "\\n(true case)}}\"]\n";
+    "{ " + get_addr(left) + "\\n (false case) | " + get_addr(right) + "\\n(true case)}}\"]\n";
 
     //HACK: no get_links() here, because nodes should be colorized and with caption
     if (left != nullptr) res += getname() + " -> " + left->getname() + "[color=\"red\", label=\"false\"]\n";
     if (right != nullptr) res += getname() + " -> " + right->getname() + "[color=\"green\", label=\"true\"]\n";
+    
+    if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted]\n";
+    return res;
+  }
+};
+
+class WhileBlk: public Branch {
+  public:
+  WhileBlk(PTree* condition = nullptr, PTree* parent_ = nullptr, PTree* left_ = nullptr): Branch(condition, parent_, left_, nullptr) {};
+  std::string dump() const override {
+    std::string res;
+    res += get_chld_dump();
+    if (condition_ != nullptr) res += condition_->dump();
+
+    res += getname() + "[shape = record, label=\"{While clause \\n |" +
+    "{ " + get_addr(left) + "\\n (cycle) | " + get_addr(right) + "\\n(depricated)}}\"]\n";
+
+    //HACK: no get_links() here, because nodes should be colorized and with caption
+    if (left != nullptr) res += getname() + " -> " + left->getname() + "\n";
     
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted]\n";
     return res;
