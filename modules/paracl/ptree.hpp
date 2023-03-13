@@ -13,9 +13,9 @@ std::string get_addr(const void* addr) {
 }
 
 class PTree {
-  public:
   PTree* parent;
   PTree *left, *right;
+public:
   PTree(PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): parent(parent_), left(left_), right(right_) {};  
   virtual ~PTree() = default;
   virtual PTree* execute() {
@@ -24,10 +24,36 @@ class PTree {
   virtual bool isLeaf() const {
     return 0;
   }
-  virtual std::string dump() const {
-    return std::string{""};
+
+  void setparent(PTree *_parent) {
+    parent = _parent;
   }
-  
+  PTree *getparent() const {
+    return parent;
+  }
+  void setleft(PTree *_left) {
+    left = _left;
+  }
+  PTree *getleft() const {
+    return left;
+  }
+  void setright(PTree *_right) {
+    right = _right;
+  }
+  PTree *getright() const {
+    return right;
+  }
+
+  virtual std::string dump() const {
+    std::string res = "graph program {";
+    if (getleft() != nullptr)
+      res += getleft()->dump();
+    if (getright() != nullptr)
+      res += getright()->dump();
+    res += "}";
+    return res;
+  }
+
   std::string getid() const {
     return get_addr(this);
   }

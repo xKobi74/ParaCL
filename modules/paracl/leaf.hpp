@@ -22,10 +22,15 @@ public:
     Input,
     None
   };
+private:
   Types type;
+public:
   Reserved(PTree* _parent = nullptr, Types _type = Types::None) : Leaf(_parent), type(_type) {}
+  Types gettype() const {
+    return type;
+  }
   std::string typetostr() const {
-    switch(type) {
+    switch(gettype()) {
       case Types::None:
         return "None";
         break;
@@ -37,7 +42,7 @@ public:
   }
   virtual std::string dump() const override {
     std::string res;
-    std::string parentname = parent->getname();
+    std::string parentname = getparent()->getname();
     std::string myname = getname();
     //TODO: res undefined here
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
@@ -50,31 +55,51 @@ private:
   T value;
 public:
   Imidiate(PTree* _parent = nullptr, T _value = T()) : Leaf(_parent), value(_value) {}
-  T getvalue() const{
+  T getvalue() const {
     return value;
   }
   virtual std::string dump() const override {
     std::string res;
-    std::string parentname = parent->getname();
+    std::string parentname = getparent()->getname();
     std::string myname = getname();
     res += myname + " [label=" + '"' + std::to_string(value) + '"' + "];\n";
     return res;
   }
 };
 
-template <typename T>
-class Name : public Leaf {
-public:
-  T value;
+class NameInfo : public Leaf {
+private:
   int nameid;
   int offset;
-  Name(PTree* _parent = nullptr, T _value = T()) : Leaf(_parent), value(_value) {};
-  Name(PTree* _parent, T _value, int _nameid, int _offset) : Leaf(_parent), value(_value), nameid(_nameid), offset(_offset) {};
+protected:
+  NameInfo(PTree* _parent = nullptr) : Leaf(_parent) {};
+  NameInfo(PTree* _parent, int _nameid, int _offset) : Leaf(_parent), nameid(_nameid), offset(_offset) {};
+public:
+  int getnameid() const {
+    return nameid;
+  }
+  int getoffset() const {
+    return offset;
+  }
+};
+
+class NameInt : public NameInfo {
+private:
+  int value;
+public:
+  NameInt(PTree* _parent = nullptr, int _value = 0) : NameInfo(_parent), value(_value) {};
+  NameInt(PTree* _parent, int _value, int _nameid, int _offset) : NameInfo(_parent, _nameid, _offset), value(_value) {};
+  int getvalue() const {
+    return value;
+  }
+  void setvalue(int x) {
+    value = x;
+  }
   virtual std::string dump() const override {
     std::string res;
-    std::string parentname = parent->getname();
+    std::string parentname = getparent()->getname();
     std::string myname = getname();
-    res += myname + " [label=" + '"' + std::to_string(nameid) + '"' + "];\n";
+    res += myname + " [label=" + '"' + std::to_string(getnameid()) + '=' + std::to_string(getvalue()) + '"' + "];\n";
     return res;
   }
 };
