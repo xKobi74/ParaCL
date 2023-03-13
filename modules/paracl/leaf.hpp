@@ -7,7 +7,7 @@
 namespace ptree {
 class Leaf : public PTree {
 public:
-  Leaf(PTree* parent_ = nullptr): PTree(parent_, nullptr, nullptr) {};
+  Leaf(PTree* parent = nullptr): PTree(parent, nullptr, nullptr) {};
   bool isLeaf() const override {
     return true;
   }
@@ -23,11 +23,11 @@ public:
     None
   };
 private:
-  Types type;
+  Types type_;
 public:
-  Reserved(PTree* _parent = nullptr, Types _type = Types::None) : Leaf(_parent), type(_type) {}
+  Reserved(PTree* parent = nullptr, Types type = Types::None) : Leaf(parent), type_(type) {}
   Types gettype() const {
-    return type;
+    return type_;
   }
   std::string typetostr() const {
     switch(gettype()) {
@@ -44,7 +44,6 @@ public:
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
-    //TODO: res undefined here
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
     return res;
   }
@@ -52,48 +51,48 @@ public:
 
 template <typename T> class Imidiate : public Leaf {
 private:
-  T value;
+  T value_;
 public:
-  Imidiate(PTree* _parent = nullptr, T _value = T()) : Leaf(_parent), value(_value) {}
+  Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
   T getvalue() const {
-    return value;
+    return value_;
   }
   virtual std::string dump() const override {
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
-    res += myname + " [label=" + '"' + std::to_string(value) + '"' + "];\n";
+    res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
     return res;
   }
 };
 
 class NameInfo : public Leaf {
 private:
-  int nameid;
-  int offset;
+  int nameid_;
+  int offset_;
 protected:
-  NameInfo(PTree* _parent = nullptr) : Leaf(_parent) {};
-  NameInfo(PTree* _parent, int _nameid, int _offset) : Leaf(_parent), nameid(_nameid), offset(_offset) {};
+  NameInfo(PTree* parent = nullptr) : Leaf(parent) {};
+  NameInfo(PTree* parent, int nameid, int offset) : Leaf(parent), nameid_(nameid), offset_(offset) {};
 public:
   int getnameid() const {
-    return nameid;
+    return nameid_;
   }
   int getoffset() const {
-    return offset;
+    return offset_;
   }
 };
 
 class NameInt : public NameInfo {
 private:
-  int value;
+  int value_;
 public:
-  NameInt(PTree* _parent = nullptr, int _value = 0) : NameInfo(_parent), value(_value) {};
-  NameInt(PTree* _parent, int _value, int _nameid, int _offset) : NameInfo(_parent, _nameid, _offset), value(_value) {};
+  NameInt(PTree* parent = nullptr, int value = 0) : NameInfo(parent), value_(value) {};
+  NameInt(PTree* parent, int value, int nameid, int offset) : NameInfo(parent, nameid, offset), value_(value) {};
   int getvalue() const {
-    return value;
+    return value_;
   }
   void setvalue(int x) {
-    value = x;
+    value_ = x;
   }
   virtual std::string dump() const override {
     std::string res;
