@@ -15,19 +15,19 @@ namespace ptree {
 class NonLeaf: public PTree {
   public:
   
-  NonLeaf(PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): PTree(parent_, left_, right_) {};
+  NonLeaf(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): PTree(parent, left, right) {};
   
   std::string get_links() const {
     std::string res{""};
-    if (left != nullptr) res += getname() + " -> " + left->getname() + "\n";
-    if (right != nullptr) res += getname() + " -> " + right->getname() + "\n";
+    if (getleft() != nullptr) res += getname() + " -> " + getleft()->getname() + "\n";
+    if (getright() != nullptr) res += getname() + " -> " + getright()->getname() + "\n";
     return res;
   }
   
   inline std::string get_chld_dump() const {
     std::string res;
-    if (left != nullptr) res += left->dump();
-    if (right != nullptr) res += right->dump();
+    if (getleft() != nullptr) res += getleft()->dump();
+    if (getright() != nullptr) res += getright()->dump();
     return res;
   }
 
@@ -42,7 +42,7 @@ class NonLeaf: public PTree {
 
 class Operation : public NonLeaf {
   public:
-  Operation(PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): NonLeaf(parent_, left_, right_) {};
+  Operation(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): NonLeaf(parent, left, right) {};
 };
 //TODO: maybe I should point it like BinOpType: std::string
 enum class BinOpType {
@@ -56,8 +56,8 @@ enum class BinOpType {
 class BinOp: public Operation {
   public:
   BinOpType operation_;
-  BinOp(BinOpType operation = BinOpType::UNDEF, PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): 
-        Operation(parent_, left_, right_), operation_(operation) {};
+  BinOp(BinOpType operation = BinOpType::UNDEF, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
+        Operation(parent, left, right), operation_(operation) {};
   
   std::string get_op() const {
     switch (operation_) {
@@ -78,7 +78,7 @@ class BinOp: public Operation {
     std::string res;
     res += get_chld_dump();
     res += getname() + "[shape = record, label=\"{Binary operation(" + get_op() + ")|" +
-    "{ " + get_addr(left) + " | " + get_addr(right) + "}}\"]\n";
+    "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "}}\"]\n";
     res += get_links();  
     return res;
   } 
@@ -93,10 +93,10 @@ enum class UnOpType {
 class UnOp: public Operation {
   public:
   UnOpType operation_;
-  //HACK: right pointer depricated because unary operation has only one operand to count value
+  //HACK: getright() pointer depricated because unary operation has only one operand to count value
   //FIXME: Now we can easily make ++i operator, but i++ op needs some more modifications
-  UnOp(UnOpType operation = UnOpType::UNDEF, PTree* parent_ = nullptr, PTree* left_ = nullptr): 
-        Operation(parent_, left_, nullptr), operation_(operation) {};
+  UnOp(UnOpType operation = UnOpType::UNDEF, PTree* parent = nullptr, PTree* left = nullptr): 
+        Operation(parent, left, nullptr), operation_(operation) {};
   
   std::string get_op() const {
     switch (operation_) {
@@ -114,12 +114,12 @@ class UnOp: public Operation {
     std::string res;
     res += get_chld_dump();
     res += getname() + "[shape = record, label=\"{Unary operation(" + get_op() + ")|" +
-    "{ " + get_addr(left) + " | " + get_addr(right) + "\\n(depricated)}}\"]\n";
+    "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "\\n(depricated)}}\"]\n";
     res += get_links();  
     return res;
   } 
 };
-/* left pointer - process inside block, right pointer - outer process, continuing of main programm
+/* getleft() pointer - process inside block, getright() pointer - outer process, continuing of main programm
 */
 class Block: public NonLeaf {
   public:
@@ -128,8 +128,8 @@ class Block: public NonLeaf {
   offset_t offset_;
   block_id id_;
 
-  Block(offset_t offset = 0x0, block_id id = -1, PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr):
-  NonLeaf(parent_, left_, right_), offset_(offset), id_(id) {};
+  Block(offset_t offset = 0x0, block_id id = -1, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr):
+  NonLeaf(parent, left, right), offset_(offset), id_(id) {};
 
   std::string get_blk_info() const {
     std::string res;
@@ -145,7 +145,7 @@ class Block: public NonLeaf {
     std::string res;
     res += get_chld_dump();
     res += getname() + "[shape = record, label=\"{Block \\n" + get_blk_info() +"|" +
-    "{ " + get_addr(left) + " | " + get_addr(right) + "\\n(depricated)}}\"]\n";
+    "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "\\n(depricated)}}\"]\n";
     res += get_links();
     return res;
   }
@@ -157,28 +157,28 @@ class Branch: public NonLeaf {
   PTree* condition_;
   //FIXME: specify condition type as Immidiate value, or leave this specialization to execute module
   //HACK: as condition used immidiate int value like a pointer to similar block, it should be available to count result and return > 0(true) or <= 0(false)
-  Branch(PTree* condition = nullptr, PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): 
-  NonLeaf(parent_, left_, right_), condition_(condition) {};
+  Branch(PTree* condition = nullptr, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
+  NonLeaf(parent, left, right), condition_(condition) {};
 };
 
 class IfBlk: public Branch {
   public:
-  //HACK: if left pointer == nullptr it means that else clause not exist, otherwise right pointer is true case, left pointer is else case
+  //HACK: if getleft() pointer == nullptr it means that else clause not exist, otherwise getright() pointer is true case, getleft() pointer is else case
   
   
-  IfBlk(PTree* condition = nullptr, PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): 
-  Branch(condition, parent_, left_, right_) {};
+  IfBlk(PTree* condition = nullptr, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
+  Branch(condition, parent, left, right) {};
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
     if (condition_ != nullptr) res += condition_->dump();
 
     res += getname() + "[shape = record, label=\"{If clause \\n |" +
-    "{ " + get_addr(left) + "\\n (false case) | " + get_addr(right) + "\\n(true case)}}\"]\n";
+    "{ " + get_addr(getleft()) + "\\n (false case) | " + get_addr(getright()) + "\\n(true case)}}\"]\n";
 
     //HACK: no get_links() here, because nodes should be colorized and with caption
-    if (left != nullptr) res += getname() + " -> " + left->getname() + "[color=\"red\", label=\"false\"]\n";
-    if (right != nullptr) res += getname() + " -> " + right->getname() + "[color=\"green\", label=\"true\"]\n";
+    if (getleft() != nullptr) res += getname() + " -> " + getleft()->getname() + "[color=\"red\", label=\"false\"]\n";
+    if (getright() != nullptr) res += getname() + " -> " + getright()->getname() + "[color=\"green\", label=\"true\"]\n";
     
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted]\n";
     return res;
@@ -187,17 +187,17 @@ class IfBlk: public Branch {
 
 class WhileBlk: public Branch {
   public:
-  WhileBlk(PTree* condition = nullptr, PTree* parent_ = nullptr, PTree* left_ = nullptr): Branch(condition, parent_, left_, nullptr) {};
+  WhileBlk(PTree* condition = nullptr, PTree* parent = nullptr, PTree* left = nullptr): Branch(condition, parent, left, nullptr) {};
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
     if (condition_ != nullptr) res += condition_->dump();
 
     res += getname() + "[shape = record, label=\"{While clause \\n |" +
-    "{ " + get_addr(left) + "\\n (cycle) | " + get_addr(right) + "\\n(depricated)}}\"]\n";
+    "{ " + get_addr(getleft()) + "\\n (cycle) | " + get_addr(getright()) + "\\n(depricated)}}\"]\n";
 
     //HACK: no get_links() here, because nodes should be colorized and with caption
-    if (left != nullptr) res += getname() + " -> " + left->getname() + "\n";
+    if (getleft() != nullptr) res += getname() + " -> " + getleft()->getname() + "\n";
     
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted]\n";
     return res;
