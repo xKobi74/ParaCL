@@ -35,21 +35,21 @@ TEST(LeafImidiate, DumpTest) {
 TEST(LeafReserved, ConstructorTestDefault) {
 	ptree::Reserved r;
 	ptree::Reserved::Types type = ptree::Reserved::Types::None;
-	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.gettype(), type);
 	ASSERT_EQ(r.parent, nullptr);
 }
 TEST(LeafReserved, ConstructorTestNone) {
 	ptree::PTree pt;
 	ptree::Reserved r(&pt, ptree::Reserved::Types::None);
 	ptree::Reserved::Types type = ptree::Reserved::Types::None;
-	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.gettype(), type);
 	ASSERT_EQ(r.parent, &pt);
 }
 TEST(LeafReserved, ConstructorTestInput) {
 	ptree::PTree pt;
 	ptree::Reserved r(&pt, ptree::Reserved::Types::Input);
 	ptree::Reserved::Types type = ptree::Reserved::Types::Input;
-	ASSERT_EQ(r.type, type);
+	ASSERT_EQ(r.gettype(), type);
 	ASSERT_EQ(r.parent, &pt);
 }
 
@@ -60,26 +60,26 @@ TEST(LeafReserved, DumpTest) {
 	ASSERT_EQ(r.parent, &pt);
 }
 
-TEST(LeafName, ConstructorTestInt1) {
+TEST(NameInt, ConstructorTestInt1) {
 	ptree::PTree pt;
-	ptree::Name<int> v(&pt, 7);
-	ASSERT_STREQ(typeid(v.value).name(), typeid(static_cast<int>(7)).name());
-	ASSERT_EQ(v.value, 7);
+	ptree::NameInt v(&pt, 7);
+	ASSERT_EQ(v.getvalue(), 7);
 	ASSERT_EQ(v.parent, &pt);
 }
-TEST(LeafName, ConstructorTestInt2) {
+TEST(NameInt, ConstructorTestInt2) {
 	ptree::PTree pt;
-	ptree::Name<int> v(&pt, 7, 11, 9);
-	ASSERT_STREQ(typeid(v.value).name(), typeid(static_cast<int>(7)).name());
-	ASSERT_EQ(v.value, 7);
-	ASSERT_EQ(v.nameid, 11);
-	ASSERT_EQ(v.offset, 9);
+	ptree::NameInt v(&pt, 10, 11, 12);
+	std::string dump = v.dump();
+	ASSERT_EQ(v.getvalue(), 10);
+	ASSERT_EQ(v.getnameid(), 11);
+	ASSERT_EQ(v.getoffset(), 12);
 	ASSERT_EQ(v.parent, &pt);
 }
 
-TEST(LeafName, DumpTest) {
+TEST(NameInt, DumpTest) {
 	ptree::PTree pt;
-	ptree::Imidiate<int> var(&pt, 10);
-	std::string dump = var.dump();
-	ASSERT_EQ(var.parent, &pt);
+	ptree::NameInt v(&pt, 10);
+	std::string dump = v.dump();
+	ASSERT_EQ(v.parent, &pt);
 }
+
