@@ -13,10 +13,10 @@ std::string get_addr(const void* addr) {
 }
 
 class PTree {
-  PTree* parent;
-  PTree *left, *right;
+  PTree* parent_;
+  PTree *left_, *right_;
 public:
-  PTree(PTree* parent_ = nullptr, PTree* left_ = nullptr, PTree* right_ = nullptr): parent(parent_), left(left_), right(right_) {};  
+  PTree(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): parent_(parent), left_(left), right_(right) {};  
   virtual ~PTree() = default;
   virtual PTree* execute() {
     return nullptr;
@@ -25,23 +25,23 @@ public:
     return 0;
   }
 
-  void setparent(PTree *_parent) {
-    parent = _parent;
+  void setparent(PTree *parent) {
+    parent_ = parent;
   }
   PTree *getparent() const {
-    return parent;
+    return parent_;
   }
-  void setleft(PTree *_left) {
-    left = _left;
+  void setleft(PTree *left) {
+    left_ = left;
   }
   PTree *getleft() const {
-    return left;
+    return left_;
   }
-  void setright(PTree *_right) {
-    right = _right;
+  void setright(PTree *right) {
+    right_ = right;
   }
   PTree *getright() const {
-    return right;
+    return right_;
   }
 
   virtual std::string dump() const {
