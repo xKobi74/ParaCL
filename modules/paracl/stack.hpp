@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <deque>
 #include <assert.h>
 
 namespace ptree {
@@ -12,25 +13,47 @@ private:
 	std::unordered_map<std::string, int> scopeoffset;
 	std::unordered_map<std::string, int> nameoffset;
 	int stackpointer;
+	std::deque<std::string> scopeorder;
+	int lastscopeid;
+	std::string lastscopename;
+
 public:
-	MemManager() : stackpointer(0) {
+	MemManager() : stackpointer(0), lastscopeid(0), lastscopename("0") {
 		scopeoffset[""] = 0;
+		scopeorder.push_front("");
 	}
 	~MemManager() = default;
-	int openscope(std::string scope) {
-		assert(scopeoffset.find(scope) == scopeoffset.end());
-		scopeoffset[scope] = stackpointer;
+	//create new scope inside the last one and return start offset of new scope
+	int openscope() {
+		++lastscopeid;
+		lastscopename = std::to_string(lastscopeid);
+		scopeoffset[lastscopename] = stackpointer;
+		scopeorder.push_front(lastscopename);
 		return stackpointer; 
 	}
-	void closescope(std::string scope) {
-		stackpointer = scopeoffset[scope]; 
+	//close the last scope
+	void closescope() {
+		stackpointer = scopeoffset[scopeorder.front()]; 
+		scopeorder.pop_front();
 	}
-	int operator()(std::string name, std::string scope = "", int namesize = sizeof(int)) {
-		assert(scopeoffset.find(scope) != scopeoffset.end());
-		std::string fullname = scope + ":" + name;
+	//create new variable in the last scope and return its offset 
+	int operator()(std::string name, int namesize = sizeof(int)) {
+		assert(scopeoffset.find(scopeorder.front()) != scopeoffset.end());
+		std::string fullname = scopeorder.front() + ":" + name;
 		nameoffset[fullname] = stackpointer;
 		stackpointer += namesize;
 		return nameoffset[fullname];
+	}
+	//retrun offset of the last variable with such name
+	int getnameoffset(std::string name) {
+		std::string fullname;
+		for (auto it : scopeorder) {
+			fullname = it + ":" + name;
+			auto nameptr = nameoffset.find(fullname);
+			if (nameptr != nameoffset.end())
+				return nameptr->second;
+		} 
+		throw "ptree::MemManager.getnameoffset() error";
 	}
 	friend std::ostream& operator<< (std::ostream &out, const MemManager &memfunc); 
 };
