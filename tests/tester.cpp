@@ -3,3 +3,4 @@
 
 #include "leaftest.hpp"
 #include "nonleaftest.hpp"
+#include "stacktest.hpp"
