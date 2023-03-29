@@ -92,8 +92,8 @@
         ptree::PTree* oper;
         ptree::Block* blk;
         
-    } YYSTYPE_t;
-    #define YYSTYPE YYSTYPE_t
+    } YYSTYPE;
+    #define YYSTYPE YYSTYPE
 
 
 #line 100 "pcl.tab.c"
@@ -552,7 +552,7 @@ static const yytype_int8 yyrline[] =
        0,    43,    43,    46,    49,    50,    53,    54,    55,    56,
       59,    60,    61,    64,    64,    66,    67,    69,    70,    71,
       72,    73,    74,    75,    78,    79,    80,    83,    84,    85,
-      88,    90,    91,    92,    93,    94
+      88,    91,    92,    93,    94,    95
 };
 #endif
 
@@ -1153,7 +1153,7 @@ yyreduce:
     {
   case 3: /* BLOCK: OPS  */
 #line 46 "pcl.y"
-                                        {((yyvsp[0].oper))->dump();tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
+                                        {tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
 #line 1158 "pcl.tab.c"
     break;
 
@@ -1279,36 +1279,37 @@ yyreduce:
 
   case 30: /* VAR: ID  */
 #line 88 "pcl.y"
-                                        {(yyval.oper) = new ptree::NameInt(nullptr, 0, 0, 0); printf("%X\n", (yyval.oper));}
-#line 1284 "pcl.tab.c"
+                                        {/*$$ = new ptree::NameInt(nullptr, 0, 0, 0); std::cout << $1 << std::endl;*/
+                                         (yyval.oper) = new ptree::Variable((yyvsp[0].str));}
+#line 1285 "pcl.tab.c"
     break;
 
   case 31: /* VAL: NUM  */
-#line 90 "pcl.y"
-                                        { (yyval.oper) = new ptree::NameInt(nullptr, 0);}
-#line 1290 "pcl.tab.c"
+#line 91 "pcl.y"
+                                        { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
+#line 1291 "pcl.tab.c"
     break;
 
   case 32: /* VAL: '-' VAL  */
-#line 91 "pcl.y"
+#line 92 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1296 "pcl.tab.c"
+#line 1297 "pcl.tab.c"
     break;
 
   case 33: /* VAL: '!' VAL  */
-#line 92 "pcl.y"
+#line 93 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1302 "pcl.tab.c"
+#line 1303 "pcl.tab.c"
     break;
 
   case 34: /* VAL: '(' EXPR ')'  */
-#line 93 "pcl.y"
+#line 94 "pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1308 "pcl.tab.c"
+#line 1309 "pcl.tab.c"
     break;
 
 
-#line 1312 "pcl.tab.c"
+#line 1313 "pcl.tab.c"
 
       default: break;
     }
@@ -1501,7 +1502,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 101 "pcl.y"
+#line 102 "pcl.y"
 
 int main() { 
     int res = yyparse();

@@ -203,7 +203,6 @@ class Block: public NonLeaf {
   
   Block(const Block& rhs): operations(rhs.operations) {
     std::cout << "copy called" << std::endl;
-    printf("%X\n", &rhs);
     offset_ = 0; id_ = 0;
   }
 
@@ -246,7 +245,6 @@ class Assign : public Operation {
   public:
   Assign(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): Operation(parent, left, right) {};
   std::string dump() const override {
-    printf("%X %X\n", getleft(), getright());
     std::string res;
     res += get_chld_dump();
 
@@ -307,6 +305,17 @@ class WhileBlk: public Branch {
 
     res += get_links();
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted, label=\"condition\"]\n";
+    return res;
+  }
+};
+//TODO: remove when ast test will be finished
+class Variable: public PTree {
+  public:
+  std::string name_;
+  Variable(std::string name, PTree* parent = nullptr): PTree(parent, nullptr, nullptr), name_(name) {};
+  std::string dump() const override {
+    std::string res;
+    res += getname() + "[label=\"" + name_ + "\"]\n";
     return res;
   }
 };

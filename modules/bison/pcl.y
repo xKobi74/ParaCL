@@ -22,8 +22,8 @@
         ptree::PTree* oper;
         ptree::Block* blk;
         
-    } YYSTYPE_t;
-    #define YYSTYPE YYSTYPE_t
+    } YYSTYPE;
+    #define YYSTYPE YYSTYPE
 
 %}
 
@@ -31,8 +31,8 @@
 %token EQ LE GE NE
 %token NUM ID
 
-%type<str> NUM
-%type<oper> ID
+%type<str> NUM ID
+ //%type<oper> ID
 %type<oper> OPS OP1 OP2 OP
 %type<oper> EXPR EXPR1 EXPR2 TERM VAL VAR
 %type<blk> BLOCK
@@ -43,7 +43,7 @@
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
                                                                                                       //move with *block very bad variant
-BLOCK: OPS                              {($1)->dump();tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+BLOCK: OPS                              {tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
@@ -85,9 +85,10 @@ TERM:   VAL                             // inherit
 |       TERM '/' VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, $1, $3); }
 ;
 
-VAR:    ID                              {$$ = new ptree::NameInt(nullptr, 0, 0, 0); printf("%X\n", $$);}
+VAR:    ID                              {/*$$ = new ptree::NameInt(nullptr, 0, 0, 0); std::cout << $1 << std::endl;*/
+                                         $$ = new ptree::Variable($1);}//temporary solution
 
-VAL:    NUM                             { $$ = new ptree::NameInt(nullptr, 0);}
+VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
 |       '-' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, $2);}
 |       '!' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, $2); }
 |       '(' EXPR ')'                    { $$ = $2; }
