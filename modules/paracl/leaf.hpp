@@ -70,9 +70,10 @@ class NameInfo : public Leaf {
 private:
   int nameid_;
   int offset_;
+  std::string name_;
 protected:
-  NameInfo(PTree* parent = nullptr) : Leaf(parent) {};
-  NameInfo(PTree* parent, int nameid, int offset) : Leaf(parent), nameid_(nameid), offset_(offset) {};
+  NameInfo(PTree* parent = nullptr, std::string name = "") : Leaf(parent), name_(name) {};
+  NameInfo(PTree* parent, int nameid, int offset, std::string name = "") : Leaf(parent), nameid_(nameid), offset_(offset), name_(name) {};
 public:
   int getnameid() const {
     return nameid_;
@@ -80,14 +81,17 @@ public:
   int getoffset() const {
     return offset_;
   }
+  std::string getvarname() const {
+    return name_;
+  }
 };
 
 class NameInt : public NameInfo {
 private:
   int value_;
 public:
-  NameInt(PTree* parent = nullptr, int value = 0) : NameInfo(parent), value_(value) {};
-  NameInt(PTree* parent, int value, int nameid, int offset) : NameInfo(parent, nameid, offset), value_(value) {};
+  NameInt(PTree* parent = nullptr, int value = 0, std::string name_ = "") : NameInfo(parent, name_), value_(value) {};
+  NameInt(PTree* parent, int value, int nameid, int offset, std::string name_ = "") : NameInfo(parent, nameid, offset, name_), value_(value) {};
   int getvalue() const {
     return value_;
   }
@@ -98,7 +102,7 @@ public:
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
-    res += myname + " [label=" + '"' + std::to_string(getnameid()) + '=' + std::to_string(getvalue()) + '"' + "];\n";
+    res += myname + " [label=" + '"' + getvarname() + '=' + std::to_string(getvalue()) + '"' + "];\n";
     return res;
   }
 };

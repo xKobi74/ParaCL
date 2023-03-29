@@ -7,7 +7,7 @@
 #include <cstring>
 #include <assert.h>
 
-#define CAN_BE_IN_STACK typename CONDITION =  										\
+#define CAN_BE_IN_STACK typename CONDITION =  					\
 	typename std::enable_if<std::is_same<T, int>::value ||		\
     std::is_same<T, double>::value ||							\
     std::is_same<T, float>::value, T>::type

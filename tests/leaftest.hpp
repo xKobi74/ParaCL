@@ -65,15 +65,17 @@ TEST(NameInt, ConstructorTestInt1) {
 	ptree::NameInt v(&pt, 7);
 	ASSERT_EQ(v.getvalue(), 7);
 	ASSERT_EQ(v.getparent(), &pt);
+	ASSERT_EQ(v.getvarname(), "");
 }
 TEST(NameInt, ConstructorTestInt2) {
 	ptree::PTree pt;
-	ptree::NameInt v(&pt, 10, 11, 12);
+	ptree::NameInt v(&pt, 10, 11, 12, "sd");
 	std::string dump = v.dump();
 	ASSERT_EQ(v.getvalue(), 10);
 	ASSERT_EQ(v.getnameid(), 11);
 	ASSERT_EQ(v.getoffset(), 12);
 	ASSERT_EQ(v.getparent(), &pt);
+	ASSERT_EQ(v.getvarname(), "sd");
 }
 
 TEST(NameInt, DumpTest) {
@@ -81,5 +83,6 @@ TEST(NameInt, DumpTest) {
 	ptree::NameInt v(&pt, 10);
 	std::string dump = v.dump();
 	ASSERT_EQ(v.getparent(), &pt);
+	ASSERT_EQ(v.getvarname(), "");
 }
 
