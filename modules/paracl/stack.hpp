@@ -26,10 +26,12 @@ private:
 	int maxsize;
 
 public:
+	//create MemManager
 	MemManager() : stackpointer(0), lastscopeid(0), lastscopename("0"), maxsize(0) {
 		scopeoffset[""] = 0;
 		scopeorder.push_front("");
 	}
+	//destroy MemManager
 	~MemManager() = default;
 	//create new scope inside the last one and return start offset of new scope
 	int openscope() {
@@ -81,15 +83,19 @@ std::ostream& operator<< (std::ostream &out, const MemManager &memfunc) {
     return out; 
 }
 
+// Stack memory emulator
 class Stack {
 	char *memory;
 public:
+	//create Stack with given size
 	Stack(int maxsize) {
 		memory = new char[maxsize];
 	}
+	//destroy Stack
 	~Stack() {
 		delete[] memory;
 	}
+	//Stack object can't be copied, it can be only moved 
 	Stack(const Stack& other) = delete;
     Stack& operator=(const Stack& other) = delete;
     Stack(Stack&& old) {
@@ -101,11 +107,15 @@ public:
         return *this;
     }
 
+    //write value into Stack in given offset
+	//WARNING: this method does not check anything about permission
     template <typename T, CAN_BE_IN_STACK>
     void write(int offset, T &value) {
     	memcpy(memory + offset, &value, sizeof(value));
     }
 
+    //read value from Stack by given offset
+    //WARNING: this method does not check anything about permission
     template <typename T, CAN_BE_IN_STACK>
     void read(int offset, T &value) const {
     	memcpy(&value, memory + offset, sizeof(value));
