@@ -3,6 +3,8 @@
     #include <list>
     #include <string>
     #include <vector>
+    #include <typeinfo>
+    #include <type_traits>
     #include "../paracl/leaf.hpp"
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
@@ -27,7 +29,7 @@
 
 %}
 
-%token IF ELSE WHILE EXIT
+%token IF ELSE WHILE PRINT
 %token EQ LE GE NE
 %token NUM ID
 
@@ -43,7 +45,8 @@
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
                                                                                                       //move with *block very bad variant
-BLOCK: OPS                              {tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+BLOCK: OPS                              { /*std::cout << std::boolalpha << std::is_same_v<decltype($1), ptree::PTree *> << std::endl;*/
+                                            tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
@@ -65,6 +68,7 @@ OP:     OP1 | OP2 ;                     // inherit
 
 EXPR:   EXPR1                           // inherit
 |       VAR '=' EXPR                     { $$ = new ptree::Assign(nullptr, $1, $3); }
+|       PRINT EXPR                       { $$ = new ptree::Output(nullptr, $2);}
 
 EXPR1:  EXPR2                           // inherit
 |       EXPR1 EQ EXPR2                  { $$ = new ptree::BinOp(ptree::BinOpType::EQUAL, nullptr, $1, $3);}
@@ -85,10 +89,11 @@ TERM:   VAL                             // inherit
 |       TERM '/' VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, $1, $3); }
 ;
 
-VAR:    ID                              {/*$$ = new ptree::NameInt(nullptr, 0, 0, 0); std::cout << $1 << std::endl;*/
+VAR:    ID                              {
                                          $$ = new ptree::Variable($1);}//temporary solution
 
-VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
+VAL:    NUM                             { 
+                                            $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
 |       '-' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, $2);}
 |       '!' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, $2); }
 |       '(' EXPR ')'                    { $$ = $2; }
@@ -102,8 +107,9 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 %%
 int main() { 
     int res = yyparse();
-    std::string out;
-    out = (blocks.back())->dump();
+    std::string out = "digraph G {\n";
+    out += (blocks.back())->dump();
+    out += "}\n";
     std::cout << out << std::endl;
     return res;
 }

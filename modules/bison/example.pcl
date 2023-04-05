@@ -10,5 +10,6 @@ while (n > 0) {
     flg = 3;
   } else {
     flg = 7;
+    print 3 + 2;
   }
 }

@@ -308,6 +308,20 @@ class WhileBlk: public Branch {
     return res;
   }
 };
+
+class Output: public Operation {
+  public:
+  Output(PTree* parent = nullptr, PTree* to_print = nullptr): Operation(parent, nullptr, to_print) {};
+
+  std::string dump() const override {
+    std::string res;
+    res += get_chld_dump();
+    res += getname() + "[shape = record, label=\"{print (" + get_addr(getright()) + ")}\"]\n";
+    res += get_links();
+    return res;
+  }
+};
+
 //TODO: remove when ast test will be finished
 class Variable: public PTree {
   public:
