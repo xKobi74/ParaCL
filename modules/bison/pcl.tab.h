@@ -58,7 +58,8 @@ extern int yydebug;
     GE = 264,
     NE = 265,
     NUM = 266,
-    ID = 267
+    ID = 267,
+    INPUT = 268
   };
 #endif
 

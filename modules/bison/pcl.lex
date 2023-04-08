@@ -25,6 +25,7 @@ if              return IF;
 else            return ELSE;
 while           return WHILE;
 print           return PRINT;
+[?]               return INPUT;
 ==              return EQ;
 [<]=            return LE;
 >=              return GE;

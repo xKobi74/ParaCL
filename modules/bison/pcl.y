@@ -31,7 +31,7 @@
 
 %token IF ELSE WHILE PRINT
 %token EQ LE GE NE
-%token NUM ID
+%token NUM ID INPUT
 
 %type<str> NUM ID
  //%type<oper> ID
@@ -89,11 +89,10 @@ TERM:   VAL                             // inherit
 |       TERM '/' VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, $1, $3); }
 ;
 
-VAR:    ID                              {
-                                         $$ = new ptree::Variable($1);}//temporary solution
+VAR:    ID                              { $$ = new ptree::Variable($1);}//temporary solution
 
-VAL:    NUM                             { 
-                                            $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
+VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
+|       INPUT                           { $$ = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
 |       '-' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, $2);}
 |       '!' VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, $2); }
 |       '(' EXPR ')'                    { $$ = $2; }
