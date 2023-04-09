@@ -4,12 +4,14 @@ flg = ?;
 
 while (n > 0) {
   fact = fact * n;
-  n = n - 1;
+  n++;
+  n--;
+  n = n - flg;
   if (? >= 5) flg = 1;
-  if (fact > 10) {
+  if (fact > 10 && n <= 5) {
     flg = 3;
   } else {
     flg = 7;
-    print 3 + 2;
+    print flg++;
   }
 }

@@ -95,6 +95,8 @@ enum class BinOpType {
   MORE,
   LESS,
   UNDEF,
+  LOG_AND,
+  LOG_OR,
 };
 
 class BinOp: public Operation {
@@ -125,6 +127,10 @@ class BinOp: public Operation {
         return "\\<";
       case BinOpType::MORE:
         return "\\>";
+      case BinOpType::LOG_AND:
+        return "&&";
+      case BinOpType::LOG_OR:
+        return "||";
       default:
         return "?";  
     }
