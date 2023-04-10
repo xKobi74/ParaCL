@@ -562,11 +562,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    46,    46,    49,    53,    54,    57,    58,    59,    60,
-      63,    64,    65,    68,    68,    70,    71,    72,    74,    75,
-      76,    79,    80,    81,    82,    83,    84,    85,    88,    89,
-      90,    93,    94,    95,    98,   100,   101,   102,   103,   104,
-     105,   106,   107
+       0,    46,    46,    49,    52,    53,    56,    57,    58,    59,
+      62,    63,    64,    67,    67,    69,    70,    71,    73,    74,
+      75,    78,    79,    80,    81,    82,    83,    84,    87,    88,
+      89,    92,    93,    94,    97,    99,   100,   101,   102,   103,
+     104,   105,   106
 };
 #endif
 
@@ -1177,199 +1177,198 @@ yyreduce:
     {
   case 3: /* BLOCK: OPS  */
 #line 49 "pcl.y"
-                                        { /*std::cout << std::boolalpha << std::is_same_v<decltype($1), ptree::PTree *> << std::endl;*/
-                                            tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
-#line 1183 "pcl.tab.c"
+                                        { tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
+#line 1182 "pcl.tab.c"
     break;
 
   case 4: /* OPS: OP  */
-#line 53 "pcl.y"
+#line 52 "pcl.y"
                                         {tmp = new ptree::Block(); tmp->push_expression((yyvsp[0].oper)); (yyval.oper) = tmp;}
-#line 1189 "pcl.tab.c"
+#line 1188 "pcl.tab.c"
     break;
 
   case 5: /* OPS: OPS OP  */
-#line 54 "pcl.y"
+#line 53 "pcl.y"
                                         {tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[-1].oper)))); tmp->push_expression((yyvsp[0].oper)); (yyval.oper) = tmp;}
-#line 1195 "pcl.tab.c"
+#line 1194 "pcl.tab.c"
     break;
 
   case 6: /* OP1: LCB BLOCK RCB  */
-#line 57 "pcl.y"
+#line 56 "pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].blk); }
-#line 1201 "pcl.tab.c"
+#line 1200 "pcl.tab.c"
     break;
 
   case 7: /* OP1: EXPR SEQUENCE  */
-#line 58 "pcl.y"
-                                             { (yyval.oper) = new ptree::Expression(nullptr, nullptr, (yyvsp[-1].oper));}
-#line 1207 "pcl.tab.c"
+#line 57 "pcl.y"
+                                        { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
+#line 1206 "pcl.tab.c"
     break;
 
   case 8: /* OP1: IF LPAR EXPR RPAR OP1 ELSE OP1  */
-#line 59 "pcl.y"
+#line 58 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].oper), nullptr, (yyvsp[0].oper), (yyvsp[-2].oper));}
-#line 1213 "pcl.tab.c"
+#line 1212 "pcl.tab.c"
     break;
 
   case 9: /* OP1: WHILE LPAR EXPR RPAR OP1  */
-#line 60 "pcl.y"
+#line 59 "pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].oper), nullptr, (yyvsp[0].oper));}
-#line 1219 "pcl.tab.c"
+#line 1218 "pcl.tab.c"
     break;
 
   case 10: /* OP2: IF LPAR EXPR RPAR OP  */
-#line 63 "pcl.y"
+#line 62 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-2].oper), nullptr, nullptr, (yyvsp[0].oper)); }
-#line 1225 "pcl.tab.c"
+#line 1224 "pcl.tab.c"
     break;
 
   case 11: /* OP2: IF LPAR EXPR RPAR OP1 ELSE OP2  */
-#line 64 "pcl.y"
+#line 63 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].oper), nullptr, (yyvsp[0].oper), (yyvsp[-2].oper)); }
-#line 1231 "pcl.tab.c"
+#line 1230 "pcl.tab.c"
     break;
 
   case 12: /* OP2: WHILE LPAR EXPR RPAR OP2  */
-#line 65 "pcl.y"
+#line 64 "pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].oper), nullptr, (yyvsp[0].oper)); }
-#line 1237 "pcl.tab.c"
+#line 1236 "pcl.tab.c"
     break;
 
   case 16: /* EXPR: VAR ASSIGN EXPR  */
-#line 71 "pcl.y"
-                                            { (yyval.oper) = new ptree::Assign(nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1243 "pcl.tab.c"
+#line 70 "pcl.y"
+                                         { (yyval.oper) = new ptree::Assign(nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
+#line 1242 "pcl.tab.c"
     break;
 
   case 17: /* EXPR: PRINT EXPR  */
-#line 72 "pcl.y"
+#line 71 "pcl.y"
                                          { (yyval.oper) = new ptree::Output(nullptr, (yyvsp[0].oper));}
-#line 1249 "pcl.tab.c"
+#line 1248 "pcl.tab.c"
     break;
 
   case 19: /* EXPR1: EXPR1 AND EXPR2  */
-#line 75 "pcl.y"
-                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1255 "pcl.tab.c"
+#line 74 "pcl.y"
+                                       { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
+#line 1254 "pcl.tab.c"
     break;
 
   case 20: /* EXPR1: EXPR1 OR EXPR2  */
-#line 76 "pcl.y"
+#line 75 "pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_OR, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1261 "pcl.tab.c"
+#line 1260 "pcl.tab.c"
     break;
 
   case 22: /* EXPR2: EXPR2 EQ EXPR3  */
-#line 80 "pcl.y"
+#line 79 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1267 "pcl.tab.c"
+#line 1266 "pcl.tab.c"
     break;
 
   case 23: /* EXPR2: EXPR2 LE EXPR3  */
-#line 81 "pcl.y"
+#line 80 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1273 "pcl.tab.c"
+#line 1272 "pcl.tab.c"
     break;
 
   case 24: /* EXPR2: EXPR2 GE EXPR3  */
-#line 82 "pcl.y"
+#line 81 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1279 "pcl.tab.c"
+#line 1278 "pcl.tab.c"
     break;
 
   case 25: /* EXPR2: EXPR2 NE EXPR3  */
-#line 83 "pcl.y"
+#line 82 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::NON_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1285 "pcl.tab.c"
+#line 1284 "pcl.tab.c"
     break;
 
   case 26: /* EXPR2: EXPR2 GREAT EXPR3  */
-#line 84 "pcl.y"
+#line 83 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1291 "pcl.tab.c"
+#line 1290 "pcl.tab.c"
     break;
 
   case 27: /* EXPR2: EXPR2 LESS EXPR3  */
-#line 85 "pcl.y"
+#line 84 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1297 "pcl.tab.c"
+#line 1296 "pcl.tab.c"
     break;
 
   case 29: /* EXPR3: EXPR3 PLUS TERM  */
-#line 89 "pcl.y"
+#line 88 "pcl.y"
                                          { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::ADDITION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1303 "pcl.tab.c"
+#line 1302 "pcl.tab.c"
     break;
 
   case 30: /* EXPR3: EXPR3 MINUS TERM  */
-#line 90 "pcl.y"
+#line 89 "pcl.y"
                                           { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::SUBTRACTION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1309 "pcl.tab.c"
+#line 1308 "pcl.tab.c"
     break;
 
   case 32: /* TERM: TERM MUL VAL  */
-#line 94 "pcl.y"
+#line 93 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MULTIPLICATION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1315 "pcl.tab.c"
+#line 1314 "pcl.tab.c"
     break;
 
   case 33: /* TERM: TERM DIV VAL  */
-#line 95 "pcl.y"
+#line 94 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1321 "pcl.tab.c"
+#line 1320 "pcl.tab.c"
     break;
 
   case 34: /* VAR: ID  */
-#line 98 "pcl.y"
+#line 97 "pcl.y"
                                         { (yyval.oper) = new ptree::Variable((yyvsp[0].str));}
-#line 1327 "pcl.tab.c"
+#line 1326 "pcl.tab.c"
     break;
 
   case 35: /* VAL: NUM  */
-#line 100 "pcl.y"
+#line 99 "pcl.y"
                                         { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
-#line 1333 "pcl.tab.c"
+#line 1332 "pcl.tab.c"
     break;
 
   case 36: /* VAL: INPUT  */
-#line 101 "pcl.y"
+#line 100 "pcl.y"
                                         { (yyval.oper) = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-#line 1339 "pcl.tab.c"
+#line 1338 "pcl.tab.c"
     break;
 
   case 37: /* VAL: MINUS VAL  */
-#line 102 "pcl.y"
+#line 101 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1345 "pcl.tab.c"
+#line 1344 "pcl.tab.c"
     break;
 
   case 38: /* VAL: NOT VAL  */
-#line 103 "pcl.y"
+#line 102 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1351 "pcl.tab.c"
+#line 1350 "pcl.tab.c"
     break;
 
   case 39: /* VAL: VAR P_PLUS  */
-#line 104 "pcl.y"
+#line 103 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, (yyvsp[-1].oper)); }
-#line 1357 "pcl.tab.c"
+#line 1356 "pcl.tab.c"
     break;
 
   case 40: /* VAL: VAR P_MINUS  */
-#line 105 "pcl.y"
+#line 104 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
-#line 1363 "pcl.tab.c"
+#line 1362 "pcl.tab.c"
     break;
 
   case 41: /* VAL: LPAR EXPR RPAR  */
-#line 106 "pcl.y"
+#line 105 "pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1369 "pcl.tab.c"
+#line 1368 "pcl.tab.c"
     break;
 
 
-#line 1373 "pcl.tab.c"
+#line 1372 "pcl.tab.c"
 
       default: break;
     }
@@ -1562,7 +1561,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 114 "pcl.y"
+#line 113 "pcl.y"
 
 int main() { 
     int res = yyparse();

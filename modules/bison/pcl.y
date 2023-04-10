@@ -45,9 +45,8 @@
 
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
-                                                                                                      //move with *block very bad variant
-BLOCK: OPS                              { /*std::cout << std::boolalpha << std::is_same_v<decltype($1), ptree::PTree *> << std::endl;*/
-                                            tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+                                                                                                    
+BLOCK: OPS                              { tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
@@ -55,7 +54,7 @@ OPS:    OP                              {tmp = new ptree::Block(); tmp->push_exp
 ;
 
 OP1:    LCB BLOCK RCB                   { $$ = $2; }
-|       EXPR SEQUENCE                        { $$ = new ptree::Expression(nullptr, nullptr, $1);}
+|       EXPR SEQUENCE                   { $$ = new ptree::Expression(nullptr, $1);}
 |       IF LPAR EXPR RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, $7, $5);}
 |       WHILE LPAR EXPR RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, $5);}
 ;
@@ -65,14 +64,14 @@ OP2:    IF LPAR EXPR RPAR OP              { $$ = new ptree::IfBlk($3, nullptr, n
 |       WHILE LPAR EXPR RPAR OP2          { $$ = new ptree::WhileBlk($3, nullptr, $5); }
 ;
 
-OP:     OP1 | OP2 ;                     // inherit
+OP:     OP1 | OP2 ;                     // inherit to solve C problem with if block
 
 EXPR:   EXPR1                           // inherit
-|       VAR ASSIGN EXPR                     { $$ = new ptree::Assign(nullptr, $1, $3); }
+|       VAR ASSIGN EXPR                  { $$ = new ptree::Assign(nullptr, $1, $3); }
 |       PRINT EXPR                       { $$ = new ptree::Output(nullptr, $2);}
 
-EXPR1: EXPR2
-|      EXPR1 AND EXPR2                  { $$ = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, $1, $3); }
+EXPR1: EXPR2                           //inherit
+|      EXPR1 AND EXPR2                 { $$ = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, $1, $3); }
 |      EXPR1 OR EXPR2                  { $$ = new ptree::BinOp(ptree::BinOpType::LOG_OR, nullptr, $1, $3); }
 ;
 
