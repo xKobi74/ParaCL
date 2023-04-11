@@ -57,7 +57,7 @@ public:
 		maxsize = std::max(maxsize, stackpointer);
 		return nameoffset[fullname];
 	}
-	//retrun offset of the last variable with such name
+	//retrun offset of the last variable with such name or -1 if such variable is not exist
 	int getnameoffset(std::string name) {
 		std::string fullname;
 		for (auto it : scopeorder) {
@@ -66,7 +66,7 @@ public:
 			if (nameptr != nameoffset.end())
 				return nameptr->second;
 		} 
-		throw "ptree::MemManager.getnameoffset() error";
+		return -1;
 	}
 
 	int getmaxstacksize() const {
@@ -124,6 +124,13 @@ public:
     }
 };
 
+//calculate all offsets for variables and return MemManager object with result information
+void manage_mem(PTree *unit, MemManager &memfunc);
+MemManager manage_tree_mem(PTree *root) {
+	MemManager memfunc;
+	manage_mem(root, memfunc);
+	return memfunc;
+}
 void manage_mem(PTree *unit, MemManager &memfunc) {
 	Block *block = dynamic_cast<Block *>(unit);
 	if (block) {
@@ -157,7 +164,9 @@ void manage_mem(PTree *unit, MemManager &memfunc) {
 	Assign *assign = dynamic_cast<Assign *>(unit);
 	if (assign) {
 		Variable *variable = dynamic_cast<Variable *>(assign->getleft());
-		variable->offset_ = memfunc(variable->name_);
+		variable->offset_ = memfunc.getnameoffset(variable->name_);
+		if (variable->offset_ < 0)
+			variable->offset_ = memfunc(variable->name_);
 		manage_mem(assign->getright(), memfunc);	
 		return;
 	}
@@ -173,13 +182,6 @@ void manage_mem(PTree *unit, MemManager &memfunc) {
 	}
 	if (unit) 
 		throw "ptree::manage_mem(PTree *,MemManager) error";
-}
-
-//calculate all offsets for variables and return MemManager object with result information
-MemManager manage_tree_mem(PTree *root) {
-	MemManager memfunc;
-	manage_mem(root, memfunc);
-	return memfunc;
 }
 
 }
