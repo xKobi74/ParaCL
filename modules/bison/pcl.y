@@ -8,6 +8,7 @@
     #include "../paracl/leaf.hpp"
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
+    #include "../paracl/stack.hpp"
     extern int yylineno;
     extern int yylex();
     void yyerror(char *s) {
@@ -113,6 +114,7 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 %%
 int main() { 
     int res = yyparse();
+   // ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
     std::string out = "digraph G {\n";
     out += (blocks.back())->dump();
     out += "}\n";
