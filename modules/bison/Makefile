@@ -1,4 +1,4 @@
 all:
 	lex pcl.lex
 	bison -d pcl.y
-	g++ -ggdb lex.yy.c pcl.tab.c -o test.out
+	g++ -ggdb -std=c++17 lex.yy.c pcl.tab.c -o test.out

@@ -61,14 +61,14 @@ class NonLeaf: public PTree {
 //HACK: left pointer is continuation of programm right pointer is operations made in line before ';'
 class Expression : public NonLeaf {
   public:
-  Expression(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): NonLeaf(parent, left, right) {};
+  Expression(PTree* parent = nullptr, PTree* operations = nullptr): NonLeaf(parent, nullptr, operations) {};
   
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
 
     res += getname() + "[shape = record, label=\"{Expression \\n |" +
-    "{ " + get_addr(getleft()) + "\\n (continue) | " + get_addr(getright()) + "\\n(expression)}}\"]\n";
+    "{ " + get_addr(getleft()) + "\\n (depricated) | " + get_addr(getright()) + "\\n(expression)}}\"]\n";
 
     //HACK: no get_links() here, because nodes should be colorized and with caption
     if (getleft() != nullptr) res += getname() + " -> " + getleft()->getname() + "[color=\"black\", label=\"continuing\"]\n";
@@ -95,13 +95,15 @@ enum class BinOpType {
   MORE,
   LESS,
   UNDEF,
+  LOG_AND,
+  LOG_OR,
 };
 
 class BinOp: public Operation {
   public:
   BinOpType operation_;
-  BinOp(BinOpType operation = BinOpType::UNDEF, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
-        Operation(parent, left, right), operation_(operation) {};
+  BinOp(BinOpType operation = BinOpType::UNDEF, PTree* parent = nullptr, PTree* l_operand = nullptr, PTree* r_operand = nullptr): 
+        Operation(parent, l_operand, r_operand), operation_(operation) {};
   
   std::string get_op() const {
     switch (operation_) {
@@ -125,6 +127,10 @@ class BinOp: public Operation {
         return "\\<";
       case BinOpType::MORE:
         return "\\>";
+      case BinOpType::LOG_AND:
+        return "&&";
+      case BinOpType::LOG_OR:
+        return "||";
       default:
         return "?";  
     }
@@ -153,8 +159,8 @@ class UnOp: public Operation {
   UnOpType operation_;
   //HACK: getright() pointer depricated because unary operation has only one operand to count value
   //FIXME: Now we can easily make ++i operator, but i++ op needs some more modifications
-  UnOp(UnOpType operation = UnOpType::UNDEF, PTree* parent = nullptr, PTree* left = nullptr): 
-        Operation(parent, left, nullptr), operation_(operation) {};
+  UnOp(UnOpType operation = UnOpType::UNDEF, PTree* parent = nullptr, PTree* operand = nullptr): 
+        Operation(parent, operand, nullptr), operation_(operation) {};
   
   std::string get_op() const {
     switch (operation_) {
@@ -228,11 +234,11 @@ class Block: public NonLeaf {
   
   std::string dump() const override {
     std::string res;
-    res += getname() + "[shape = record, label=\"{Block \\n" + get_blk_info() +"|" +
-    "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "\\n(depricated)}}\"]\n";
+    res += getname() + "[shape = record, label=\"{Block \\n" + get_blk_info() +"}\"]\n";
+    unsigned int expr_num = 1;
     for (PTree* expr: operations) {
       res += expr->dump();
-      res += getname() + " -> " + expr->getname() + "\n";
+      res += getname() + " -> " + expr->getname() + "[color = \"black\", label=\"expr number: " + std::to_string(expr_num++) + "\"]\n";
     }
     return res;
   }
@@ -308,6 +314,20 @@ class WhileBlk: public Branch {
     return res;
   }
 };
+
+class Output: public Operation {
+  public:
+  Output(PTree* parent = nullptr, PTree* to_print = nullptr): Operation(parent, nullptr, to_print) {};
+
+  std::string dump() const override {
+    std::string res;
+    res += get_chld_dump();
+    res += getname() + "[shape = record, label=\"{print (" + get_addr(getright()) + ")}\"]\n";
+    res += get_links();
+    return res;
+  }
+};
+
 //TODO: remove when ast test will be finished
 class Variable: public PTree {
   public:
