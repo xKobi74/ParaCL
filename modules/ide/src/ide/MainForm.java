@@ -27,21 +27,55 @@ public class MainForm extends javax.swing.JFrame {
   private void initComponents()
   {
 
+    textAreaInput = new java.awt.TextArea();
+    jTextAreaOutput = new javax.swing.JTextArea();
+    jMenuBar = new javax.swing.JMenuBar();
+    jMenuFile = new javax.swing.JMenu();
+    jMenuItemFileOpen = new javax.swing.JMenuItem();
+    jMenuEdit = new javax.swing.JMenu();
+    jMenuRun = new javax.swing.JMenu();
+
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 400, Short.MAX_VALUE)
-    );
-    layout.setVerticalGroup(
-      layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 300, Short.MAX_VALUE)
-    );
+    textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    getContentPane().add(textAreaInput, java.awt.BorderLayout.CENTER);
+
+    jTextAreaOutput.setColumns(20);
+    jTextAreaOutput.setLineWrap(true);
+    jTextAreaOutput.setRows(5);
+    jTextAreaOutput.setEnabled(false);
+    getContentPane().add(jTextAreaOutput, java.awt.BorderLayout.PAGE_END);
+
+    jMenuFile.setText("File");
+
+    jMenuItemFileOpen.setText("Open");
+    jMenuItemFileOpen.setToolTipText("");
+    jMenuItemFileOpen.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuItemFileOpenActionPerformed(evt);
+      }
+    });
+    jMenuFile.add(jMenuItemFileOpen);
+
+    jMenuBar.add(jMenuFile);
+
+    jMenuEdit.setText("Edit");
+    jMenuBar.add(jMenuEdit);
+
+    jMenuRun.setText("Edit");
+    jMenuBar.add(jMenuRun);
+
+    setJMenuBar(jMenuBar);
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
+
+  private void jMenuItemFileOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileOpenActionPerformed
+  {//GEN-HEADEREND:event_jMenuItemFileOpenActionPerformed
+    System.out.println("menu->file->open");
+  }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,6 +113,13 @@ public class MainForm extends javax.swing.JFrame {
     }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JMenuBar jMenuBar;
+  private javax.swing.JMenu jMenuEdit;
+  private javax.swing.JMenu jMenuFile;
+  private javax.swing.JMenuItem jMenuItemFileOpen;
+  private javax.swing.JMenu jMenuRun;
+  private javax.swing.JTextArea jTextAreaOutput;
+  private java.awt.TextArea textAreaInput;
   // End of variables declaration//GEN-END:variables
 
 }
