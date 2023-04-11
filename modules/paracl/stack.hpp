@@ -1,5 +1,7 @@
 #pragma once
 
+#include "paracl.hpp"
+
 #include <unordered_map>
 #include <string>
 #include <deque>
@@ -120,8 +122,64 @@ public:
     void read(int offset, T &value) const {
     	memcpy(&value, memory + offset, sizeof(value));
     }
-
-
 };
+
+void manage_mem(PTree *unit, MemManager &memfunc) {
+	Block *block = dynamic_cast<Block *>(unit);
+	if (block) {
+		memfunc.openscope();
+		using opit = std::vector<PTree*>::iterator;
+		opit it = block->operations.begin();
+		opit end = block->operations.end();
+		for (; it != end; ++it)
+			manage_mem(*it, memfunc);
+		memfunc.closescope();
+		return;
+	}
+	IfBlk *ifblock = dynamic_cast<IfBlk *>(unit);
+	if (ifblock) {
+		manage_mem(ifblock->condition_, memfunc);
+		manage_mem(ifblock->getleft(), memfunc);
+		manage_mem(ifblock->getright(), memfunc);
+		return;
+	}
+	WhileBlk *whileblock = dynamic_cast<WhileBlk *>(unit);
+	if (whileblock) {
+		manage_mem(whileblock->condition_, memfunc);
+		manage_mem(whileblock->getleft(), memfunc);
+		return;
+	}
+	Expression *expression = dynamic_cast<Expression *>(unit);
+	if (expression) {
+		manage_mem(expression->getright(), memfunc);
+		return;
+	}
+	Assign *assign = dynamic_cast<Assign *>(unit);
+	if (assign) {
+		Variable *variable = dynamic_cast<Variable *>(assign->getleft());
+		variable->offset_ = memfunc(variable->name_);
+		manage_mem(assign->getright(), memfunc);	
+		return;
+	}
+	Variable *variable = dynamic_cast<Variable *>(unit);
+	if (variable) {
+		variable->offset_ = memfunc.getnameoffset(variable->name_);
+		return;
+	}
+	if (unit) {
+		manage_mem(unit->getleft(), memfunc);
+		manage_mem(unit->getright(), memfunc);
+		return;
+	}
+	if (unit) 
+		throw "ptree::manage_mem(PTree *,MemManager) error";
+}
+
+//calculate all offsets for variables and return MemManager object with result information
+MemManager manage_tree_mem(PTree *root) {
+	MemManager memfunc;
+	manage_mem(root, memfunc);
+	return memfunc;
+}
 
 }

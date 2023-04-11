@@ -332,10 +332,11 @@ class Output: public Operation {
 class Variable: public PTree {
   public:
   std::string name_;
+  int offset_;
   Variable(std::string name, PTree* parent = nullptr): PTree(parent, nullptr, nullptr), name_(name) {};
   std::string dump() const override {
     std::string res;
-    res += getname() + "[label=\"" + name_ + "\"]\n";
+    res += getname() + "[label=\"" + name_ + std::to_string(offset_) + "\"]\n";
     return res;
   }
 };
