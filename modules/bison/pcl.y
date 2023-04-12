@@ -47,15 +47,15 @@
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
                                                                                                     
-BLOCK: OPS                              { tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+BLOCK: OPS                              { tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>($1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
-|       OPS OP                          {tmp = new ptree::Block(std::move(*((ptree::Block*)$1))); tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
+|       OPS OP                          {tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>($1))); tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
 ;
 
-OP1:    LCB BLOCK RCB                   { $$ = $2; }
-|       EXPR SEQUENCE                   { $$ = new ptree::Expression(nullptr, $1);}
+OP1:    LCB BLOCK RCB                     { $$ = $2; }
+|       EXPR SEQUENCE                     { $$ = new ptree::Expression(nullptr, $1);}
 |       IF LPAR EXPR RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, $7, $5);}
 |       WHILE LPAR EXPR RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, $5);}
 ;
@@ -95,7 +95,8 @@ TERM:   VAL                             // inherit
 |       TERM DIV VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, $1, $3); }
 ;
 
-VAR:    ID                              { $$ = new ptree::Variable($1);}//temporary solution
+VAR:    ID                              { $$ = new ptree::NameInt(nullptr, 0, $1);
+                                        }
 
 VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
 |       INPUT                           { $$ = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
@@ -114,12 +115,12 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 %%
 int main() { 
     int res = yyparse();
-    ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
+    //ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
     std::string out = "digraph G {\n";
     out += (blocks.back())->dump();
     out += "}\n";
     std::cout << out << std::endl;
     std::cout << "--------------------------------------" << std::endl;
-    std::cout << memfunc << std::endl;
+    //std::cout << memfunc << std::endl;
     return res;
 }
