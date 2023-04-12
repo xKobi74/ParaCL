@@ -6,6 +6,8 @@
 
 package ide;
 
+import java.io.File;
+
 /**
  *
  * @author mipt
@@ -27,13 +29,26 @@ public class MainForm extends javax.swing.JFrame {
   private void initComponents()
   {
 
+    jFileChooser = new javax.swing.JFileChooser();
     textAreaInput = new java.awt.TextArea();
     jTextAreaOutput = new javax.swing.JTextArea();
     jMenuBar = new javax.swing.JMenuBar();
     jMenuFile = new javax.swing.JMenu();
     jMenuItemFileOpen = new javax.swing.JMenuItem();
+    jMenuItemFileSave = new javax.swing.JMenuItem();
+    jMenuItemFileSaveAs = new javax.swing.JMenuItem();
     jMenuEdit = new javax.swing.JMenu();
     jMenuRun = new javax.swing.JMenu();
+
+    jFileChooser.setToolTipText("");
+    jFileChooser.setName(""); // NOI18N
+    jFileChooser.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jFileChooserActionPerformed(evt);
+      }
+    });
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,6 +74,28 @@ public class MainForm extends javax.swing.JFrame {
     });
     jMenuFile.add(jMenuItemFileOpen);
 
+    jMenuItemFileSave.setText("Save");
+    jMenuItemFileSave.setToolTipText("");
+    jMenuItemFileSave.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuItemFileSaveActionPerformed(evt);
+      }
+    });
+    jMenuFile.add(jMenuItemFileSave);
+
+    jMenuItemFileSaveAs.setText("Save as");
+    jMenuItemFileSaveAs.setToolTipText("");
+    jMenuItemFileSaveAs.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuItemFileSaveAsActionPerformed(evt);
+      }
+    });
+    jMenuFile.add(jMenuItemFileSaveAs);
+
     jMenuBar.add(jMenuFile);
 
     jMenuEdit.setText("Edit");
@@ -74,8 +111,25 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuItemFileOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileOpenActionPerformed
   {//GEN-HEADEREND:event_jMenuItemFileOpenActionPerformed
-    System.out.println("menu->file->open");
+    jFileChooser.showOpenDialog(this); 
+    System.out.println("menu->file->open->" + jFileChooser.getSelectedFile());
   }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
+
+  private void jMenuItemFileSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveActionPerformed
+  {//GEN-HEADEREND:event_jMenuItemFileSaveActionPerformed
+    System.out.println("menu->file->open->save");
+  }//GEN-LAST:event_jMenuItemFileSaveActionPerformed
+
+  private void jMenuItemFileSaveAsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveAsActionPerformed
+  {//GEN-HEADEREND:event_jMenuItemFileSaveAsActionPerformed
+    jFileChooser.showSaveDialog(this);
+    System.out.println("menu->file->->saveas->" + jFileChooser.getSelectedFile());
+  }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
+
+  private void jFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jFileChooserActionPerformed
+  {//GEN-HEADEREND:event_jFileChooserActionPerformed
+    jFileChooser.setSelectedFile(new File(""));
+  }//GEN-LAST:event_jFileChooserActionPerformed
 
     /**
      * @param args the command line arguments
@@ -113,10 +167,13 @@ public class MainForm extends javax.swing.JFrame {
     }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuEdit;
   private javax.swing.JMenu jMenuFile;
   private javax.swing.JMenuItem jMenuItemFileOpen;
+  private javax.swing.JMenuItem jMenuItemFileSave;
+  private javax.swing.JMenuItem jMenuItemFileSaveAs;
   private javax.swing.JMenu jMenuRun;
   private javax.swing.JTextArea jTextAreaOutput;
   private java.awt.TextArea textAreaInput;
