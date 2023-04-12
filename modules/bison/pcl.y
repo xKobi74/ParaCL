@@ -115,12 +115,12 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 %%
 int main() { 
     int res = yyparse();
-    //ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
+    ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
     std::string out = "digraph G {\n";
     out += (blocks.back())->dump();
     out += "}\n";
     std::cout << out << std::endl;
     std::cout << "--------------------------------------" << std::endl;
-    //std::cout << memfunc << std::endl;
+    std::cout << memfunc << std::endl;
     return res;
 }
