@@ -8,6 +8,8 @@ package ide;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -16,7 +18,7 @@ import java.util.Arrays;
  */
 public class MainForm extends javax.swing.JFrame {
 
-    public static File curFile;
+    public static File curFile = null;
     
     //output message to "IDE terminal" in format <prefix>+<message>
     private void log(String prefix, String message) {
@@ -38,16 +40,22 @@ public class MainForm extends javax.swing.JFrame {
     private void outputClear() {
       textAreaInput.setText("");
     }
+    //return text from editor
+    private String input() {
+      return textAreaInput.getText();
+    }
     //read File and output it to text editor
     private boolean downloadFile(File iFile) {
+      if (iFile == null)
+        return false;
       if (!iFile.exists()) {
-        System.out.println("File does not exist");
-        logln("Error: ", "File does not exist");
+        System.out.println("File " + iFile + " does not exist");
+        logln("Error: ", "File " + iFile + " does not exist");
         return false;
       }
       if(!iFile.canRead()) {
-        System.out.println("File can not be read");
-        logln("Error: ", "File can not be read");
+        System.out.println("File " + iFile + " can not be read");
+        logln("Error: ", "File " + iFile + " can not be read");
         return false;
       }
       try (FileReader reader = new FileReader(iFile)) {
@@ -62,12 +70,56 @@ public class MainForm extends javax.swing.JFrame {
       }
       catch (Exception ex) {
          System.out.println(ex);
-         logln("Error: ", "Promblems with file reading");
+         logln("Error: ", "Promblems with file " + iFile + " reading");
          return false;
       }
       System.out.println("menu->file->open->" + iFile);
-      logln("Message: ", "File sucessfully downlad");  
+      logln("Message: ", "File " + iFile + " sucessfully downlad");  
       return true;
+    }
+    //upload text ftom text editor to File
+    private boolean uploadFile(File oFile) {
+      if (oFile == null)
+        return false;
+      if (!oFile.exists()) {
+        System.out.println("File " + oFile + " does not exist");
+        logln("Error: ", "File " + oFile + " does not exist");
+        return false;
+      }
+      if(!oFile.canWrite()) {
+        System.out.println("File " + oFile + " can not be written");
+        logln("Error: ", "File " + oFile + " can not be written");
+        return false;
+      }
+      try (FileWriter writer = new FileWriter(oFile)) {
+        writer.write(input());
+      }
+      catch (Exception ex) {
+         System.out.println(ex);
+         logln("Error: ", "Promblems with file " + oFile + " writing");
+         return false;
+      }
+      System.out.println("menu->file->save->" + oFile);
+      logln("Message: ", "File " + oFile + " sucessfully saved");  
+      return true;
+    }
+    //create file by its oFile
+    private boolean createFile(File oFile) {
+      if (oFile == null)
+        return false;
+      try {
+        boolean created =  oFile.createNewFile();
+        if (created) {
+          System.out.println("menu->file->saveas->" + oFile);
+          logln("Message: ", "File " + oFile + " sucessfully created"); 
+          return true;
+        }
+      }
+      catch (IOException ex) {
+        System.out.println(ex);
+      }
+      logln("Error: ", "Promblems with file " + oFile + " creating");
+      return false;
     }
       
     /** Creates new form MainForm */
@@ -163,16 +215,17 @@ public class MainForm extends javax.swing.JFrame {
     jFileChooser.setSelectedFile(new File(""));
     jFileChooser.showOpenDialog(this);
     File iFile = jFileChooser.getSelectedFile();
+    String reserve = input();
     outputClear();
     if (downloadFile(iFile))
       curFile = iFile;
     else
-      curFile = null;
+      output(reserve);
   }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
 
   private void jMenuItemFileSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveActionPerformed
   {//GEN-HEADEREND:event_jMenuItemFileSaveActionPerformed
-    System.out.println("menu->file->open->save");
+    uploadFile(curFile);
   }//GEN-LAST:event_jMenuItemFileSaveActionPerformed
 
   private void jMenuItemFileSaveAsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveAsActionPerformed
@@ -180,11 +233,11 @@ public class MainForm extends javax.swing.JFrame {
     jFileChooser.setSelectedFile(new File(""));
     jFileChooser.showSaveDialog(this);
     File oFile = jFileChooser.getSelectedFile();
-    if (oFile.exists()) {
-      System.out.println("File already exist");
+    if (createFile(oFile))
+      curFile = oFile;
+    else
       return;
-    }
-    System.out.println("menu->file->->saveas->" + oFile);
+    uploadFile(curFile);
   }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
 
     /**
