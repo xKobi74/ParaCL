@@ -36,12 +36,12 @@ public:
 	//destroy MemManager
 	~MemManager() = default;
 	//create new scope inside the last one and return start offset of new scope
-	int openscope() {
+	std::pair<int, int> openscope() {
 		++lastscopeid;
 		lastscopename = std::to_string(lastscopeid);
 		scopeoffset[lastscopename] = stackpointer;
 		scopeorder.push_front(lastscopename);
-		return stackpointer; 
+		return std::pair<int, int>(lastscopeid, stackpointer); 
 	}
 	//close the last scope
 	void closescope() {
@@ -134,7 +134,9 @@ MemManager manage_tree_mem(PTree *root) {
 void manage_mem(PTree *unit, MemManager &memfunc) {
 	Block *block = dynamic_cast<Block *>(unit);
 	if (block) {
-		memfunc.openscope();
+		std::pair<int, int> idandoffset = memfunc.openscope();
+		block->id_ = idandoffset.first;
+		block->offset_ = idandoffset.second;
 		using opit = std::vector<PTree*>::iterator;
 		opit it = block->operations.begin();
 		opit end = block->operations.end();
