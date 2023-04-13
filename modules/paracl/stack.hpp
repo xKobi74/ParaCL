@@ -1,6 +1,8 @@
 #pragma once
 
-#include "paracl.hpp"
+#include "ptree.hpp"
+#include "nonleaf.hpp"
+#include "leaf.hpp"
 
 #include <unordered_map>
 #include <string>

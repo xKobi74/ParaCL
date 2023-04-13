@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include "stack.hpp"
 //CPP20 is not needed because most compilators doesn`t accept format lib
 #ifdef CPP20
 #include <format>
@@ -52,7 +53,7 @@ class NonLeaf: public PTree {
     return false;
   } 
   
-  PTree* execute() override {
+  const std::unique_ptr<PTree> execute(Stack *stack) override {
     return this;
   }
 };

@@ -1,20 +1,42 @@
 #pragma once
 
 #include "ptree.hpp"
+#include "stack.hpp"
 
 #include <string>
+#include <memory>
 
 namespace ptree {
 class Leaf : public PTree {
 public:
   Leaf(PTree* parent = nullptr): PTree(parent, nullptr, nullptr) {};
-  bool isLeaf() const override {
+  virtual bool isLeaf() const override {
     return true;
   }
-  virtual PTree* execute() {
-    return this;
+  virtual const std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    return make;
   }
 };
+
+template <typename T> class Imidiate : public Leaf {
+private:
+  T value_;
+public:
+  Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
+  Imidiate(T value) : Leaf(nullptr), value_(value) {}
+  T getvalue() const {
+    return value_;
+  }
+  virtual std::string dump() const override {
+    std::string res;
+    std::string parentname = getparent()->getname();
+    std::string myname = getname();
+    res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
+    return res;
+  }
+};
+
+std::unique_ptr<Imidiate<int>> intinput();
 
 class Reserved : public Leaf {
 public:
@@ -40,28 +62,21 @@ public:
     }
     return "Smth strange";
   }
+  virtual const std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    switch(gettype()) {
+      case Types::None:
+        return nullptr;
+        break;
+      case Types::Input:
+        return intinput();
+        break;
+    }
+  }
   virtual std::string dump() const override {
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
-    return res;
-  }
-};
-
-template <typename T> class Imidiate : public Leaf {
-private:
-  T value_;
-public:
-  Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
-  T getvalue() const {
-    return value_;
-  }
-  virtual std::string dump() const override {
-    std::string res;
-    std::string parentname = getparent()->getname();
-    std::string myname = getname();
-    res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
     return res;
   }
 };
@@ -109,5 +124,11 @@ public:
     return res;
   }
 };
+
+std::unique_ptr<Imidiate<int>> intinput() {
+  int x;
+  std::cin >> x;
+  return std::unique_ptr<Imidiate<int>>(new Imidiate<int>(x)); 
+}
 
 }

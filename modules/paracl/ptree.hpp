@@ -2,6 +2,7 @@
 
 #include <string>
 #include <sstream>
+#include <memory>
 
 
 namespace ptree {
@@ -13,6 +14,8 @@ std::string get_addr(const void* addr) {
   return address.str();
 }
 
+class Stack;
+
 class PTree {
   PTree* parent_;
   PTree *left_, *right_;
@@ -21,7 +24,7 @@ public:
   PTree(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): parent_(parent), left_(left), right_(right) {};  
   virtual ~PTree() = default;
   //method for tree execution
-  virtual PTree* execute() {
+  virtual const std::unique_ptr<PTree> execute(Stack *stack) const {
     return nullptr;
   }
   //return true if class leaf
