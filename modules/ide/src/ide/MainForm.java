@@ -145,8 +145,12 @@ public class MainForm extends javax.swing.JFrame {
     jMenuItemFileOpen = new javax.swing.JMenuItem();
     jMenuItemFileSave = new javax.swing.JMenuItem();
     jMenuItemFileSaveAs = new javax.swing.JMenuItem();
-    jMenuEdit = new javax.swing.JMenu();
+    jMenuView = new javax.swing.JMenu();
+    jMenuViewFont = new javax.swing.JMenuItem();
+    jMenuViewBackground = new javax.swing.JMenuItem();
     jMenuRun = new javax.swing.JMenu();
+    jMenuRunBuilt = new javax.swing.JMenuItem();
+    jMenuRunExecute = new javax.swing.JMenuItem();
 
     jFileChooser.setToolTipText("");
     jFileChooser.setName(""); // NOI18N
@@ -199,10 +203,31 @@ public class MainForm extends javax.swing.JFrame {
 
     jMenuBar.add(jMenuFile);
 
-    jMenuEdit.setText("Edit");
-    jMenuBar.add(jMenuEdit);
+    jMenuView.setText("View");
 
-    jMenuRun.setText("Edit");
+    jMenuViewFont.setText("Font");
+    jMenuView.add(jMenuViewFont);
+
+    jMenuViewBackground.setText("Background");
+    jMenuView.add(jMenuViewBackground);
+
+    jMenuBar.add(jMenuView);
+
+    jMenuRun.setText("Run");
+
+    jMenuRunBuilt.setText("Build");
+    jMenuRunBuilt.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuRunBuiltActionPerformed(evt);
+      }
+    });
+    jMenuRun.add(jMenuRunBuilt);
+
+    jMenuRunExecute.setText("Execute");
+    jMenuRun.add(jMenuRunExecute);
+
     jMenuBar.add(jMenuRun);
 
     setJMenuBar(jMenuBar);
@@ -239,6 +264,11 @@ public class MainForm extends javax.swing.JFrame {
       return;
     uploadFile(curFile);
   }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
+
+  private void jMenuRunBuiltActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuiltActionPerformed
+  {//GEN-HEADEREND:event_jMenuRunBuiltActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_jMenuRunBuiltActionPerformed
 
     /**
      * @param args the command line arguments
@@ -278,12 +308,16 @@ public class MainForm extends javax.swing.JFrame {
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
-  private javax.swing.JMenu jMenuEdit;
   private javax.swing.JMenu jMenuFile;
   private javax.swing.JMenuItem jMenuItemFileOpen;
   private javax.swing.JMenuItem jMenuItemFileSave;
   private javax.swing.JMenuItem jMenuItemFileSaveAs;
   private javax.swing.JMenu jMenuRun;
+  private javax.swing.JMenuItem jMenuRunBuilt;
+  private javax.swing.JMenuItem jMenuRunExecute;
+  private javax.swing.JMenu jMenuView;
+  private javax.swing.JMenuItem jMenuViewBackground;
+  private javax.swing.JMenuItem jMenuViewFont;
   private javax.swing.JTextArea jTextAreaOutput;
   private java.awt.TextArea textAreaInput;
   // End of variables declaration//GEN-END:variables
