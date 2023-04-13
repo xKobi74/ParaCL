@@ -7,6 +7,8 @@
 package ide;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.Arrays;
 
 /**
  *
@@ -14,6 +16,60 @@ import java.io.File;
  */
 public class MainForm extends javax.swing.JFrame {
 
+    public static File curFile;
+    
+    //output message to "IDE terminal" in format <prefix>+<message>
+    private void log(String prefix, String message) {
+      jTextAreaOutput.setText(jTextAreaOutput.getText() + prefix + message);
+    }
+    //output message to "IDE terminal" in format <prefix>+<message>+'\n'
+    private void logln(String prefix, String message) {
+      log(prefix, message + '\n');
+    }
+    //output text to "IDE editor" in format <message>
+    private void output(String text) {
+      textAreaInput.append(text);
+    }
+    //output text to "IDE editor" in format <message>+'\n'
+    private void outputln(String text) {
+      output(text + '\n');
+    }
+    //clear "IDE editor"
+    private void outputClear() {
+      textAreaInput.setText("");
+    }
+    //read File and output it to text editor
+    private boolean downloadFile(File iFile) {
+      if (!iFile.exists()) {
+        System.out.println("File does not exist");
+        logln("Error: ", "File does not exist");
+        return false;
+      }
+      if(!iFile.canRead()) {
+        System.out.println("File can not be read");
+        logln("Error: ", "File can not be read");
+        return false;
+      }
+      try (FileReader reader = new FileReader(iFile)) {
+        char[] buf = new char[256];
+        int c;
+        while((c = reader.read(buf))>0){  
+          if(c < 256) {
+            buf = Arrays.copyOf(buf, c);
+            output(new String(buf));
+          }
+        }
+      }
+      catch (Exception ex) {
+         System.out.println(ex);
+         logln("Error: ", "Promblems with file reading");
+         return false;
+      }
+      System.out.println("menu->file->open->" + iFile);
+      logln("Message: ", "File sucessfully downlad");  
+      return true;
+    }
+      
     /** Creates new form MainForm */
     public MainForm() {
         initComponents();
@@ -42,13 +98,6 @@ public class MainForm extends javax.swing.JFrame {
 
     jFileChooser.setToolTipText("");
     jFileChooser.setName(""); // NOI18N
-    jFileChooser.addActionListener(new java.awt.event.ActionListener()
-    {
-      public void actionPerformed(java.awt.event.ActionEvent evt)
-      {
-        jFileChooserActionPerformed(evt);
-      }
-    });
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,11 +157,17 @@ public class MainForm extends javax.swing.JFrame {
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
-
+//action on menu item Open that opens and reads the file
   private void jMenuItemFileOpenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileOpenActionPerformed
   {//GEN-HEADEREND:event_jMenuItemFileOpenActionPerformed
-    jFileChooser.showOpenDialog(this); 
-    System.out.println("menu->file->open->" + jFileChooser.getSelectedFile());
+    jFileChooser.setSelectedFile(new File(""));
+    jFileChooser.showOpenDialog(this);
+    File iFile = jFileChooser.getSelectedFile();
+    outputClear();
+    if (downloadFile(iFile))
+      curFile = iFile;
+    else
+      curFile = null;
   }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
 
   private void jMenuItemFileSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveActionPerformed
@@ -122,14 +177,15 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuItemFileSaveAsActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveAsActionPerformed
   {//GEN-HEADEREND:event_jMenuItemFileSaveAsActionPerformed
-    jFileChooser.showSaveDialog(this);
-    System.out.println("menu->file->->saveas->" + jFileChooser.getSelectedFile());
-  }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
-
-  private void jFileChooserActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jFileChooserActionPerformed
-  {//GEN-HEADEREND:event_jFileChooserActionPerformed
     jFileChooser.setSelectedFile(new File(""));
-  }//GEN-LAST:event_jFileChooserActionPerformed
+    jFileChooser.showSaveDialog(this);
+    File oFile = jFileChooser.getSelectedFile();
+    if (oFile.exists()) {
+      System.out.println("File already exist");
+      return;
+    }
+    System.out.println("menu->file->->saveas->" + oFile);
+  }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
 
     /**
      * @param args the command line arguments
