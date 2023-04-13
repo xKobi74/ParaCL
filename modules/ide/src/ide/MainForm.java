@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 /**
@@ -121,7 +123,22 @@ public class MainForm extends javax.swing.JFrame {
       logln("Error: ", "Promblems with file " + oFile + " creating");
       return false;
     }
+    //compile oFile with ParaCL
+    private void compileFile(File oFile) throws IOException {
+      ProcessBuilder processBuilder = new ProcessBuilder("/home/mipt/ParaCL/modules/bison/test.out");
+      Process process = processBuilder.start();
+      InputStream in = process.getInputStream();
+      OutputStream out = process.getOutputStream();
+      out.write(input().getBytes());
+      out.close();
+      byte[] buf;
+      buf = new byte[100000];
+      in.read(buf);
+      log("", new String(buf));
+      System.out.println(new String(buf));
+      in.close();
       
+    }
     /** Creates new form MainForm */
     public MainForm() {
         initComponents();
@@ -138,6 +155,7 @@ public class MainForm extends javax.swing.JFrame {
   {
 
     jFileChooser = new javax.swing.JFileChooser();
+    jSplitPane1 = new javax.swing.JSplitPane();
     textAreaInput = new java.awt.TextArea();
     jTextAreaOutput = new javax.swing.JTextArea();
     jMenuBar = new javax.swing.JMenuBar();
@@ -157,14 +175,18 @@ public class MainForm extends javax.swing.JFrame {
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+    jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    getContentPane().add(textAreaInput, java.awt.BorderLayout.CENTER);
+    jSplitPane1.setTopComponent(textAreaInput);
 
     jTextAreaOutput.setColumns(20);
     jTextAreaOutput.setLineWrap(true);
     jTextAreaOutput.setRows(5);
     jTextAreaOutput.setEnabled(false);
-    getContentPane().add(jTextAreaOutput, java.awt.BorderLayout.PAGE_END);
+    jSplitPane1.setRightComponent(jTextAreaOutput);
+
+    getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
     jMenuFile.setText("File");
 
@@ -267,7 +289,14 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuRunBuiltActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuiltActionPerformed
   {//GEN-HEADEREND:event_jMenuRunBuiltActionPerformed
-    // TODO add your handling code here:
+    System.out.println("menu->run->built " + curFile);
+    try {
+      compileFile(curFile);
+    }
+    catch (IOException ex) {
+      System.out.println(ex);
+      logln("Error: ", "Compilation fault");
+    }
   }//GEN-LAST:event_jMenuRunBuiltActionPerformed
 
     /**
@@ -318,6 +347,7 @@ public class MainForm extends javax.swing.JFrame {
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
+  private javax.swing.JSplitPane jSplitPane1;
   private javax.swing.JTextArea jTextAreaOutput;
   private java.awt.TextArea textAreaInput;
   // End of variables declaration//GEN-END:variables
