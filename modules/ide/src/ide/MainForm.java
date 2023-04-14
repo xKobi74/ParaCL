@@ -24,7 +24,7 @@ public class MainForm extends javax.swing.JFrame {
     
     //output message to "IDE terminal" in format <prefix>+<message>
     private void log(String prefix, String message) {
-      jTextAreaOutput.setText(jTextAreaOutput.getText() + prefix + message);
+      textAreaOutput.setText(textAreaOutput.getText() + prefix + message);
     }
     //output message to "IDE terminal" in format <prefix>+<message>+'\n'
     private void logln(String prefix, String message) {
@@ -123,20 +123,23 @@ public class MainForm extends javax.swing.JFrame {
       logln("Error: ", "Promblems with file " + oFile + " creating");
       return false;
     }
-    //compile oFile with ParaCL
-    private void compileFile(File oFile) throws IOException {
+    //compile String code with ParaCL
+    private void compileCode(String code) throws IOException {
+      System.out.println(code);
       ProcessBuilder processBuilder = new ProcessBuilder("/home/mipt/ParaCL/modules/bison/test.out");
       Process process = processBuilder.start();
-      InputStream in = process.getInputStream();
-      OutputStream out = process.getOutputStream();
-      out.write(input().getBytes());
-      out.close();
-      byte[] buf;
-      buf = new byte[100000];
-      in.read(buf);
-      log("", new String(buf));
-      System.out.println(new String(buf));
-      in.close();
+      try (InputStream in = process.getInputStream())
+      {
+        try (OutputStream out = process.getOutputStream())
+        {
+          out.write(code.getBytes());
+        }
+        byte[] buf;
+        buf = new byte[100000];
+        in.read(buf);
+        log("", new String(buf).trim());
+        System.out.println(new String(buf).trim());
+      }
       
     }
     /** Creates new form MainForm */
@@ -155,9 +158,9 @@ public class MainForm extends javax.swing.JFrame {
   {
 
     jFileChooser = new javax.swing.JFileChooser();
-    jSplitPane1 = new javax.swing.JSplitPane();
+    jSplitPane = new javax.swing.JSplitPane();
+    textAreaOutput = new java.awt.TextArea();
     textAreaInput = new java.awt.TextArea();
-    jTextAreaOutput = new javax.swing.JTextArea();
     jMenuBar = new javax.swing.JMenuBar();
     jMenuFile = new javax.swing.JMenu();
     jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -175,18 +178,16 @@ public class MainForm extends javax.swing.JFrame {
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-    jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+    jSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+    jSplitPane.setResizeWeight(0.8);
+
+    textAreaOutput.setEditable(false);
+    jSplitPane.setBottomComponent(textAreaOutput);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    jSplitPane1.setTopComponent(textAreaInput);
+    jSplitPane.setLeftComponent(textAreaInput);
 
-    jTextAreaOutput.setColumns(20);
-    jTextAreaOutput.setLineWrap(true);
-    jTextAreaOutput.setRows(5);
-    jTextAreaOutput.setEnabled(false);
-    jSplitPane1.setRightComponent(jTextAreaOutput);
-
-    getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
+    getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
 
     jMenuFile.setText("File");
 
@@ -289,9 +290,9 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuRunBuiltActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuiltActionPerformed
   {//GEN-HEADEREND:event_jMenuRunBuiltActionPerformed
-    System.out.println("menu->run->built " + curFile);
+    System.out.println("menu->run->build");
     try {
-      compileFile(curFile);
+      compileCode(input());
     }
     catch (IOException ex) {
       System.out.println(ex);
@@ -347,9 +348,9 @@ public class MainForm extends javax.swing.JFrame {
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
-  private javax.swing.JSplitPane jSplitPane1;
-  private javax.swing.JTextArea jTextAreaOutput;
+  private javax.swing.JSplitPane jSplitPane;
   private java.awt.TextArea textAreaInput;
+  private java.awt.TextArea textAreaOutput;
   // End of variables declaration//GEN-END:variables
 
 }
