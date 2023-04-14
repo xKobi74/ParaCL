@@ -555,8 +555,8 @@ static const yytype_int8 yyrline[] =
        0,    47,    47,    50,    53,    54,    57,    58,    59,    60,
       63,    64,    65,    68,    68,    70,    71,    72,    74,    75,
       76,    79,    80,    81,    82,    83,    84,    85,    88,    89,
-      90,    93,    94,    95,    98,   100,   101,   102,   103,   104,
-     105,   106,   107
+      90,    93,    94,    95,    98,   101,   102,   103,   104,   105,
+     106,   107,   108
 };
 #endif
 
@@ -1398,7 +1398,7 @@ yyreduce:
     {
   case 3:
 #line 50 "pcl.y"
-                                        { tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
+                                        { tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>((yyvsp[0].oper)))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
 #line 1403 "pcl.tab.c"
     break;
 
@@ -1410,19 +1410,19 @@ yyreduce:
 
   case 5:
 #line 54 "pcl.y"
-                                        {tmp = new ptree::Block(std::move(*((ptree::Block*)(yyvsp[-1].oper)))); tmp->push_expression((yyvsp[0].oper)); (yyval.oper) = tmp;}
+                                        {tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>((yyvsp[-1].oper)))); tmp->push_expression((yyvsp[0].oper)); (yyval.oper) = tmp;}
 #line 1415 "pcl.tab.c"
     break;
 
   case 6:
 #line 57 "pcl.y"
-                                        { (yyval.oper) = (yyvsp[-1].blk); }
+                                          { (yyval.oper) = (yyvsp[-1].blk); }
 #line 1421 "pcl.tab.c"
     break;
 
   case 7:
 #line 58 "pcl.y"
-                                        { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
+                                          { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
 #line 1427 "pcl.tab.c"
     break;
 
@@ -1542,54 +1542,55 @@ yyreduce:
 
   case 34:
 #line 98 "pcl.y"
-                                        { (yyval.oper) = new ptree::Variable((yyvsp[0].str));}
-#line 1547 "pcl.tab.c"
+                                        { (yyval.oper) = new ptree::NameInt(nullptr, 0, (yyvsp[0].str));
+                                        }
+#line 1548 "pcl.tab.c"
     break;
 
   case 35:
-#line 100 "pcl.y"
+#line 101 "pcl.y"
                                         { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
-#line 1553 "pcl.tab.c"
+#line 1554 "pcl.tab.c"
     break;
 
   case 36:
-#line 101 "pcl.y"
+#line 102 "pcl.y"
                                         { (yyval.oper) = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-#line 1559 "pcl.tab.c"
+#line 1560 "pcl.tab.c"
     break;
 
   case 37:
-#line 102 "pcl.y"
+#line 103 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1565 "pcl.tab.c"
+#line 1566 "pcl.tab.c"
     break;
 
   case 38:
-#line 103 "pcl.y"
+#line 104 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1571 "pcl.tab.c"
+#line 1572 "pcl.tab.c"
     break;
 
   case 39:
-#line 104 "pcl.y"
+#line 105 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, (yyvsp[-1].oper)); }
-#line 1577 "pcl.tab.c"
+#line 1578 "pcl.tab.c"
     break;
 
   case 40:
-#line 105 "pcl.y"
+#line 106 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
-#line 1583 "pcl.tab.c"
+#line 1584 "pcl.tab.c"
     break;
 
   case 41:
-#line 106 "pcl.y"
+#line 107 "pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1589 "pcl.tab.c"
+#line 1590 "pcl.tab.c"
     break;
 
 
-#line 1593 "pcl.tab.c"
+#line 1594 "pcl.tab.c"
 
       default: break;
     }
@@ -1821,7 +1822,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 114 "pcl.y"
+#line 115 "pcl.y"
 
 int main() { 
     int res = yyparse();

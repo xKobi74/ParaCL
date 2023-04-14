@@ -81,6 +81,9 @@ public:
   int getoffset() const {
     return offset_;
   }
+  void setoffset(int offset) {
+    offset_ = offset;
+  }
   std::string getvarname() const {
     return name_;
   }
@@ -102,7 +105,7 @@ public:
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
-    res += myname + " [label=" + '"' + getvarname() + '=' + std::to_string(getvalue()) + '"' + "];\n";
+    res += myname + " [label=" + '"' + getvarname() + '=' + std::to_string(getvalue()) + '\n' + "offset: " + std::to_string(getoffset()) +'"' + "];\n";
     return res;
   }
 };

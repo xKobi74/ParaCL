@@ -163,16 +163,16 @@ void manage_mem(PTree *unit, MemManager &memfunc) {
 	}
 	Assign *assign = dynamic_cast<Assign *>(unit);
 	if (assign) {
-		Variable *variable = dynamic_cast<Variable *>(assign->getleft());
-		variable->offset_ = memfunc.getnameoffset(variable->name_);
-		if (variable->offset_ < 0)
-			variable->offset_ = memfunc(variable->name_);
+		NameInt *nameint = dynamic_cast<NameInt *>(assign->getleft());
+		nameint->setoffset(memfunc.getnameoffset(nameint->getvarname()));
+		if (nameint->getoffset() < 0)
+			nameint->setoffset(memfunc(nameint->getvarname()));
 		manage_mem(assign->getright(), memfunc);	
 		return;
 	}
-	Variable *variable = dynamic_cast<Variable *>(unit);
-	if (variable) {
-		variable->offset_ = memfunc.getnameoffset(variable->name_);
+	NameInt *nameint = dynamic_cast<NameInt *>(unit);
+	if (nameint) {
+		nameint->setoffset(memfunc.getnameoffset(nameint->getvarname()));
 		return;
 	}
 	if (unit) {
