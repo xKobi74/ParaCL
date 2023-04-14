@@ -24,7 +24,7 @@ private:
 public:
   Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
   Imidiate(T value) : Leaf(nullptr), value_(value) {}
-  T getvalue() const {
+  T getvalue(Stack *stack = nullptr) const {
     return value_;
   }
   virtual std::string dump() const override {
@@ -115,11 +115,17 @@ private:
 public:
   NameInt(PTree* parent = nullptr, int value = 0, std::string name_ = "") : NameInfo(parent, name_), value_(value) {};
   NameInt(PTree* parent, int value, int nameid, int offset, std::string name_ = "") : NameInfo(parent, nameid, offset, name_), value_(value) {};
-  int getvalue() const {
+  int getvalue() const { //returns value from the field that value equals to value in stack
     return value_;
   }
-  void setvalue(int x) {
-    value_ = x;
+  int getvalue(Stack *stack) const { //returns value from the stack
+    int value;
+    stack->read(getoffset(), value);
+    return value;
+  }
+  void setvalue(int value, Stack *stack) {
+    stack->write(getoffset(), value);
+    value_ = value;
   }
   virtual std::string dump() const override {
     std::string res;

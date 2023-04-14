@@ -44,7 +44,7 @@ public:
     //write value into Stack in given offset
 	//WARNING: this method does not check anything about permission
     template <typename T, CAN_BE_IN_STACK>
-    void write(int offset, T &value) {
+    void write(int offset, const T &value) {
     	memcpy(memory + offset, &value, sizeof(value));
     }
 
