@@ -182,6 +182,7 @@ public class MainForm extends javax.swing.JFrame {
     jSplitPane.setResizeWeight(0.8);
 
     textAreaOutput.setEditable(false);
+    textAreaOutput.setText("Attention: in current version only file options and run->build are working.\n");
     jSplitPane.setBottomComponent(textAreaOutput);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
