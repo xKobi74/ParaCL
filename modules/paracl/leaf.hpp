@@ -13,8 +13,8 @@ public:
   virtual bool isLeaf() const override {
     return true;
   }
-  virtual const std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
-    return make;
+  virtual std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    return std::unique_ptr<PTree>{};
   }
 };
 
@@ -36,7 +36,11 @@ public:
   }
 };
 
-std::unique_ptr<Imidiate<int>> intinput();
+std::unique_ptr<PTree> intinput() {
+  int x;
+  std::cin >> x;
+  return std::unique_ptr<PTree>(new Imidiate<int>(x)); 
+}
 
 class Reserved : public Leaf {
 public:
@@ -62,15 +66,16 @@ public:
     }
     return "Smth strange";
   }
-  virtual const std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+  virtual std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
     switch(gettype()) {
       case Types::None:
-        return nullptr;
+        return std::unique_ptr<PTree>{};
         break;
       case Types::Input:
         return intinput();
         break;
     }
+    return std::unique_ptr<PTree>{};
   }
   virtual std::string dump() const override {
     std::string res;
@@ -125,10 +130,6 @@ public:
   }
 };
 
-std::unique_ptr<Imidiate<int>> intinput() {
-  int x;
-  std::cin >> x;
-  return std::unique_ptr<Imidiate<int>>(new Imidiate<int>(x)); 
-}
+
 
 }

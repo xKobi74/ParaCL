@@ -9,6 +9,7 @@
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
     #include "../paracl/stack.hpp"
+    #include "../paracl/memory_manager.hpp"
     extern int yylineno;
     extern int yylex();
     void yyerror(char *s) {

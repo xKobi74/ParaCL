@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ptree.hpp"
+#include "stack.hpp"
 
 
 #include <string>
@@ -8,7 +9,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
-#include "stack.hpp"
+
 //CPP20 is not needed because most compilators doesn`t accept format lib
 #ifdef CPP20
 #include <format>
@@ -53,9 +54,12 @@ class NonLeaf: public PTree {
     return false;
   } 
   
-  const std::unique_ptr<PTree> execute(Stack *stack) override {
-    return this;
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+    PTree* tmp = new NonLeaf{*this};
+    return std::unique_ptr<PTree>(tmp);
   }
+
+  ~NonLeaf() override = default;
 };
 
 //expression provides sequencing between strings separated with ';'

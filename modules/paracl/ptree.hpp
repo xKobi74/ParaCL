@@ -4,6 +4,8 @@
 #include <sstream>
 #include <memory>
 
+#include "stack.hpp"
+
 
 namespace ptree {
 
@@ -24,8 +26,8 @@ public:
   PTree(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): parent_(parent), left_(left), right_(right) {};  
   virtual ~PTree() = default;
   //method for tree execution
-  virtual const std::unique_ptr<PTree> execute(Stack *stack) const {
-    return nullptr;
+  virtual std::unique_ptr<PTree> execute(Stack *stack) const {
+    return std::unique_ptr<PTree>{};
   }
   //return true if class leaf
   virtual bool isLeaf() const {
