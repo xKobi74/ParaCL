@@ -6,12 +6,16 @@
 
 package ide;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
 /**
@@ -23,27 +27,27 @@ public class MainForm extends javax.swing.JFrame {
     public static File curFile = null;
     
     //output message to "IDE terminal" in format <prefix>+<message>
-    private void log(String prefix, String message) {
+    private synchronized void log(String prefix, String message) {
       textAreaOutput.setText(textAreaOutput.getText() + prefix + message);
     }
     //output message to "IDE terminal" in format <prefix>+<message>+'\n'
-    private void logln(String prefix, String message) {
+    private synchronized void logln(String prefix, String message) {
       log(prefix, message + '\n');
     }
     //output text to "IDE editor" in format <message>
-    private void output(String text) {
+    private synchronized void output(String text) {
       textAreaInput.append(text);
     }
     //output text to "IDE editor" in format <message>+'\n'
-    private void outputln(String text) {
+    private synchronized void outputln(String text) {
       output(text + '\n');
     }
     //clear "IDE editor"
-    private void outputClear() {
+    private synchronized void outputClear() {
       textAreaInput.setText("");
     }
     //return text from editor
-    private String input() {
+    private synchronized String input() {
       return textAreaInput.getText();
     }
     //read File and output it to text editor
@@ -124,23 +128,29 @@ public class MainForm extends javax.swing.JFrame {
       return false;
     }
     //compile String code with ParaCL
-    private void compileCode(String code) throws IOException {
-      System.out.println(code);
+    private void compileCode(String code) throws IOException, InterruptedException {
       ProcessBuilder processBuilder = new ProcessBuilder("/home/mipt/ParaCL/modules/bison/test.out");
       Process process = processBuilder.start();
-      try (InputStream in = process.getInputStream())
-      {
-        try (OutputStream out = process.getOutputStream())
-        {
-          out.write(code.getBytes());
-        }
-        byte[] buf;
-        buf = new byte[100000];
-        in.read(buf);
-        log("", new String(buf).trim());
-        System.out.println(new String(buf).trim());
-      }
-      
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+      writer.write(code);
+      writer.close();        
+      while (process.isAlive())
+        Thread.sleep(10);
+      String line = "";
+      if (reader.ready())
+        while ((line = reader.readLine()) != null) {
+          logln("", line);
+          System.out.println(line);
+       }
+      if (errorReader.ready())
+        while ((line = errorReader.readLine()) != null) {
+          logln("", line);
+          System.out.println(line);
+        }      
+      reader.close();
+      errorReader.close();
     }
     /** Creates new form MainForm */
     public MainForm() {
@@ -295,7 +305,7 @@ public class MainForm extends javax.swing.JFrame {
     try {
       compileCode(input());
     }
-    catch (IOException ex) {
+    catch (IOException | InterruptedException ex) {
       System.out.println(ex);
       logln("Error: ", "Compilation fault");
     }
