@@ -2,13 +2,14 @@
 
 #include "ptree.hpp"
 #include "stack.hpp"
-
+#include "leaf.hpp"
 
 #include <string>
 #include <list>
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 //CPP20 is not needed because most compilators doesn`t accept format lib
 #ifdef CPP20
@@ -54,10 +55,7 @@ class NonLeaf: public PTree {
     return false;
   } 
   
-  std::unique_ptr<PTree> execute(Stack *stack) const override {
-    PTree* tmp = new NonLeaf{*this};
-    return std::unique_ptr<PTree>(tmp);
-  }
+  std::unique_ptr<PTree> execute(Stack *stack) const override = 0;
 
   ~NonLeaf() override = default;
 };
@@ -81,11 +79,16 @@ class Expression : public NonLeaf {
     
     return res;
   }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+    return getright()->execute(stack);
+  }
 };
 
 class Operation : public NonLeaf {
   public:
   Operation(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): NonLeaf(parent, left, right) {};
+  std::unique_ptr<PTree> execute(Stack *stack) const override = 0;
 };
 //TODO: maybe I should point it like BinOpType: std::string
 enum class BinOpType {
@@ -103,6 +106,39 @@ enum class BinOpType {
   LOG_AND,
   LOG_OR,
 };
+//TODO: Split for log binop and simple binop
+template <typename T>
+T operate(T lhs, T rhs, BinOpType operation) {
+  switch (operation) {
+    case BinOpType::ADDITION:
+      return lhs + rhs;
+    case BinOpType::SUBTRACTION:
+      return lhs - rhs;
+    case BinOpType::MULTIPLICATION:
+      return lhs * rhs;
+    case BinOpType::DIVISION:
+      return lhs / rhs;
+    case BinOpType::EQUAL:
+      return lhs == rhs;
+    case BinOpType::MORE_EQUAL:
+      return lhs >= rhs;
+    case BinOpType::LESS_EQUAL:
+      return lhs <= rhs;
+    case BinOpType::NON_EQUAL:
+      return lhs != rhs;
+    case BinOpType::MORE:
+      return lhs > rhs;
+    case BinOpType::LESS:
+      return lhs < rhs;
+    case BinOpType::LOG_AND:
+      return lhs && rhs;
+    case BinOpType::LOG_OR:
+      return lhs || rhs;
+    default:
+      assert(!"Fault");
+      return 0;
+  }
+}
 
 class BinOp: public Operation {
   public:
@@ -148,6 +184,19 @@ class BinOp: public Operation {
     "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "}}\"]\n";
     res += get_links();  
     return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+    auto left_op = getleft()->execute(stack);
+    auto right_op = getright()->execute(stack);
+
+    Imidiate<int>* l_exec = dynamic_cast<Imidiate<int>*>(left_op.get());
+    Imidiate<int>* r_exec = dynamic_cast<Imidiate<int>*>(right_op.get());
+
+    //TODO: add operations implementation
+    assert((l_exec != nullptr) && (r_exec != nullptr));
+    int result = operate<int>(l_exec->getvalue(stack), r_exec->getvalue(stack), operation_);
+    return std::unique_ptr<PTree>{new Imidiate<int>(result)};
   } 
 };
 
@@ -158,6 +207,8 @@ enum class UnOpType {
   NOT,
   UNDEF
 };
+
+
 
 class UnOp: public Operation {
   public:
@@ -181,6 +232,32 @@ class UnOp: public Operation {
         return "?";  
     }
 
+  }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+    NameInt* var = dynamic_cast<NameInt*>(getleft());
+    assert(var != nullptr);
+    //here execute method not used because of speed, to not provide more imidiate
+    switch (operation_) {
+    case UnOpType::POST_ADDITION:
+      int value = var->getvalue(stack);
+      var->setvalue(++value, stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(value)};
+    case UnOpType::POST_SUBTRACTION:
+      int value = var->getvalue(stack);
+      var->setvalue(--value, stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(value)};
+    case UnOpType::MINUS:
+      int value = var->getvalue(stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(-value)};
+    case UnOpType::NOT:
+      int value = var->getvalue(stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(!value)};
+    default:
+      assert(!"Fault");
+      return std::unique_ptr<PTree>{};
+  }
+    
   }
   
   std::string dump() const override {

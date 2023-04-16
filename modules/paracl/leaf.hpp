@@ -5,6 +5,8 @@
 
 #include <string>
 #include <memory>
+#include <iostream>
+#include <memory>
 
 namespace ptree {
 class Leaf : public PTree {
@@ -33,6 +35,10 @@ public:
     std::string myname = getname();
     res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
     return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    return std::unique_ptr<PTree>{new Imidiate<int>(*this)}; 
   }
 };
 
@@ -133,6 +139,10 @@ public:
     std::string myname = getname();
     res += myname + " [label=" + '"' + getvarname() + '=' + std::to_string(getvalue()) + '\n' + "offset: " + std::to_string(getoffset()) +'"' + "];\n";
     return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+    return std::unique_ptr<PTree>{new Imidiate<int>(getvalue(stack))};
   }
 };
 
