@@ -6,6 +6,7 @@
         std::string str;
         void* oper;
         void* blk;
+        void* cnd;
     } YYSTYPE;
     #define YYSTYPE YYSTYPE
    #include "pcl.tab.h"

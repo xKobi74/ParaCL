@@ -26,7 +26,7 @@ private:
 public:
   Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
   Imidiate(T value) : Leaf(nullptr), value_(value) {}
-  T getvalue(Stack *stack = nullptr) const {
+  T getvalue(Stack *stack = nullptr) const { //why stack?
     return value_;
   }
   virtual std::string dump() const override {
@@ -45,6 +45,9 @@ public:
 std::unique_ptr<PTree> intinput() {
   int x;
   std::cin >> x;
+#ifdef DBG_CALL
+  std::cout << "Input called" << std::endl;
+#endif
   return std::unique_ptr<PTree>(new Imidiate<int>(x)); 
 }
 
@@ -73,13 +76,14 @@ public:
     return "Smth strange";
   }
   virtual std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+#ifdef DBG_CALL
+    std::cout << "Resrved called" << std::endl;
+#endif
     switch(gettype()) {
       case Types::None:
         return std::unique_ptr<PTree>{};
-        break;
       case Types::Input:
         return intinput();
-        break;
     }
     return std::unique_ptr<PTree>{};
   }

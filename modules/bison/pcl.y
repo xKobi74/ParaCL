@@ -25,6 +25,7 @@
         std::string str;
         ptree::PTree* oper;
         ptree::Block* blk;
+        ptree::Condition* cnd;
         
     } YYSTYPE;
     #define YYSTYPE YYSTYPE
@@ -50,6 +51,7 @@
 %type<oper>  OP1 OP2 OP
 %type<oper> EXPR EXPR1 EXPR2 EXPR3 TERM VAL VAR
 %type<blk> BLOCK SCOPE OPS
+%type<cnd> COND
 
 
 %%
@@ -68,14 +70,16 @@ SCOPE: LCB BLOCK RCB                      { $$ = $2; }
 
 OP1:    SCOPE                             {$$ = $1;}
 |       EXPR SEQUENCE                     { $$ = new ptree::Expression(nullptr, $1);}
-|       IF LPAR EXPR RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5));}
-|       WHILE LPAR EXPR RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5));}
+|       IF LPAR COND RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5));}
+|       WHILE LPAR COND RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5));}
 ;
 
-OP2:    IF LPAR EXPR RPAR OP              { $$ = new ptree::IfBlk($3, nullptr, nullptr, wrap_block($5)); }
-|       IF LPAR EXPR RPAR OP1 ELSE OP2    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5)); }
-|       WHILE LPAR EXPR RPAR OP2          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5)); }
+OP2:    IF LPAR COND RPAR OP              { $$ = new ptree::IfBlk($3, nullptr, nullptr, wrap_block($5)); }
+|       IF LPAR COND RPAR OP1 ELSE OP2    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5)); }
+|       WHILE LPAR COND RPAR OP2          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5)); }
 ;
+
+COND:  EXPR                               {$$ = new ptree::Condition(nullptr, $1);}
 
 OP:     OP1 | OP2 ;                     // inherit to solve C problem with if block
 
@@ -132,7 +136,9 @@ int main() {
     out += (blocks.back())->dump();
     out += "}\n";
     std::cout << out << std::endl;
-    //std::cout << "--------------------------------------" << std::endl;
-    //std::cout << memfunc << std::endl;
+    std::cout << "--------------------------------------" << std::endl;
+    ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
+    (blocks.back())->execute(stack);
+
     return res;
 }
