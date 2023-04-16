@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -135,7 +137,7 @@ public class MainForm extends javax.swing.JFrame {
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       writer.write(code);
-      writer.close();        
+      writer.close();    
       while (process.isAlive())
         Thread.sleep(10);
       String line = "";
@@ -302,13 +304,17 @@ public class MainForm extends javax.swing.JFrame {
   private void jMenuRunBuiltActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuiltActionPerformed
   {//GEN-HEADEREND:event_jMenuRunBuiltActionPerformed
     System.out.println("menu->run->build");
-    try {
-      compileCode(input());
-    }
-    catch (IOException | InterruptedException ex) {
-      System.out.println(ex);
-      logln("Error: ", "Compilation fault");
-    }
+    Thread compiler = new Thread(() ->
+    {
+      try {
+        compileCode(input());
+      }
+      catch (IOException | InterruptedException ex) {
+        System.out.println(ex);
+        logln("Error: ", "Compilation fault");
+      }
+    });
+    compiler.start();
   }//GEN-LAST:event_jMenuRunBuiltActionPerformed
 
     /**
