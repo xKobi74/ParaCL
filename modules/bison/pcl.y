@@ -5,13 +5,21 @@
     #include <vector>
     #include <typeinfo>
     #include <type_traits>
+
     #include "../paracl/leaf.hpp"
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
     #include "../paracl/stack.hpp"
     #include "../paracl/memory_manager.hpp"
+/*
+    #include <boost/program_options.hpp>
+    namespace po = boost::program_options;
+    #include <iterator>
+    #include <fstream>
+*/    
     extern int yylineno;
     extern int yylex();
+    extern FILE * yyin;
     void yyerror(char *s) {
         std::cerr << s << ", line " << yylineno << std::endl;
         exit(1);
@@ -41,11 +49,11 @@
 
 %}
 
-%token IF ELSE WHILE PRINT INPUT
+%token IF ELSE WHILE PRINT INPUT MOD
 %token EQ LE GE NE AND OR NOT GREAT LESS
 %token NUM ID  P_PLUS P_MINUS SEQUENCE
 %token LPAR RPAR LBR RBR LCB RCB
-%token ASSIGN PLUS MINUS MUL DIV MOD
+%token ASSIGN PLUS MINUS MUL DIV
 
 %type<str> NUM ID
 %type<oper>  OP1 OP2 OP
@@ -109,6 +117,7 @@ EXPR3:  TERM                            // inherit
 TERM:   VAL                             // inherit
 |       TERM MUL VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::MULTIPLICATION, nullptr, $1, $3); }
 |       TERM DIV VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, $1, $3); }
+|       TERM MOD VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::REMAINDER, nullptr, $1, $3);}
 ;
 
 VAR:    ID                              { $$ = new ptree::NameInt(nullptr, 0, $1);
@@ -129,7 +138,10 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 
 
 %%
-int main() { 
+int main(int argc, char* argv[]) { 
+    FILE *fh;
+
+    if (argc == 2 && (fh = fopen(argv[1], "r"))) yyin = fh;
     int res = yyparse();
     ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
     std::string out = "digraph G {\n";

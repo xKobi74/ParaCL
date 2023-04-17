@@ -99,6 +99,7 @@ enum class BinOpType {
   SUBTRACTION,
   MULTIPLICATION,
   DIVISION,
+  REMAINDER,
   EQUAL,
   MORE_EQUAL,
   LESS_EQUAL,
@@ -115,6 +116,8 @@ T operate(T lhs, T rhs, BinOpType operation) {
   switch (operation) {
     case BinOpType::ADDITION:
       return lhs + rhs;
+    case BinOpType::REMAINDER:
+      return lhs % rhs;
     case BinOpType::SUBTRACTION:
       return lhs - rhs;
     case BinOpType::MULTIPLICATION:
@@ -155,6 +158,8 @@ class BinOp: public Operation {
         return "+";
       case BinOpType::DIVISION:
         return "/";
+      case BinOpType::REMAINDER:
+        return "%";
       case BinOpType::MULTIPLICATION:
         return "*";
       case BinOpType::SUBTRACTION:
