@@ -12,32 +12,52 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  *
  * @author mipt
  */
 public class MainForm extends javax.swing.JFrame {
-
+    
+    public class InputQueue {
+      Queue<String> queue;
+      public InputQueue() {
+        queue = new LinkedList<String>();
+      } 
+      public synchronized void clear() {
+        queue.clear();
+      }
+      public synchronized void add(String str) {
+        queue.add(str);
+      } 
+      public synchronized String poll() {
+        return queue.poll();
+      }
+    }
+    InputQueue inputQueue;
     public static File curFile = null;
     
     //output message to "IDE terminal" in format <prefix>+<message>
     private synchronized void log(String prefix, String message) {
+      if (message == null)
+        return;
       textAreaOutput.setText(textAreaOutput.getText() + prefix + message);
     }
     //output message to "IDE terminal" in format <prefix>+<message>+'\n'
     private synchronized void logln(String prefix, String message) {
+      if (message == null)
+        return;
       log(prefix, message + '\n');
     }
     //output text to "IDE editor" in format <message>
     private synchronized void output(String text) {
+      if (text == null)
+        return;
       textAreaInput.append(text);
     }
     //output text to "IDE editor" in format <message>+'\n'
@@ -140,7 +160,7 @@ public class MainForm extends javax.swing.JFrame {
       writer.close();    
       while (process.isAlive())
         Thread.sleep(10);
-      String line = "";
+      String line;
       if (reader.ready())
         while ((line = reader.readLine()) != null) {
           logln("", line);
@@ -156,6 +176,7 @@ public class MainForm extends javax.swing.JFrame {
     }
     /** Creates new form MainForm */
     public MainForm() {
+        inputQueue = new InputQueue();
         initComponents();
     }
 
@@ -171,11 +192,10 @@ public class MainForm extends javax.swing.JFrame {
 
     jFileChooser = new javax.swing.JFileChooser();
     jSplitPane = new javax.swing.JSplitPane();
-    textAreaInput = new java.awt.TextArea();
     jSplitPane1 = new javax.swing.JSplitPane();
+    textFieldInput = new java.awt.TextField();
     textAreaOutput = new java.awt.TextArea();
-    textField1 = new java.awt.TextField();
-    jPanel1 = new javax.swing.JPanel();
+    textAreaInput = new java.awt.TextArea();
     jMenuBar = new javax.swing.JMenuBar();
     jMenuFile = new javax.swing.JMenu();
     jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -192,27 +212,39 @@ public class MainForm extends javax.swing.JFrame {
     jFileChooser.setName(""); // NOI18N
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setMinimumSize(new java.awt.Dimension(204, 204));
 
     jSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane.setResizeWeight(0.8);
+    jSplitPane.setToolTipText("");
 
-    textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    jSplitPane.setLeftComponent(textAreaInput);
-
-    jSplitPane1.setDividerSize(1);
+    jSplitPane1.setDividerSize(8);
     jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-    jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 10));
+    jSplitPane1.setResizeWeight(1.0);
+    jSplitPane1.setToolTipText("");
+    jSplitPane1.setName(""); // NOI18N
+    jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 102));
     jSplitPane1.setRequestFocusEnabled(false);
+
+    textFieldInput.addKeyListener(new java.awt.event.KeyAdapter()
+    {
+      public void keyPressed(java.awt.event.KeyEvent evt)
+      {
+        textFieldInputKeyPressed(evt);
+      }
+    });
+    jSplitPane1.setBottomComponent(textFieldInput);
 
     textAreaOutput.setEditable(false);
     textAreaOutput.setText("Attention: in current version only file options and run->build are working.\n");
     jSplitPane1.setTopComponent(textAreaOutput);
-    jSplitPane1.setRightComponent(textField1);
 
     jSplitPane.setRightComponent(jSplitPane1);
 
+    textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    jSplitPane.setLeftComponent(textAreaInput);
+
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
-    getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
     jMenuFile.setText("File");
 
@@ -274,6 +306,13 @@ public class MainForm extends javax.swing.JFrame {
     jMenuRun.add(jMenuRunBuilt);
 
     jMenuRunExecute.setText("Execute");
+    jMenuRunExecute.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuRunExecuteActionPerformed(evt);
+      }
+    });
     jMenuRun.add(jMenuRunExecute);
 
     jMenuBar.add(jMenuRun);
@@ -329,6 +368,21 @@ public class MainForm extends javax.swing.JFrame {
     compiler.start();
   }//GEN-LAST:event_jMenuRunBuiltActionPerformed
 
+  private void textFieldInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textFieldInputKeyPressed
+  {//GEN-HEADEREND:event_textFieldInputKeyPressed
+    if (evt.getKeyChar() != '\n')
+      return;
+    System.out.println("Input->Enter");
+    inputQueue.add(textFieldInput.getText());
+    textFieldInput.setText(" ");
+    
+  }//GEN-LAST:event_textFieldInputKeyPressed
+
+  private void jMenuRunExecuteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunExecuteActionPerformed
+  {//GEN-HEADEREND:event_jMenuRunExecuteActionPerformed
+    logln(">", inputQueue.poll());
+  }//GEN-LAST:event_jMenuRunExecuteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -355,13 +409,7 @@ public class MainForm extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainForm().setVisible(true);
-            }
-        });
+       
     }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -377,12 +425,11 @@ public class MainForm extends javax.swing.JFrame {
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
-  private javax.swing.JPanel jPanel1;
   private javax.swing.JSplitPane jSplitPane;
   private javax.swing.JSplitPane jSplitPane1;
   private java.awt.TextArea textAreaInput;
   private java.awt.TextArea textAreaOutput;
-  private java.awt.TextField textField1;
+  private java.awt.TextField textFieldInput;
   // End of variables declaration//GEN-END:variables
 
 }
