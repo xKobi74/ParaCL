@@ -11,12 +11,12 @@
     #include "../paracl/ptree.hpp"
     #include "../paracl/stack.hpp"
     #include "../paracl/memory_manager.hpp"
-/*
+
     #include <boost/program_options.hpp>
     namespace po = boost::program_options;
     #include <iterator>
     #include <fstream>
-*/    
+   
     extern int yylineno;
     extern int yylex();
     extern FILE * yyin;
@@ -138,19 +138,67 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 
 
 %%
-int main(int argc, char* argv[]) { 
-    FILE *fh;
+int main(int ac, char* av[]) { 
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help, h", "shows help option")
+        ("version, v", "shows program version")
+        ("build, b", "only builds program without execute")
+        ("dump-tree, d", "dumps built tree to file default: out.dot")
+        ("dump-out", po::value<std::string>(), "sets output file name")
+        ("input-file", po::value<std::string>(), "input file")
+    ;
+    po::positional_options_description p;
+    p.add("input-file", -1);
 
-    if (argc == 2 && (fh = fopen(argv[1], "r"))) yyin = fh;
+    po::variables_map vm;        
+    po::store(po::command_line_parser(ac, av).options(desc).positional(p).run(), vm);
+    po::notify(vm);    
+
+    if (vm.count("help")) {
+        std::cout << desc << std::endl;
+        return 0;
+    }
+    if (vm.count("version")) {
+        std::cout << "ParaCL interpreter 1.0.1"<< std::endl;
+        std::cout << "Authors: Ilya Gavrilin and Eugene Bogdanov" << std::endl;
+        std::cout <<  std::endl;
+        std::cout << "This is free software;There is NO warranty;" << std::endl;
+        std::cout << "not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." << std::endl;
+        return 0;
+    }
+
+    if (!vm.count("input-file")) {
+        std::cout << "No input file provided" << std::endl;
+        return -1;
+    }
+    FILE* fh;
+    if ((fh = fopen(vm["input-file"].as<std::string>().c_str(), "r"))) yyin = fh;
+    
     int res = yyparse();
     ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
-    std::string out = "digraph G {\n";
-    out += (blocks.back())->dump();
-    out += "}\n";
-    std::cout << out << std::endl;
-    std::cout << "--------------------------------------" << std::endl;
+    if (vm.count("dump-tree")) {
+        std::string dump = "digraph G {\n";
+        dump += (blocks.back())->dump();
+        dump += "}\n";
+        
+        std::string out = "out.dot";
+        if (vm.count("dump-out")) out = vm["dump-out"].as<std::string>();
+        
+        std::ofstream f_out;
+        f_out.open(out, std::ios::out);
+        f_out << dump;
+        f_out.close();
+
+    }
+    
+    if (vm.count("build")) {
+        std::cout << "Build finished, no error catched" << std::endl;
+        return 0;
+    } 
+
     ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
     (blocks.back())->execute(stack);
 
-    return res;
+    return 0;
 }
