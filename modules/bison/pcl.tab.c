@@ -75,13 +75,21 @@
     #include <vector>
     #include <typeinfo>
     #include <type_traits>
+
     #include "../paracl/leaf.hpp"
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
     #include "../paracl/stack.hpp"
     #include "../paracl/memory_manager.hpp"
+/*
+    #include <boost/program_options.hpp>
+    namespace po = boost::program_options;
+    #include <iterator>
+    #include <fstream>
+*/    
     extern int yylineno;
     extern int yylex();
+    extern FILE * yyin;
     void yyerror(char *s) {
         std::cerr << s << ", line " << yylineno << std::endl;
         exit(1);
@@ -110,7 +118,7 @@
     }
 
 
-#line 114 "pcl.tab.c"
+#line 122 "pcl.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -146,32 +154,32 @@ enum yysymbol_kind_t
   YYSYMBOL_WHILE = 5,                      /* WHILE  */
   YYSYMBOL_PRINT = 6,                      /* PRINT  */
   YYSYMBOL_INPUT = 7,                      /* INPUT  */
-  YYSYMBOL_EQ = 8,                         /* EQ  */
-  YYSYMBOL_LE = 9,                         /* LE  */
-  YYSYMBOL_GE = 10,                        /* GE  */
-  YYSYMBOL_NE = 11,                        /* NE  */
-  YYSYMBOL_AND = 12,                       /* AND  */
-  YYSYMBOL_OR = 13,                        /* OR  */
-  YYSYMBOL_NOT = 14,                       /* NOT  */
-  YYSYMBOL_GREAT = 15,                     /* GREAT  */
-  YYSYMBOL_LESS = 16,                      /* LESS  */
-  YYSYMBOL_NUM = 17,                       /* NUM  */
-  YYSYMBOL_ID = 18,                        /* ID  */
-  YYSYMBOL_P_PLUS = 19,                    /* P_PLUS  */
-  YYSYMBOL_P_MINUS = 20,                   /* P_MINUS  */
-  YYSYMBOL_SEQUENCE = 21,                  /* SEQUENCE  */
-  YYSYMBOL_LPAR = 22,                      /* LPAR  */
-  YYSYMBOL_RPAR = 23,                      /* RPAR  */
-  YYSYMBOL_LBR = 24,                       /* LBR  */
-  YYSYMBOL_RBR = 25,                       /* RBR  */
-  YYSYMBOL_LCB = 26,                       /* LCB  */
-  YYSYMBOL_RCB = 27,                       /* RCB  */
-  YYSYMBOL_ASSIGN = 28,                    /* ASSIGN  */
-  YYSYMBOL_PLUS = 29,                      /* PLUS  */
-  YYSYMBOL_MINUS = 30,                     /* MINUS  */
-  YYSYMBOL_MUL = 31,                       /* MUL  */
-  YYSYMBOL_DIV = 32,                       /* DIV  */
-  YYSYMBOL_MOD = 33,                       /* MOD  */
+  YYSYMBOL_MOD = 8,                        /* MOD  */
+  YYSYMBOL_EQ = 9,                         /* EQ  */
+  YYSYMBOL_LE = 10,                        /* LE  */
+  YYSYMBOL_GE = 11,                        /* GE  */
+  YYSYMBOL_NE = 12,                        /* NE  */
+  YYSYMBOL_AND = 13,                       /* AND  */
+  YYSYMBOL_OR = 14,                        /* OR  */
+  YYSYMBOL_NOT = 15,                       /* NOT  */
+  YYSYMBOL_GREAT = 16,                     /* GREAT  */
+  YYSYMBOL_LESS = 17,                      /* LESS  */
+  YYSYMBOL_NUM = 18,                       /* NUM  */
+  YYSYMBOL_ID = 19,                        /* ID  */
+  YYSYMBOL_P_PLUS = 20,                    /* P_PLUS  */
+  YYSYMBOL_P_MINUS = 21,                   /* P_MINUS  */
+  YYSYMBOL_SEQUENCE = 22,                  /* SEQUENCE  */
+  YYSYMBOL_LPAR = 23,                      /* LPAR  */
+  YYSYMBOL_RPAR = 24,                      /* RPAR  */
+  YYSYMBOL_LBR = 25,                       /* LBR  */
+  YYSYMBOL_RBR = 26,                       /* RBR  */
+  YYSYMBOL_LCB = 27,                       /* LCB  */
+  YYSYMBOL_RCB = 28,                       /* RCB  */
+  YYSYMBOL_ASSIGN = 29,                    /* ASSIGN  */
+  YYSYMBOL_PLUS = 30,                      /* PLUS  */
+  YYSYMBOL_MINUS = 31,                     /* MINUS  */
+  YYSYMBOL_MUL = 32,                       /* MUL  */
+  YYSYMBOL_DIV = 33,                       /* DIV  */
   YYSYMBOL_YYACCEPT = 34,                  /* $accept  */
   YYSYMBOL_PROGRAM = 35,                   /* PROGRAM  */
   YYSYMBOL_BLOCK = 36,                     /* BLOCK  */
@@ -515,16 +523,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  33
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   89
+#define YYLAST   96
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  34
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  16
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  44
+#define YYNRULES  45
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  78
+#define YYNSTATES  80
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   288
@@ -574,13 +582,13 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    59,    59,    62,    65,    66,    69,    71,    72,    73,
-      74,    77,    78,    79,    82,    84,    84,    86,    87,    88,
-      90,    91,    92,    95,    96,    97,    98,    99,   100,   101,
-     104,   105,   106,   109,   110,   111,   114,   117,   118,   119,
-     120,   121,   122,   123,   124
+       0,    67,    67,    70,    73,    74,    77,    79,    80,    81,
+      82,    85,    86,    87,    90,    92,    92,    94,    95,    96,
+      98,    99,   100,   103,   104,   105,   106,   107,   108,   109,
+     112,   113,   114,   117,   118,   119,   120,   123,   126,   127,
+     128,   129,   130,   131,   132,   133
 };
 #endif
 
@@ -597,10 +605,10 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "IF", "ELSE", "WHILE",
-  "PRINT", "INPUT", "EQ", "LE", "GE", "NE", "AND", "OR", "NOT", "GREAT",
-  "LESS", "NUM", "ID", "P_PLUS", "P_MINUS", "SEQUENCE", "LPAR", "RPAR",
-  "LBR", "RBR", "LCB", "RCB", "ASSIGN", "PLUS", "MINUS", "MUL", "DIV",
-  "MOD", "$accept", "PROGRAM", "BLOCK", "OPS", "SCOPE", "OP1", "OP2",
+  "PRINT", "INPUT", "MOD", "EQ", "LE", "GE", "NE", "AND", "OR", "NOT",
+  "GREAT", "LESS", "NUM", "ID", "P_PLUS", "P_MINUS", "SEQUENCE", "LPAR",
+  "RPAR", "LBR", "RBR", "LCB", "RCB", "ASSIGN", "PLUS", "MINUS", "MUL",
+  "DIV", "$accept", "PROGRAM", "BLOCK", "OPS", "SCOPE", "OP1", "OP2",
   "COND", "OP", "EXPR", "EXPR1", "EXPR2", "EXPR3", "TERM", "VAR", "VAL", YY_NULLPTR
 };
 
@@ -611,7 +619,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-59)
+#define YYPACT_NINF (-61)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -625,14 +633,14 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      15,   -18,   -16,    17,   -59,    41,   -59,   -59,    17,    15,
-      41,    30,   -59,    15,   -59,   -59,   -59,   -59,    19,     3,
-      57,    31,    51,    34,   -59,    17,    17,   -59,    65,   -59,
-      13,    11,   -59,   -59,   -59,   -59,    41,    41,    41,    41,
-      41,    41,    41,    41,    41,    41,    41,    41,   -59,   -59,
-      17,    23,   -59,    26,   -59,   -59,    57,    57,    31,    31,
-      31,    31,    31,    31,    51,    51,   -59,   -59,   -59,    15,
-      15,    47,   -59,   -59,   -59,    15,   -59,   -59
+      15,   -19,   -17,    17,   -61,    42,   -61,   -61,    17,    15,
+      42,    29,   -61,    15,   -61,   -61,   -61,   -61,    19,    50,
+      69,   -15,    23,    46,   -61,    17,    17,   -61,    48,   -61,
+      13,    11,   -61,   -61,   -61,   -61,    42,    42,    42,    42,
+      42,    42,    42,    42,    42,    42,    42,    42,    42,   -61,
+     -61,    17,    26,   -61,    28,   -61,   -61,    69,    69,   -15,
+     -15,   -15,   -15,   -15,   -15,    23,    23,   -61,   -61,   -61,
+     -61,    15,    15,    43,   -61,   -61,   -61,    15,   -61,   -61
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -640,27 +648,27 @@ static const yytype_int8 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     0,    38,     0,    37,    36,     0,     0,
+       0,     0,     0,     0,    39,     0,    38,    37,     0,     0,
        0,     0,     2,     3,     7,    15,    16,     4,     0,    17,
-      20,    23,    30,    44,    33,     0,     0,    19,    44,    40,
-       0,     0,    39,     1,     5,     8,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    41,    42,
-       0,     0,    14,     0,    43,     6,    21,    22,    24,    25,
-      26,    27,    28,    29,    31,    32,    34,    35,    18,     0,
-       0,    15,    11,    10,    13,     0,     9,    12
+      20,    23,    30,    45,    33,     0,     0,    19,    45,    41,
+       0,     0,    40,     1,     5,     8,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    42,
+      43,     0,     0,    14,     0,    44,     6,    21,    22,    24,
+      25,    26,    27,    28,    29,    31,    32,    36,    34,    35,
+      18,     0,     0,    15,    11,    10,    13,     0,     9,    12
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -59,   -59,    33,   -59,   -59,   -58,   -56,    48,   -12,     2,
-     -59,    50,    38,    44,     0,    -3
+     -61,   -61,    45,   -61,   -61,   -60,   -58,    32,   -12,     2,
+     -61,    47,    49,    51,     0,    -3
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,    11,    12,    13,    14,    15,    16,    51,    17,    18,
+       0,    11,    12,    13,    14,    15,    16,    52,    17,    18,
       19,    20,    21,    22,    28,    24
 };
 
@@ -670,41 +678,43 @@ static const yytype_int8 yydefgoto[] =
 static const yytype_int8 yytable[] =
 {
       23,    34,    29,    23,    25,    27,    26,    32,    23,    23,
-      30,    71,    73,    23,    74,    36,    37,    76,     1,    77,
-       2,     3,     4,     3,     4,    23,    23,    52,    52,     5,
-      33,     5,     6,     7,     6,     7,    54,     8,    55,     8,
-      35,     9,    31,    66,    67,    10,    69,    10,     4,    70,
-      23,    75,    68,    48,    49,     5,     0,    72,     6,     7,
-      44,    45,    50,     8,     0,    38,    39,    40,    41,    23,
-      23,    10,    42,    43,    53,    23,    58,    59,    60,    61,
-      62,    63,    46,    47,    48,    49,    56,    57,    64,    65
+      30,    73,    75,    23,    76,    44,    45,    78,     1,    79,
+       2,     3,     4,     3,     4,    23,    23,    53,    53,    33,
+       5,    46,     5,     6,     7,     6,     7,    55,     8,    56,
+       8,    35,     9,    67,    68,    69,    10,    77,    10,     4,
+      71,    23,    72,    70,    31,    47,    48,     5,    54,    74,
+       6,     7,     0,    36,    37,     8,    49,    50,    49,    50,
+       0,    23,    23,    10,     0,    51,     0,    23,    38,    39,
+      40,    41,     0,    57,    58,    42,    43,    59,    60,    61,
+      62,    63,    64,     0,     0,    65,    66
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,    13,     5,     3,    22,     3,    22,    10,     8,     9,
-       8,    69,    70,    13,    70,    12,    13,    75,     3,    75,
-       5,     6,     7,     6,     7,    25,    26,    25,    26,    14,
-       0,    14,    17,    18,    17,    18,    23,    22,    27,    22,
-      21,    26,     9,    46,    47,    30,    23,    30,     7,    23,
-      50,     4,    50,    19,    20,    14,    -1,    69,    17,    18,
-      29,    30,    28,    22,    -1,     8,     9,    10,    11,    69,
-      70,    30,    15,    16,    26,    75,    38,    39,    40,    41,
-      42,    43,    31,    32,    19,    20,    36,    37,    44,    45
+       0,    13,     5,     3,    23,     3,    23,    10,     8,     9,
+       8,    71,    72,    13,    72,    30,    31,    77,     3,    77,
+       5,     6,     7,     6,     7,    25,    26,    25,    26,     0,
+      15,     8,    15,    18,    19,    18,    19,    24,    23,    28,
+      23,    22,    27,    46,    47,    48,    31,     4,    31,     7,
+      24,    51,    24,    51,     9,    32,    33,    15,    26,    71,
+      18,    19,    -1,    13,    14,    23,    20,    21,    20,    21,
+      -1,    71,    72,    31,    -1,    29,    -1,    77,     9,    10,
+      11,    12,    -1,    36,    37,    16,    17,    38,    39,    40,
+      41,    42,    43,    -1,    -1,    44,    45
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,     5,     6,     7,    14,    17,    18,    22,    26,
-      30,    35,    36,    37,    38,    39,    40,    42,    43,    44,
-      45,    46,    47,    48,    49,    22,    22,    43,    48,    49,
-      43,    36,    49,     0,    42,    21,    12,    13,     8,     9,
-      10,    11,    15,    16,    29,    30,    31,    32,    19,    20,
-      28,    41,    43,    41,    23,    27,    45,    45,    46,    46,
-      46,    46,    46,    46,    47,    47,    49,    49,    43,    23,
-      23,    39,    42,    39,    40,     4,    39,    40
+       0,     3,     5,     6,     7,    15,    18,    19,    23,    27,
+      31,    35,    36,    37,    38,    39,    40,    42,    43,    44,
+      45,    46,    47,    48,    49,    23,    23,    43,    48,    49,
+      43,    36,    49,     0,    42,    22,    13,    14,     9,    10,
+      11,    12,    16,    17,    30,    31,     8,    32,    33,    20,
+      21,    29,    41,    43,    41,    24,    28,    45,    45,    46,
+      46,    46,    46,    46,    46,    47,    47,    49,    49,    49,
+      43,    24,    24,    39,    42,    39,    40,     4,    39,    40
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -713,8 +723,8 @@ static const yytype_int8 yyr1[] =
        0,    34,    35,    36,    37,    37,    38,    39,    39,    39,
       39,    40,    40,    40,    41,    42,    42,    43,    43,    43,
       44,    44,    44,    45,    45,    45,    45,    45,    45,    45,
-      46,    46,    46,    47,    47,    47,    48,    49,    49,    49,
-      49,    49,    49,    49,    49
+      46,    46,    46,    47,    47,    47,    47,    48,    49,    49,
+      49,    49,    49,    49,    49,    49
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -723,8 +733,8 @@ static const yytype_int8 yyr2[] =
        0,     2,     1,     1,     1,     2,     3,     1,     2,     7,
        5,     5,     7,     5,     1,     1,     1,     1,     3,     2,
        1,     3,     3,     1,     3,     3,     3,     3,     3,     3,
-       1,     3,     3,     1,     3,     3,     1,     1,     1,     2,
-       2,     2,     2,     3,     1
+       1,     3,     3,     1,     3,     3,     3,     1,     1,     1,
+       2,     2,     2,     2,     3,     1
 };
 
 
@@ -1188,212 +1198,218 @@ yyreduce:
   switch (yyn)
     {
   case 3: /* BLOCK: OPS  */
-#line 62 "pcl.y"
+#line 70 "pcl.y"
                                         { tmp = new ptree::Block(std::move(*(yyvsp[0].blk))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
-#line 1194 "pcl.tab.c"
+#line 1204 "pcl.tab.c"
     break;
 
   case 4: /* OPS: OP  */
-#line 65 "pcl.y"
+#line 73 "pcl.y"
                                         {tmp = new ptree::Block(); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1200 "pcl.tab.c"
+#line 1210 "pcl.tab.c"
     break;
 
   case 5: /* OPS: OPS OP  */
-#line 66 "pcl.y"
+#line 74 "pcl.y"
                                         {tmp = new ptree::Block(std::move(*(yyvsp[-1].blk))); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1206 "pcl.tab.c"
+#line 1216 "pcl.tab.c"
     break;
 
   case 6: /* SCOPE: LCB BLOCK RCB  */
-#line 69 "pcl.y"
+#line 77 "pcl.y"
                                           { (yyval.blk) = (yyvsp[-1].blk); }
-#line 1212 "pcl.tab.c"
+#line 1222 "pcl.tab.c"
     break;
 
   case 7: /* OP1: SCOPE  */
-#line 71 "pcl.y"
+#line 79 "pcl.y"
                                           {(yyval.oper) = (yyvsp[0].blk);}
-#line 1218 "pcl.tab.c"
+#line 1228 "pcl.tab.c"
     break;
 
   case 8: /* OP1: EXPR SEQUENCE  */
-#line 72 "pcl.y"
+#line 80 "pcl.y"
                                           { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
-#line 1224 "pcl.tab.c"
+#line 1234 "pcl.tab.c"
     break;
 
   case 9: /* OP1: IF LPAR COND RPAR OP1 ELSE OP1  */
-#line 73 "pcl.y"
+#line 81 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper)));}
-#line 1230 "pcl.tab.c"
+#line 1240 "pcl.tab.c"
     break;
 
   case 10: /* OP1: WHILE LPAR COND RPAR OP1  */
-#line 74 "pcl.y"
+#line 82 "pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper)));}
-#line 1236 "pcl.tab.c"
+#line 1246 "pcl.tab.c"
     break;
 
   case 11: /* OP2: IF LPAR COND RPAR OP  */
-#line 77 "pcl.y"
+#line 85 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-2].cnd), nullptr, nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1242 "pcl.tab.c"
+#line 1252 "pcl.tab.c"
     break;
 
   case 12: /* OP2: IF LPAR COND RPAR OP1 ELSE OP2  */
-#line 78 "pcl.y"
+#line 86 "pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper))); }
-#line 1248 "pcl.tab.c"
+#line 1258 "pcl.tab.c"
     break;
 
   case 13: /* OP2: WHILE LPAR COND RPAR OP2  */
-#line 79 "pcl.y"
+#line 87 "pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1254 "pcl.tab.c"
+#line 1264 "pcl.tab.c"
     break;
 
   case 14: /* COND: EXPR  */
-#line 82 "pcl.y"
+#line 90 "pcl.y"
                                           {(yyval.cnd) = new ptree::Condition(nullptr, (yyvsp[0].oper));}
-#line 1260 "pcl.tab.c"
+#line 1270 "pcl.tab.c"
     break;
 
   case 18: /* EXPR: VAR ASSIGN EXPR  */
-#line 87 "pcl.y"
+#line 95 "pcl.y"
                                          { (yyval.oper) = new ptree::Assign(nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1266 "pcl.tab.c"
+#line 1276 "pcl.tab.c"
     break;
 
   case 19: /* EXPR: PRINT EXPR  */
-#line 88 "pcl.y"
+#line 96 "pcl.y"
                                          { (yyval.oper) = new ptree::Output(nullptr, (yyvsp[0].oper));}
-#line 1272 "pcl.tab.c"
+#line 1282 "pcl.tab.c"
     break;
 
   case 21: /* EXPR1: EXPR1 AND EXPR2  */
-#line 91 "pcl.y"
+#line 99 "pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1278 "pcl.tab.c"
+#line 1288 "pcl.tab.c"
     break;
 
   case 22: /* EXPR1: EXPR1 OR EXPR2  */
-#line 92 "pcl.y"
+#line 100 "pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_OR, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1284 "pcl.tab.c"
+#line 1294 "pcl.tab.c"
     break;
 
   case 24: /* EXPR2: EXPR2 EQ EXPR3  */
-#line 96 "pcl.y"
+#line 104 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1290 "pcl.tab.c"
+#line 1300 "pcl.tab.c"
     break;
 
   case 25: /* EXPR2: EXPR2 LE EXPR3  */
-#line 97 "pcl.y"
+#line 105 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1296 "pcl.tab.c"
+#line 1306 "pcl.tab.c"
     break;
 
   case 26: /* EXPR2: EXPR2 GE EXPR3  */
-#line 98 "pcl.y"
+#line 106 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1302 "pcl.tab.c"
+#line 1312 "pcl.tab.c"
     break;
 
   case 27: /* EXPR2: EXPR2 NE EXPR3  */
-#line 99 "pcl.y"
+#line 107 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::NON_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1308 "pcl.tab.c"
+#line 1318 "pcl.tab.c"
     break;
 
   case 28: /* EXPR2: EXPR2 GREAT EXPR3  */
-#line 100 "pcl.y"
+#line 108 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1314 "pcl.tab.c"
+#line 1324 "pcl.tab.c"
     break;
 
   case 29: /* EXPR2: EXPR2 LESS EXPR3  */
-#line 101 "pcl.y"
+#line 109 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1320 "pcl.tab.c"
+#line 1330 "pcl.tab.c"
     break;
 
   case 31: /* EXPR3: EXPR3 PLUS TERM  */
-#line 105 "pcl.y"
+#line 113 "pcl.y"
                                          { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::ADDITION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1326 "pcl.tab.c"
+#line 1336 "pcl.tab.c"
     break;
 
   case 32: /* EXPR3: EXPR3 MINUS TERM  */
-#line 106 "pcl.y"
+#line 114 "pcl.y"
                                           { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::SUBTRACTION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1332 "pcl.tab.c"
+#line 1342 "pcl.tab.c"
     break;
 
   case 34: /* TERM: TERM MUL VAL  */
-#line 110 "pcl.y"
+#line 118 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MULTIPLICATION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1338 "pcl.tab.c"
+#line 1348 "pcl.tab.c"
     break;
 
   case 35: /* TERM: TERM DIV VAL  */
-#line 111 "pcl.y"
+#line 119 "pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1344 "pcl.tab.c"
+#line 1354 "pcl.tab.c"
     break;
 
-  case 36: /* VAR: ID  */
-#line 114 "pcl.y"
+  case 36: /* TERM: TERM MOD VAL  */
+#line 120 "pcl.y"
+                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::REMAINDER, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
+#line 1360 "pcl.tab.c"
+    break;
+
+  case 37: /* VAR: ID  */
+#line 123 "pcl.y"
                                         { (yyval.oper) = new ptree::NameInt(nullptr, 0, (yyvsp[0].str));
                                         }
-#line 1351 "pcl.tab.c"
+#line 1367 "pcl.tab.c"
     break;
 
-  case 37: /* VAL: NUM  */
-#line 117 "pcl.y"
+  case 38: /* VAL: NUM  */
+#line 126 "pcl.y"
                                         { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
-#line 1357 "pcl.tab.c"
+#line 1373 "pcl.tab.c"
     break;
 
-  case 38: /* VAL: INPUT  */
-#line 118 "pcl.y"
+  case 39: /* VAL: INPUT  */
+#line 127 "pcl.y"
                                         { (yyval.oper) = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-#line 1363 "pcl.tab.c"
+#line 1379 "pcl.tab.c"
     break;
 
-  case 39: /* VAL: MINUS VAL  */
-#line 119 "pcl.y"
+  case 40: /* VAL: MINUS VAL  */
+#line 128 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1369 "pcl.tab.c"
+#line 1385 "pcl.tab.c"
     break;
 
-  case 40: /* VAL: NOT VAL  */
-#line 120 "pcl.y"
+  case 41: /* VAL: NOT VAL  */
+#line 129 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1375 "pcl.tab.c"
+#line 1391 "pcl.tab.c"
     break;
 
-  case 41: /* VAL: VAR P_PLUS  */
-#line 121 "pcl.y"
+  case 42: /* VAL: VAR P_PLUS  */
+#line 130 "pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, (yyvsp[-1].oper)); }
-#line 1381 "pcl.tab.c"
-    break;
-
-  case 42: /* VAL: VAR P_MINUS  */
-#line 122 "pcl.y"
-                                        { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
-#line 1387 "pcl.tab.c"
-    break;
-
-  case 43: /* VAL: LPAR EXPR RPAR  */
-#line 123 "pcl.y"
-                                        { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1393 "pcl.tab.c"
-    break;
-
-
 #line 1397 "pcl.tab.c"
+    break;
+
+  case 43: /* VAL: VAR P_MINUS  */
+#line 131 "pcl.y"
+                                        { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
+#line 1403 "pcl.tab.c"
+    break;
+
+  case 44: /* VAL: LPAR EXPR RPAR  */
+#line 132 "pcl.y"
+                                        { (yyval.oper) = (yyvsp[-1].oper); }
+#line 1409 "pcl.tab.c"
+    break;
+
+
+#line 1413 "pcl.tab.c"
 
       default: break;
     }
@@ -1586,9 +1602,12 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 131 "pcl.y"
+#line 140 "pcl.y"
 
-int main() { 
+int main(int argc, char* argv[]) { 
+    FILE *fh;
+
+    if (argc == 2 && (fh = fopen(argv[1], "r"))) yyin = fh;
     int res = yyparse();
     ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
     std::string out = "digraph G {\n";

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <memory>
 
+
 namespace ptree {
 class Leaf : public PTree {
 public:
