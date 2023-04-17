@@ -14,9 +14,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -150,6 +154,7 @@ public class MainForm extends javax.swing.JFrame {
       return false;
     }
     //compile String code with ParaCL
+    //FIX: does not work
     private void compileCode(String code) throws IOException, InterruptedException {
       ProcessBuilder processBuilder = new ProcessBuilder("/home/mipt/ParaCL/modules/bison/test.out");
       Process process = processBuilder.start();
@@ -171,6 +176,65 @@ public class MainForm extends javax.swing.JFrame {
           logln("", line);
           System.out.println(line);
         }      
+      reader.close();
+      errorReader.close();
+    }
+    //compile String code with ParaCL
+    private void executeCode() throws Exception {
+      if (curFile == null) {
+        logln("Error: ", "Save code to file for execution");
+        return;
+      }
+      uploadFile(curFile);
+      List<String> command = new ArrayList<String>();
+      command.add("/home/mipt/ParaCL/modules/bison/test.out");
+      command.add(curFile.toString());
+      ProcessBuilder processBuilder = new ProcessBuilder(command);
+      Process process = processBuilder.start();
+      
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+      BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+      inputQueue.clear();
+      String line;
+      while (process.isAlive()) {
+        while (reader.ready()) {
+         if ((line = reader.readLine()) != null) {
+           logln("> ", line);
+           System.out.println(line);
+          }
+        }
+        
+        while (errorReader.ready()) {
+          if ((line = errorReader.readLine()) != null) {
+            logln("> ", line);
+            System.out.println(line);
+          }
+         }
+        
+        while ((line = inputQueue.poll()) != null) {
+          writer.write(line);
+          writer.newLine(); 
+        }
+        writer.flush();
+        
+        Thread.sleep(10);
+      }
+      while (reader.ready()) {
+         if ((line = reader.readLine()) != null) {
+           logln("> ", line);
+           System.out.println(line);
+          }
+        }
+        
+      while (errorReader.ready()) {
+        if ((line = errorReader.readLine()) != null) {
+          logln("> ", line);
+          System.out.println(line);
+        }
+      }
+      
+      writer.close();
       reader.close();
       errorReader.close();
     }
@@ -373,6 +437,7 @@ public class MainForm extends javax.swing.JFrame {
     if (evt.getKeyChar() != '\n')
       return;
     System.out.println("Input->Enter");
+    logln("< ", textFieldInput.getText());
     inputQueue.add(textFieldInput.getText());
     textFieldInput.setText(" ");
     
@@ -380,7 +445,20 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuRunExecuteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunExecuteActionPerformed
   {//GEN-HEADEREND:event_jMenuRunExecuteActionPerformed
-    logln(">", inputQueue.poll());
+    System.out.println("menu->run->execute");
+    Thread executer = new Thread(() ->
+    {
+      try {
+        executeCode();
+      }
+      catch (Exception ex) {
+        System.out.println(ex);
+        logln("Error: ", "Execution fault");
+      }
+    });
+    
+    executer.start();
+    
   }//GEN-LAST:event_jMenuRunExecuteActionPerformed
 
     /**

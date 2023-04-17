@@ -35,3 +35,4 @@
 #bulid files
 build/
 CMakeUserPresets.json
+/modules/ide/dist/
