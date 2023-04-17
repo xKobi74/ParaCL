@@ -171,8 +171,11 @@ public class MainForm extends javax.swing.JFrame {
 
     jFileChooser = new javax.swing.JFileChooser();
     jSplitPane = new javax.swing.JSplitPane();
-    textAreaOutput = new java.awt.TextArea();
     textAreaInput = new java.awt.TextArea();
+    jSplitPane1 = new javax.swing.JSplitPane();
+    textAreaOutput = new java.awt.TextArea();
+    textField1 = new java.awt.TextField();
+    jPanel1 = new javax.swing.JPanel();
     jMenuBar = new javax.swing.JMenuBar();
     jMenuFile = new javax.swing.JMenu();
     jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -193,14 +196,23 @@ public class MainForm extends javax.swing.JFrame {
     jSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane.setResizeWeight(0.8);
 
-    textAreaOutput.setEditable(false);
-    textAreaOutput.setText("Attention: in current version only file options and run->build are working.\n");
-    jSplitPane.setBottomComponent(textAreaOutput);
-
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     jSplitPane.setLeftComponent(textAreaInput);
 
+    jSplitPane1.setDividerSize(1);
+    jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+    jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 10));
+    jSplitPane1.setRequestFocusEnabled(false);
+
+    textAreaOutput.setEditable(false);
+    textAreaOutput.setText("Attention: in current version only file options and run->build are working.\n");
+    jSplitPane1.setTopComponent(textAreaOutput);
+    jSplitPane1.setRightComponent(textField1);
+
+    jSplitPane.setRightComponent(jSplitPane1);
+
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
+    getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
     jMenuFile.setText("File");
 
@@ -365,9 +377,12 @@ public class MainForm extends javax.swing.JFrame {
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
+  private javax.swing.JPanel jPanel1;
   private javax.swing.JSplitPane jSplitPane;
+  private javax.swing.JSplitPane jSplitPane1;
   private java.awt.TextArea textAreaInput;
   private java.awt.TextArea textAreaOutput;
+  private java.awt.TextField textField1;
   // End of variables declaration//GEN-END:variables
 
 }
