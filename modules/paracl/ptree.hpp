@@ -2,6 +2,9 @@
 
 #include <string>
 #include <sstream>
+#include <memory>
+
+#include "stack.hpp"
 
 
 namespace ptree {
@@ -13,6 +16,8 @@ std::string get_addr(const void* addr) {
   return address.str();
 }
 
+class Stack;
+
 class PTree {
   PTree* parent_;
   PTree *left_, *right_;
@@ -21,8 +26,8 @@ public:
   PTree(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): parent_(parent), left_(left), right_(right) {};  
   virtual ~PTree() = default;
   //method for tree execution
-  virtual PTree* execute() {
-    return nullptr;
+  virtual std::unique_ptr<PTree> execute(Stack *stack) const {
+    return std::unique_ptr<PTree>{};
   }
   //return true if class leaf
   virtual bool isLeaf() const {

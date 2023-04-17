@@ -1,13 +1,16 @@
 #pragma once
 
 #include "ptree.hpp"
-
+#include "stack.hpp"
+#include "leaf.hpp"
 
 #include <string>
 #include <list>
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <cassert>
+
 //CPP20 is not needed because most compilators doesn`t accept format lib
 #ifdef CPP20
 #include <format>
@@ -52,9 +55,9 @@ class NonLeaf: public PTree {
     return false;
   } 
   
-  PTree* execute() override {
-    return this;
-  }
+  std::unique_ptr<PTree> execute(Stack *stack) const override = 0;
+
+  ~NonLeaf() override = default;
 };
 
 //expression provides sequencing between strings separated with ';'
@@ -76,11 +79,19 @@ class Expression : public NonLeaf {
     
     return res;
   }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+#ifdef DBG_CALL    
+    std::cout << "Expression execute" << std::endl;
+#endif
+    return getright()->execute(stack);
+  }
 };
 
 class Operation : public NonLeaf {
   public:
   Operation(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): NonLeaf(parent, left, right) {};
+  std::unique_ptr<PTree> execute(Stack *stack) const override = 0;
 };
 //TODO: maybe I should point it like BinOpType: std::string
 enum class BinOpType {
@@ -98,6 +109,39 @@ enum class BinOpType {
   LOG_AND,
   LOG_OR,
 };
+//TODO: Split for log binop and simple binop
+template <typename T>
+T operate(T lhs, T rhs, BinOpType operation) {
+  switch (operation) {
+    case BinOpType::ADDITION:
+      return lhs + rhs;
+    case BinOpType::SUBTRACTION:
+      return lhs - rhs;
+    case BinOpType::MULTIPLICATION:
+      return lhs * rhs;
+    case BinOpType::DIVISION:
+      return lhs / rhs;
+    case BinOpType::EQUAL:
+      return lhs == rhs;
+    case BinOpType::MORE_EQUAL:
+      return lhs >= rhs;
+    case BinOpType::LESS_EQUAL:
+      return lhs <= rhs;
+    case BinOpType::NON_EQUAL:
+      return lhs != rhs;
+    case BinOpType::MORE:
+      return lhs > rhs;
+    case BinOpType::LESS:
+      return lhs < rhs;
+    case BinOpType::LOG_AND:
+      return lhs && rhs;
+    case BinOpType::LOG_OR:
+      return lhs || rhs;
+    default:
+      assert(!"Fault");
+      return 0;
+  }
+}
 
 class BinOp: public Operation {
   public:
@@ -143,6 +187,22 @@ class BinOp: public Operation {
     "{ " + get_addr(getleft()) + " | " + get_addr(getright()) + "}}\"]\n";
     res += get_links();  
     return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+#ifdef DBG_CALL
+    std::cout << "BinOp execute" << std::endl;
+#endif
+    auto left_op = getleft()->execute(stack);
+    auto right_op = getright()->execute(stack);
+
+    Imidiate<int>* l_exec = dynamic_cast<Imidiate<int>*>(left_op.get());
+    Imidiate<int>* r_exec = dynamic_cast<Imidiate<int>*>(right_op.get());
+
+    //TODO: add operations implementation
+    assert((l_exec != nullptr) && (r_exec != nullptr));
+    int result = operate<int>(l_exec->getvalue(stack), r_exec->getvalue(stack), operation_);
+    return std::unique_ptr<PTree>{new Imidiate<int>(result)};
   } 
 };
 
@@ -153,6 +213,8 @@ enum class UnOpType {
   NOT,
   UNDEF
 };
+
+
 
 class UnOp: public Operation {
   public:
@@ -177,6 +239,41 @@ class UnOp: public Operation {
     }
 
   }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+  #ifdef DBG_CALL
+    std::cout << "UnOp execute" << std::endl;
+#endif
+    
+    NameInt* var = dynamic_cast<NameInt*>(getleft());
+    assert(var != nullptr);
+    //here execute method not used because of speed, to not provide more imidiate
+    switch (operation_) {
+    case UnOpType::POST_ADDITION: {
+      int value = var->getvalue(stack);
+      var->setvalue(++value, stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(value)};
+    }
+    case UnOpType::POST_SUBTRACTION: {
+      int value = var->getvalue(stack);
+      var->setvalue(--value, stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(value)};
+    }
+    case UnOpType::MINUS: {
+      int value = var->getvalue(stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(-value)};
+    }
+    case UnOpType::NOT: {
+      int value = var->getvalue(stack);
+      return std::unique_ptr<PTree>{new Imidiate<int>(!value)};
+    }
+    default: {
+      assert(!"Fault");
+      return std::unique_ptr<PTree>{};
+    }
+  }
+    
+  }
   
   std::string dump() const override {
     std::string res;
@@ -187,8 +284,8 @@ class UnOp: public Operation {
     return res;
   } 
 };
-/* getleft() pointer - process inside block, getright() pointer - outer process, continuing of main programm
-*/
+// getleft() pointer - process inside block, getright() pointer - outer process, continuing of main programm
+
 class Block: public NonLeaf {
   public:
   using offset_t = unsigned long;
@@ -243,6 +340,14 @@ class Block: public NonLeaf {
     return res;
   }
 
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL
+    std::cout << "Block execute" << std::endl;
+#endif
+    for (auto expr: operations) expr->execute(stack);
+    return std::unique_ptr<PTree> {};
+  }
+
 };
 
 
@@ -250,6 +355,7 @@ class Block: public NonLeaf {
 class Assign : public Operation {
   public:
   Assign(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): Operation(parent, left, right) {};
+  
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
@@ -263,24 +369,72 @@ class Assign : public Operation {
     
     return res;
   }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL    
+    std::cout << "Assign execute" << std::endl;
+#endif
+    NameInt* var = dynamic_cast<NameInt*> (getleft());
+    std::unique_ptr<PTree> executed = getright()->execute(stack);
+    const Imidiate<int> * to_assign = dynamic_cast<Imidiate<int>*>(executed.get());
+    var->setvalue(to_assign->getvalue(), stack);
+    return executed;
+  }
+};
+
+class Condition: public NonLeaf {
+  public:
+  Condition(PTree* parent = nullptr, PTree* condition = nullptr): NonLeaf(parent, condition, nullptr) {}
+
+  std::string dump() const override {
+    std::string res;
+    res += get_chld_dump();
+
+    res += getname() + "[shape = record, label=\"{Condition \\n |" +
+    "{ " + get_addr(getleft()) + "\\n (condition) | " + get_addr(getright()) + "\\n(depricated)}}\"]\n";
+
+    res += get_links();
+    
+    return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL    
+    std::cout << "Condition execute" << std::endl;
+#endif
+    return getleft()->execute(stack);
+  }
+
+  bool is_true(Stack* stack) const {
+    std::unique_ptr<PTree> executed = execute(stack);
+    Imidiate<int>* result = dynamic_cast<Imidiate<int>*> (executed.get());
+    assert(result != nullptr);
+
+    return result->getvalue();
+  }
 };
 
 class Branch: public NonLeaf {
   public:
-  PTree* condition_;
+  Condition* condition_;
   //FIXME: specify condition type as Immidiate value, or leave this specialization to execute module
   //HACK: as condition used immidiate int value like a pointer to similar block, it should be available to count result and return > 0(true) or <= 0(false)
-  Branch(PTree* condition = nullptr, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
+  Branch(Condition* condition = nullptr, PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): 
   NonLeaf(parent, left, right), condition_(condition) {};
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override  = 0;
 };
+
+
 
 class IfBlk: public Branch {
   public:
   //HACK: if getleft() pointer == nullptr it means that else clause not exist, otherwise getright() pointer is true case, getleft() pointer is else case
   
   
-  IfBlk(PTree* condition = nullptr, PTree* parent = nullptr, PTree* else_blk = nullptr, PTree* if_blk = nullptr): 
+  IfBlk(Condition* condition = nullptr, PTree* parent = nullptr, PTree* else_blk = nullptr, PTree* if_blk = nullptr): 
   Branch(condition, parent, else_blk, if_blk) {};
+  
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
@@ -296,11 +450,26 @@ class IfBlk: public Branch {
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted]\n";
     return res;
   }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL    
+    std::cout << "If execute" << std::endl;
+#endif
+    if (condition_ == nullptr) return std::unique_ptr<PTree>{};
+
+    if (condition_->is_true(stack)) {
+      if (getright() != nullptr) return getright()->execute(stack);
+    } else {
+      if (getleft() != nullptr) return getleft()->execute(stack);
+    }
+    return std::unique_ptr<PTree> {};
+  }
 };
 
 class WhileBlk: public Branch {
   public:
-  WhileBlk(PTree* condition = nullptr, PTree* parent = nullptr, PTree* while_blk = nullptr): Branch(condition, parent, while_blk, nullptr) {};
+  WhileBlk(Condition* condition = nullptr, PTree* parent = nullptr, PTree* while_blk = nullptr): Branch(condition, parent, while_blk, nullptr) {};
+  
   std::string dump() const override {
     std::string res;
     res += get_chld_dump();
@@ -312,6 +481,16 @@ class WhileBlk: public Branch {
     res += get_links();
     if (condition_ != nullptr) res += getname() + " -> " + condition_->getname() + " [style=dotted, label=\"condition\"]\n";
     return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL    
+    std::cout << "While execute" << std::endl;
+#endif
+    if (condition_ == nullptr) return std::unique_ptr<PTree>{};
+
+    while (condition_->is_true(stack)) getleft()->execute(stack);
+    return std::unique_ptr<PTree>{};
   }
 };
 
@@ -326,19 +505,19 @@ class Output: public Operation {
     res += get_links();
     return res;
   }
-};
 
-//TODO: remove when ast test will be finished
-class Variable: public PTree {
-  public:
-  std::string name_;
-  int offset_;
-  Variable(std::string name, PTree* parent = nullptr): PTree(parent, nullptr, nullptr), name_(name) {};
-  std::string dump() const override {
-    std::string res;
-    res += getname() + "[label=\"" + name_ + std::to_string(offset_) + "\"]\n";
-    return res;
+  std::unique_ptr<PTree> execute(Stack* stack) const override {
+#ifdef DBG_CALL
+    std::cout << "Print execute" << std::endl;
+#endif
+    std::unique_ptr<PTree> executed = getright()->execute(stack);
+    Imidiate<int>* value = dynamic_cast<Imidiate<int>*> (executed.get());
+    assert(value != nullptr);
+    std::cout << value->getvalue() << std::endl;
+    return executed;
   }
 };
+
+
 
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../modules/paracl/stack.hpp"
+#include "../modules/paracl/memory_manager.hpp"
 
 #include <string>
 #include <sstream>

@@ -9,6 +9,7 @@
     #include "../paracl/nonleaf.hpp"
     #include "../paracl/ptree.hpp"
     #include "../paracl/stack.hpp"
+    #include "../paracl/memory_manager.hpp"
     extern int yylineno;
     extern int yylex();
     void yyerror(char *s) {
@@ -24,9 +25,19 @@
         std::string str;
         ptree::PTree* oper;
         ptree::Block* blk;
+        ptree::Condition* cnd;
         
     } YYSTYPE;
     #define YYSTYPE YYSTYPE
+
+    ptree::Block* wrap_block(ptree::PTree* statement) {
+        ptree::Block* result = dynamic_cast<ptree::Block*> (statement);
+        if (!result) {
+            result = new ptree::Block{};
+            result->push_expression(statement);
+        }
+        return result;
+    }
 
 %}
 
@@ -37,9 +48,10 @@
 %token ASSIGN PLUS MINUS MUL DIV MOD
 
 %type<str> NUM ID
-%type<oper> OPS OP1 OP2 OP
+%type<oper>  OP1 OP2 OP
 %type<oper> EXPR EXPR1 EXPR2 EXPR3 TERM VAL VAR
-%type<blk> BLOCK
+%type<blk> BLOCK SCOPE OPS
+%type<cnd> COND
 
 
 %%
@@ -47,23 +59,27 @@
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
                                                                                                     
-BLOCK: OPS                              { tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>($1))); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+BLOCK: OPS                              { tmp = new ptree::Block(std::move(*$1)); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
-|       OPS OP                          {tmp = new ptree::Block(std::move(*dynamic_cast<ptree::Block*>($1))); tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
+|       OPS OP                          {tmp = new ptree::Block(std::move(*$1)); tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
 ;
 
-OP1:    LCB BLOCK RCB                     { $$ = $2; }
+SCOPE: LCB BLOCK RCB                      { $$ = $2; }
+
+OP1:    SCOPE                             {$$ = $1;}
 |       EXPR SEQUENCE                     { $$ = new ptree::Expression(nullptr, $1);}
-|       IF LPAR EXPR RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, $7, $5);}
-|       WHILE LPAR EXPR RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, $5);}
+|       IF LPAR COND RPAR OP1 ELSE OP1    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5));}
+|       WHILE LPAR COND RPAR OP1          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5));}
 ;
 
-OP2:    IF LPAR EXPR RPAR OP              { $$ = new ptree::IfBlk($3, nullptr, nullptr, $5); }
-|       IF LPAR EXPR RPAR OP1 ELSE OP2    { $$ = new ptree::IfBlk($3, nullptr, $7, $5); }
-|       WHILE LPAR EXPR RPAR OP2          { $$ = new ptree::WhileBlk($3, nullptr, $5); }
+OP2:    IF LPAR COND RPAR OP              { $$ = new ptree::IfBlk($3, nullptr, nullptr, wrap_block($5)); }
+|       IF LPAR COND RPAR OP1 ELSE OP2    { $$ = new ptree::IfBlk($3, nullptr, wrap_block($7), wrap_block($5)); }
+|       WHILE LPAR COND RPAR OP2          { $$ = new ptree::WhileBlk($3, nullptr, wrap_block($5)); }
 ;
+
+COND:  EXPR                               {$$ = new ptree::Condition(nullptr, $1);}
 
 OP:     OP1 | OP2 ;                     // inherit to solve C problem with if block
 
@@ -121,6 +137,8 @@ int main() {
     out += "}\n";
     std::cout << out << std::endl;
     std::cout << "--------------------------------------" << std::endl;
-    std::cout << memfunc << std::endl;
+    ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
+    (blocks.back())->execute(stack);
+
     return res;
 }

@@ -1,20 +1,55 @@
 #pragma once
 
 #include "ptree.hpp"
+#include "stack.hpp"
 
 #include <string>
+#include <memory>
+#include <iostream>
+#include <memory>
 
 namespace ptree {
 class Leaf : public PTree {
 public:
   Leaf(PTree* parent = nullptr): PTree(parent, nullptr, nullptr) {};
-  bool isLeaf() const override {
+  virtual bool isLeaf() const override {
     return true;
   }
-  virtual PTree* execute() {
-    return this;
+  virtual std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    return std::unique_ptr<PTree>{};
   }
 };
+
+template <typename T> class Imidiate : public Leaf {
+private:
+  T value_;
+public:
+  Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
+  Imidiate(T value) : Leaf(nullptr), value_(value) {}
+  T getvalue(Stack *stack = nullptr) const { //why stack?
+    return value_;
+  }
+  virtual std::string dump() const override {
+    std::string res;
+    std::string parentname = getparent()->getname();
+    std::string myname = getname();
+    res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
+    return res;
+  }
+
+  std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+    return std::unique_ptr<PTree>{new Imidiate<int>(*this)}; 
+  }
+};
+
+std::unique_ptr<PTree> intinput() {
+  int x;
+  std::cin >> x;
+#ifdef DBG_CALL
+  std::cout << "Input called" << std::endl;
+#endif
+  return std::unique_ptr<PTree>(new Imidiate<int>(x)); 
+}
 
 class Reserved : public Leaf {
 public:
@@ -40,28 +75,23 @@ public:
     }
     return "Smth strange";
   }
+  virtual std::unique_ptr<PTree> execute(Stack *stack = nullptr) const override {
+#ifdef DBG_CALL
+    std::cout << "Resrved called" << std::endl;
+#endif
+    switch(gettype()) {
+      case Types::None:
+        return std::unique_ptr<PTree>{};
+      case Types::Input:
+        return intinput();
+    }
+    return std::unique_ptr<PTree>{};
+  }
   virtual std::string dump() const override {
     std::string res;
     std::string parentname = getparent()->getname();
     std::string myname = getname();
     res += myname + " [label=" + '"' + typetostr() + '"' + "];\n";
-    return res;
-  }
-};
-
-template <typename T> class Imidiate : public Leaf {
-private:
-  T value_;
-public:
-  Imidiate(PTree* parent = nullptr, T value = T()) : Leaf(parent), value_(value) {}
-  T getvalue() const {
-    return value_;
-  }
-  virtual std::string dump() const override {
-    std::string res;
-    std::string parentname = getparent()->getname();
-    std::string myname = getname();
-    res += myname + " [label=" + '"' + std::to_string(value_) + '"' + "];\n";
     return res;
   }
 };
@@ -95,11 +125,17 @@ private:
 public:
   NameInt(PTree* parent = nullptr, int value = 0, std::string name_ = "") : NameInfo(parent, name_), value_(value) {};
   NameInt(PTree* parent, int value, int nameid, int offset, std::string name_ = "") : NameInfo(parent, nameid, offset, name_), value_(value) {};
-  int getvalue() const {
+  int getvalue() const { //returns value from the field that value equals to value in stack
     return value_;
   }
-  void setvalue(int x) {
-    value_ = x;
+  int getvalue(Stack *stack) const { //returns value from the stack
+    int value;
+    stack->read(getoffset(), value);
+    return value;
+  }
+  void setvalue(int value, Stack *stack) {
+    stack->write(getoffset(), value);
+    value_ = value;
   }
   virtual std::string dump() const override {
     std::string res;
@@ -108,6 +144,12 @@ public:
     res += myname + " [label=" + '"' + getvarname() + '=' + std::to_string(getvalue()) + '\n' + "offset: " + std::to_string(getoffset()) +'"' + "];\n";
     return res;
   }
+
+  std::unique_ptr<PTree> execute(Stack *stack) const override {
+    return std::unique_ptr<PTree>{new Imidiate<int>(getvalue(stack))};
+  }
 };
+
+
 
 }
