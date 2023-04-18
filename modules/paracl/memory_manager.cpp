@@ -100,4 +100,14 @@ void manage_mem(PTree *unit, MemManager &memfunc) {
 		throw "ptree::manage_mem(PTree *,MemManager) error";
 }
 
+std::ostream& operator<< (std::ostream &out, const MemManager &memfunc) {
+    out << "Stackpointer: " << memfunc.stackpointer << std::endl;
+    out << "Scope offsets: " << std::endl;
+    for (auto &it : memfunc.scopeoffset) 
+    	out << it.first << " " << it.second << std::endl;
+    for (auto &it : memfunc.nameoffset) 
+    	out << it.first << " " << it.second << std::endl;
+    return out; 
+}
+
 }

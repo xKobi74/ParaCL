@@ -42,15 +42,6 @@ public:
 	friend std::ostream& operator<< (std::ostream &out, const MemManager &memfunc); 
 };
 
-std::ostream& operator<< (std::ostream &out, const MemManager &memfunc) {
-    out << "Stackpointer: " << memfunc.stackpointer << std::endl;
-    out << "Scope offsets: " << std::endl;
-    for (auto &it : memfunc.scopeoffset) 
-    	out << it.first << " " << it.second << std::endl;
-    for (auto &it : memfunc.nameoffset) 
-    	out << it.first << " " << it.second << std::endl;
-    return out; 
-}
 
 
 //calculate all offsets for variables and return MemManager object with result information
