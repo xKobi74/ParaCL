@@ -156,26 +156,47 @@ public class MainForm extends javax.swing.JFrame {
     //compile String code with ParaCL
     //FIX: does not work
     private void compileCode(String code) throws IOException, InterruptedException {
-      ProcessBuilder processBuilder = new ProcessBuilder("/home/mipt/ParaCL/modules/bison/test.out");
+      if (curFile == null) {
+        logln("Error: ", "Save code to file for execution");
+        return;
+      }
+      uploadFile(curFile);
+      List<String> command = new ArrayList<String>();
+      command.add("/home/mipt/ParaCL/modules/bison/test.out");
+      command.add(curFile.toString());
+      command.add("--build");
+      ProcessBuilder processBuilder = new ProcessBuilder(command);
       Process process = processBuilder.start();
-      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-      writer.write(code);
-      writer.close();    
-      while (process.isAlive())
-        Thread.sleep(10);
       String line;
-      if (reader.ready())
-        while ((line = reader.readLine()) != null) {
-          logln("", line);
+      while (process.isAlive()) {
+        while (reader.ready()) {
+         if ((line = reader.readLine()) != null) {
+           logln("> ", line);
+           System.out.println(line);
+          }
+        }
+        while (errorReader.ready()) {
+          if ((line = errorReader.readLine()) != null) {
+            logln("> ", line);
+            System.out.println(line);
+          }
+         }
+        Thread.sleep(10);
+      }
+      while (reader.ready()) {
+         if ((line = reader.readLine()) != null) {
+           logln("> ", line);
+           System.out.println(line);
+          }
+        }
+      while (errorReader.ready()) {
+        if ((line = errorReader.readLine()) != null) {
+          logln("> ", line);
           System.out.println(line);
-       }
-      if (errorReader.ready())
-        while ((line = errorReader.readLine()) != null) {
-          logln("", line);
-          System.out.println(line);
-        }      
+        }
+      }
       reader.close();
       errorReader.close();
     }
@@ -204,14 +225,12 @@ public class MainForm extends javax.swing.JFrame {
            System.out.println(line);
           }
         }
-        
         while (errorReader.ready()) {
           if ((line = errorReader.readLine()) != null) {
             logln("> ", line);
             System.out.println(line);
           }
-         }
-        
+         } 
         while ((line = inputQueue.poll()) != null) {
           writer.write(line);
           writer.newLine(); 
@@ -226,15 +245,12 @@ public class MainForm extends javax.swing.JFrame {
            System.out.println(line);
           }
         }
-        
       while (errorReader.ready()) {
         if ((line = errorReader.readLine()) != null) {
           logln("> ", line);
           System.out.println(line);
         }
       }
-      
-      writer.close();
       reader.close();
       errorReader.close();
     }
@@ -300,12 +316,12 @@ public class MainForm extends javax.swing.JFrame {
     jSplitPane1.setBottomComponent(textFieldInput);
 
     textAreaOutput.setEditable(false);
-    textAreaOutput.setText("Attention: in current version only file options and run->build are working.\n");
     jSplitPane1.setTopComponent(textAreaOutput);
 
     jSplitPane.setRightComponent(jSplitPane1);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    textAreaInput.setText("Attention: view menu does not work\n");
     jSplitPane.setLeftComponent(textAreaInput);
 
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
