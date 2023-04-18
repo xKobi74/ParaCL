@@ -1862,6 +1862,7 @@ yyreturn:
 #line 140 "pcl.y"
 
 int main(int ac, char* av[]) { 
+    try {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help, h", "shows help option")
@@ -1922,6 +1923,14 @@ int main(int ac, char* av[]) {
 
     ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
     (blocks.back())->execute(stack);
+    }
+    catch(std::exception& e) {
+        std::cerr << "error: " << e.what() << std::endl;
+        return 1;
+    }
+    catch(...) {
+        std::cerr << "Exception of unknown type!" << std::endl;
+    }
 
     return 0;
 }
