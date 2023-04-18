@@ -111,8 +111,11 @@ public class MainForm extends javax.swing.JFrame {
     }
     //upload text ftom text editor to File
     private boolean uploadFile(File oFile) {
-      if (oFile == null)
+      if (oFile == null) {
+        System.out.println("File does not exist");
+        logln("Error: ", "File does not exist");
         return false;
+      }
       if (!oFile.exists()) {
         System.out.println("File " + oFile + " does not exist");
         logln("Error: ", "File " + oFile + " does not exist");
@@ -154,7 +157,6 @@ public class MainForm extends javax.swing.JFrame {
       return false;
     }
     //compile String code with ParaCL
-    //FIX: does not work
     private void compileCode(String code) throws IOException, InterruptedException {
       if (curFile == null) {
         logln("Error: ", "Save code to file for execution");
@@ -316,12 +318,19 @@ public class MainForm extends javax.swing.JFrame {
     jSplitPane1.setBottomComponent(textFieldInput);
 
     textAreaOutput.setEditable(false);
+    textAreaOutput.setText("Attention: view menu does not work\n");
+    textAreaOutput.addTextListener(new java.awt.event.TextListener()
+    {
+      public void textValueChanged(java.awt.event.TextEvent evt)
+      {
+        textAreaOutputTextValueChanged(evt);
+      }
+    });
     jSplitPane1.setTopComponent(textAreaOutput);
 
     jSplitPane.setRightComponent(jSplitPane1);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    textAreaInput.setText("Attention: view menu does not work\n");
     jSplitPane.setLeftComponent(textAreaInput);
 
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
@@ -476,6 +485,11 @@ public class MainForm extends javax.swing.JFrame {
     executer.start();
     
   }//GEN-LAST:event_jMenuRunExecuteActionPerformed
+
+  private void textAreaOutputTextValueChanged(java.awt.event.TextEvent evt)//GEN-FIRST:event_textAreaOutputTextValueChanged
+  {//GEN-HEADEREND:event_textAreaOutputTextValueChanged
+    textAreaOutput.setCaretPosition(textAreaOutput.getText().length());
+  }//GEN-LAST:event_textAreaOutputTextValueChanged
 
     /**
      * @param args the command line arguments

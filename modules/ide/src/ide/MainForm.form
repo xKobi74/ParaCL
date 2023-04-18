@@ -160,7 +160,11 @@
             <Component class="java.awt.TextArea" name="textAreaOutput">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="text" type="java.lang.String" value="Attention: view menu does not work&#xa;"/>
               </Properties>
+              <Events>
+                <EventHandler event="textValueChanged" listener="java.awt.event.TextListener" parameters="java.awt.event.TextEvent" handler="textAreaOutputTextValueChanged"/>
+              </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
                   <JSplitPaneConstraints position="top"/>
@@ -174,7 +178,6 @@
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Default Cursor"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Attention: view menu does not work&#xa;"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
