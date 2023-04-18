@@ -6,6 +6,7 @@
 
 package ide;
 
+import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -336,6 +337,19 @@ public class MainForm extends javax.swing.JFrame {
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
 
     jMenuFile.setText("File");
+    jMenuFile.addMenuListener(new javax.swing.event.MenuListener()
+    {
+      public void menuSelected(javax.swing.event.MenuEvent evt)
+      {
+        jMenuFileMenuSelected(evt);
+      }
+      public void menuDeselected(javax.swing.event.MenuEvent evt)
+      {
+      }
+      public void menuCanceled(javax.swing.event.MenuEvent evt)
+      {
+      }
+    });
 
     jMenuItemFileOpen.setText("Open");
     jMenuItemFileOpen.setToolTipText("");
@@ -373,6 +387,19 @@ public class MainForm extends javax.swing.JFrame {
     jMenuBar.add(jMenuFile);
 
     jMenuView.setText("View");
+    jMenuView.addMenuListener(new javax.swing.event.MenuListener()
+    {
+      public void menuSelected(javax.swing.event.MenuEvent evt)
+      {
+        jMenuFileMenuSelected(evt);
+      }
+      public void menuDeselected(javax.swing.event.MenuEvent evt)
+      {
+      }
+      public void menuCanceled(javax.swing.event.MenuEvent evt)
+      {
+      }
+    });
 
     jMenuViewFont.setText("Font");
     jMenuView.add(jMenuViewFont);
@@ -383,6 +410,19 @@ public class MainForm extends javax.swing.JFrame {
     jMenuBar.add(jMenuView);
 
     jMenuRun.setText("Run");
+    jMenuRun.addMenuListener(new javax.swing.event.MenuListener()
+    {
+      public void menuSelected(javax.swing.event.MenuEvent evt)
+      {
+        jMenuFileMenuSelected(evt);
+      }
+      public void menuDeselected(javax.swing.event.MenuEvent evt)
+      {
+      }
+      public void menuCanceled(javax.swing.event.MenuEvent evt)
+      {
+      }
+    });
 
     jMenuRunBuilt.setText("Build");
     jMenuRunBuilt.addActionListener(new java.awt.event.ActionListener()
@@ -490,6 +530,14 @@ public class MainForm extends javax.swing.JFrame {
   {//GEN-HEADEREND:event_textAreaOutputTextValueChanged
     textAreaOutput.setCaretPosition(textAreaOutput.getText().length());
   }//GEN-LAST:event_textAreaOutputTextValueChanged
+
+  private void jMenuFileMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuFileMenuSelected
+  {//GEN-HEADEREND:event_jMenuFileMenuSelected
+    for (Component menu : jMenuBar.getComponents()) {
+      menu.setVisible(false);
+      menu.setVisible(true);
+    }
+  }//GEN-LAST:event_jMenuFileMenuSelected
 
     /**
      * @param args the command line arguments
