@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class MainForm extends javax.swing.JFrame
 {
-  public static String paraclPath = "/home/mipt/ParaCL/modules/bison/test.out";
+  public static String paraclPath;
   public static SyncQueue inputQueue;
   public static File curFile = null;
 
@@ -271,7 +271,7 @@ public class MainForm extends javax.swing.JFrame
   {
     String workingDirectory = Paths.get(".").toAbsolutePath().toString();
     workingDirectory = workingDirectory.substring(0, workingDirectory.length() - 1);
-    paraclPath = workingDirectory + "../bison/test.out";
+    paraclPath = workingDirectory + "../../build/modules/bison/pcli";
     inputQueue = new SyncQueue();
     initComponents();
   }

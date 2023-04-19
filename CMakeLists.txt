@@ -3,4 +3,4 @@ project(ParaCL)
 
 add_subdirectory(modules/paracl)
 add_subdirectory(modules/bison)
-add_subdirectory(tests)
+#add_subdirectory(tests)

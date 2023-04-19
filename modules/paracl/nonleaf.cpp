@@ -270,6 +270,7 @@ std::unique_ptr<PTree> Assign::execute(Stack *stack) const {
 #ifdef DBG_CALL
   std::cout << "Assign execute" << std::endl;
 #endif
+  // I`m so sorry for using dynamic cast here, maybe should use typeid + static_cast
   NameInt *var = dynamic_cast<NameInt *>(getleft());
   std::unique_ptr<PTree> executed = getright()->execute(stack);
   const Imidiate<int> *to_assign =
@@ -300,6 +301,7 @@ std::unique_ptr<PTree> Condition::execute(Stack *stack) const {
 
 bool Condition::is_true(Stack *stack) const {
   std::unique_ptr<PTree> executed = execute(stack);
+  // I`m so sorry for using dynamic cast here, maybe should use typeid + static_cast
   Imidiate<int> *result = dynamic_cast<Imidiate<int> *>(executed.get());
   assert(result != nullptr);
 
@@ -390,6 +392,7 @@ std::unique_ptr<PTree> Output::execute(Stack *stack) const {
   std::cout << "Print execute" << std::endl;
 #endif
   std::unique_ptr<PTree> executed = getright()->execute(stack);
+  // I`m so sorry for using dynamic cast here, maybe should use typeid + static_cast
   Imidiate<int> *value = dynamic_cast<Imidiate<int> *>(executed.get());
   assert(value != nullptr);
   std::cout << value->getvalue() << std::endl;
