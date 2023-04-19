@@ -14,18 +14,27 @@ import java.util.Queue;
  */
 public class SyncQueue
 {
-   Queue<String> queue;
-   public SyncQueue() {
-      queue = new LinkedList<>();
-   } 
-   public synchronized void clear() {
-     queue.clear();
-   }
-   public synchronized void add(String str) {
-     queue.add(str);
-   } 
-   public synchronized String poll() {
-     return queue.poll();
-   }
+
+  Queue<String> queue;
+
+  public SyncQueue()
+  {
+    queue = new LinkedList<>();
+  }
+
+  public synchronized void clear()
+  {
+    queue.clear();
+  }
+
+  public synchronized void add(String str)
+  {
+    queue.add(str);
+  }
+
+  public synchronized String poll()
+  {
+    return queue.poll();
+  }
 
 }

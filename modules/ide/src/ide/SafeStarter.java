@@ -9,14 +9,19 @@ package ide;
  *
  * @author mipt
  */
-public interface Printable
+public class SafeStarter
 {
 
-  void print(String message);
+  public interface Printable
+  {
 
-  void println(String message);
+    void print(String message);
 
-  void log(String prefix, String message);
+    void println(String message);
 
-  void logln(String prefix, String message);
+    void log(String prefix, String message);
+
+    void logln(String prefix, String message);
+  }
+
 }
