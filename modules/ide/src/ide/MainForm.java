@@ -6,6 +6,7 @@
 package ide;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,11 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -26,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class MainForm extends javax.swing.JFrame
 {
-
+  public static String paraclPath = "/home/mipt/ParaCL/modules/bison/test.out";
   public static SyncQueue inputQueue;
   public static File curFile = null;
 
@@ -39,7 +40,7 @@ public class MainForm extends javax.swing.JFrame
     }
     textAreaOutput.setText(textAreaOutput.getText() + prefix + message);
   }
-  
+
   //output message to "IDE terminal" in format <prefix>+<message>+'\n'
   private void logln(String prefix, String message)
   {
@@ -49,7 +50,7 @@ public class MainForm extends javax.swing.JFrame
     }
     log(prefix, message + '\n');
   }
-  
+
   //output text to "IDE editor" in format <message>
   private void output(String text)
   {
@@ -71,13 +72,13 @@ public class MainForm extends javax.swing.JFrame
   {
     textAreaInput.setText("");
   }
-  
+
   //return text from editor
   private String input()
   {
     return textAreaInput.getText();
   }
-  
+
   //read File and output it to text editor
   private boolean downloadFile(File iFile)
   {
@@ -119,7 +120,7 @@ public class MainForm extends javax.swing.JFrame
     logln("Message: ", "File " + iFile + " sucessfully downlad");
     return true;
   }
-  
+
   //upload text ftom text editor to File
   private boolean uploadFile(File oFile)
   {
@@ -154,7 +155,7 @@ public class MainForm extends javax.swing.JFrame
     logln("Message: ", "File " + oFile + " sucessfully saved");
     return true;
   }
-  
+
   //create file by its oFile
   private boolean createFile(File oFile)
   {
@@ -178,7 +179,7 @@ public class MainForm extends javax.swing.JFrame
     logln("Error: ", "Promblems with file " + oFile + " creating");
     return false;
   }
-  
+
   //print buffer to terminal
   private void readBuf(BufferedReader reader) throws IOException
   {
@@ -192,7 +193,7 @@ public class MainForm extends javax.swing.JFrame
       }
     }
   }
-  
+
   //compile String code with ParaCL
   private void compileCode(String code) throws Exception
   {
@@ -203,7 +204,7 @@ public class MainForm extends javax.swing.JFrame
     }
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
-    command.add("/home/mipt/ParaCL/modules/bison/test.out");
+    command.add(paraclPath);
     command.add(curFile.toString());
     command.add("--build");
     ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -222,7 +223,7 @@ public class MainForm extends javax.swing.JFrame
     reader.close();
     errorReader.close();
   }
-  
+
   //compile String code with ParaCL
   private void executeCode() throws Exception
   {
@@ -233,7 +234,7 @@ public class MainForm extends javax.swing.JFrame
     }
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
-    command.add("/home/mipt/ParaCL/modules/bison/test.out");
+    command.add(paraclPath);
     command.add(curFile.toString());
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     Process process = processBuilder.start();
@@ -268,6 +269,9 @@ public class MainForm extends javax.swing.JFrame
    */
   public MainForm()
   {
+    String workingDirectory = Paths.get(".").toAbsolutePath().toString();
+    workingDirectory = workingDirectory.substring(0, workingDirectory.length() - 1);
+    paraclPath = workingDirectory + "../bison/test.out";
     inputQueue = new SyncQueue();
     initComponents();
   }
@@ -341,6 +345,13 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane.setRightComponent(jSplitPane1);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    textAreaInput.addKeyListener(new java.awt.event.KeyAdapter()
+    {
+      public void keyPressed(java.awt.event.KeyEvent evt)
+      {
+        textAreaInputKeyPressed(evt);
+      }
+    });
     jSplitPane.setLeftComponent(textAreaInput);
 
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
@@ -476,7 +487,7 @@ public class MainForm extends javax.swing.JFrame
       output(reserve);
     }
   }//GEN-LAST:event_jMenuItemFileOpenActionPerformed
-  
+
   //action on menu item Save that saves text from editor to current file
   private void jMenuItemFileSaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuItemFileSaveActionPerformed
   {//GEN-HEADEREND:event_jMenuItemFileSaveActionPerformed
@@ -498,7 +509,7 @@ public class MainForm extends javax.swing.JFrame
     }
     uploadFile(curFile);
   }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
-  
+
   //action on menu item Build that saves and builds current file
   private void jMenuRunBuildActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuildActionPerformed
   {//GEN-HEADEREND:event_jMenuRunBuildActionPerformed
@@ -522,6 +533,17 @@ public class MainForm extends javax.swing.JFrame
   {//GEN-HEADEREND:event_textFieldInputKeyPressed
     if (evt.getKeyChar() != '\n')
     {
+      switch (evt.getKeyCode())
+      {    
+        case KeyEvent.VK_LEFT:
+          if (textFieldInput.getCaretPosition() == 0)
+            break;
+          textFieldInput.setCaretPosition(textFieldInput.getCaretPosition() - 1);
+          break;
+        case KeyEvent.VK_RIGHT:
+          textFieldInput.setCaretPosition(textFieldInput.getCaretPosition() + 1);
+          break;
+      }
       return;
     }
     System.out.println("Input->Enter");
@@ -567,9 +589,42 @@ public class MainForm extends javax.swing.JFrame
     }
   }//GEN-LAST:event_jMenuFileMenuSelected
 
+  private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textAreaInputKeyPressed
+  {//GEN-HEADEREND:event_textAreaInputKeyPressed
+    if (!evt.isActionKey())
+    {
+      return;
+    }
+    switch (evt.getKeyCode())
+    {    
+      case KeyEvent.VK_UP:
+        
+        break;
+      case KeyEvent.VK_DOWN:
+        break;
+      case KeyEvent.VK_LEFT:
+        if (textAreaInput.getCaretPosition() == 0)
+          break;
+        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
+        break;
+      case KeyEvent.VK_RIGHT:
+        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
+        break;
+      case KeyEvent.VK_AGAIN:
+      case KeyEvent.VK_UNDO:
+      case KeyEvent.VK_COPY:
+      case KeyEvent.VK_PASTE:
+      case KeyEvent.VK_CUT:
+      case KeyEvent.VK_FIND:
+      case KeyEvent.VK_PROPS:
+      case KeyEvent.VK_STOP:
+        break;
+    }
+  }//GEN-LAST:event_textAreaInputKeyPressed
+
   /**
-   * @param args the command line arguments
-   */
+     * @param args the command line arguments
+     */
   public static void main(String args[])
   {
     /* Set the Nimbus look and feel */
