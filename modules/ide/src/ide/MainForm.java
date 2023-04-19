@@ -18,6 +18,8 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -139,14 +141,24 @@ public class MainForm extends javax.swing.JFrame {
       logln("Error: ", "Promblems with file " + oFile + " creating");
       return false;
     }
+    //print buffer to terminal
+    private void readBuf(BufferedReader reader) throws IOException {
+      String line;
+      while (reader.ready()) {
+         if ((line = reader.readLine()) != null) {
+           logln("> ", line);
+           System.out.println(line);
+          }
+        }
+    }
     //compile String code with ParaCL
-    private void compileCode(String code) throws IOException, InterruptedException {
+    private void compileCode(String code) throws Exception {
       if (curFile == null) {
         logln("Error: ", "Save code to file for execution");
         return;
       }
       uploadFile(curFile);
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add("/home/mipt/ParaCL/modules/bison/test.out");
       command.add(curFile.toString());
       command.add("--build");
@@ -156,32 +168,12 @@ public class MainForm extends javax.swing.JFrame {
       BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
       String line;
       while (process.isAlive()) {
-        while (reader.ready()) {
-         if ((line = reader.readLine()) != null) {
-           logln("> ", line);
-           System.out.println(line);
-          }
-        }
-        while (errorReader.ready()) {
-          if ((line = errorReader.readLine()) != null) {
-            logln("> ", line);
-            System.out.println(line);
-          }
-         }
+        readBuf(reader);
+        readBuf(errorReader);
         Thread.sleep(10);
       }
-      while (reader.ready()) {
-         if ((line = reader.readLine()) != null) {
-           logln("> ", line);
-           System.out.println(line);
-          }
-        }
-      while (errorReader.ready()) {
-        if ((line = errorReader.readLine()) != null) {
-          logln("> ", line);
-          System.out.println(line);
-        }
-      }
+      readBuf(reader);
+      readBuf(errorReader);
       reader.close();
       errorReader.close();
     }
@@ -192,7 +184,7 @@ public class MainForm extends javax.swing.JFrame {
         return;
       }
       uploadFile(curFile);
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       command.add("/home/mipt/ParaCL/modules/bison/test.out");
       command.add(curFile.toString());
       ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -204,18 +196,8 @@ public class MainForm extends javax.swing.JFrame {
       inputQueue.clear();
       String line;
       while (process.isAlive()) {
-        while (reader.ready()) {
-         if ((line = reader.readLine()) != null) {
-           logln("> ", line);
-           System.out.println(line);
-          }
-        }
-        while (errorReader.ready()) {
-          if ((line = errorReader.readLine()) != null) {
-            logln("> ", line);
-            System.out.println(line);
-          }
-         } 
+        readBuf(reader);
+        readBuf(errorReader);
         while ((line = inputQueue.poll()) != null) {
           writer.write(line);
           writer.newLine(); 
@@ -224,20 +206,11 @@ public class MainForm extends javax.swing.JFrame {
         
         Thread.sleep(10);
       }
-      while (reader.ready()) {
-         if ((line = reader.readLine()) != null) {
-           logln("> ", line);
-           System.out.println(line);
-          }
-        }
-      while (errorReader.ready()) {
-        if ((line = errorReader.readLine()) != null) {
-          logln("> ", line);
-          System.out.println(line);
-        }
-      }
+      readBuf(reader);
+      readBuf(errorReader);
       reader.close();
       errorReader.close();
+      writer.close();
     }
     /** Creates new form MainForm */
     public MainForm() {
@@ -474,6 +447,9 @@ public class MainForm extends javax.swing.JFrame {
       catch (IOException | InterruptedException ex) {
         System.out.println(ex);
         logln("Error: ", "Compilation fault");
+      } catch (Exception ex)
+      {
+        Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
       }
     });
     compiler.start();
@@ -515,6 +491,7 @@ public class MainForm extends javax.swing.JFrame {
 
   private void jMenuFileMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuFileMenuSelected
   {//GEN-HEADEREND:event_jMenuFileMenuSelected
+    //refresh menus to show it under text editor
     for (Component menu : jMenuBar.getComponents()) {
       menu.setVisible(false);
       menu.setVisible(true);
