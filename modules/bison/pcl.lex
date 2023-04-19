@@ -2,16 +2,9 @@
 %{
    #include <string>
    #include <iostream>
-   typedef struct {
-        std::string str;
-        void* oper;
-        void* blk;
-        void* cnd;
-    } YYSTYPE;
-    #define YYSTYPE YYSTYPE
+   
+   #include "pcl_bison.hpp"
    #include "pcl.tab.h"
-   void yyerror(char *s);
-   //std::string yylval;
 %}
 
 %option noyywrap

@@ -6,10 +6,7 @@
     #include <typeinfo>
     #include <type_traits>
 
-    #include "../paracl/leaf.hpp"
-    #include "../paracl/nonleaf.hpp"
-    #include "../paracl/ptree.hpp"
-    #include "../paracl/stack.hpp"
+    #include "pcl_bison.hpp"
     #include "../paracl/memory_manager.hpp"
 
     #include <boost/program_options.hpp>
@@ -20,32 +17,14 @@
     extern int yylineno;
     extern int yylex();
     extern FILE * yyin;
-    void yyerror(char *s) {
-        std::cerr << s << ", line " << yylineno << std::endl;
-        exit(1);
-    }
+
     std::vector<ptree::PTree*> blocks;
     ptree::Block* tmp;
     unsigned long offset = 0;
     int blk_num = 1;
 
-    typedef struct {
-        std::string str;
-        ptree::PTree* oper;
-        ptree::Block* blk;
-        ptree::Condition* cnd;
-        
-    } YYSTYPE;
-    #define YYSTYPE YYSTYPE
 
-    ptree::Block* wrap_block(ptree::PTree* statement) {
-        ptree::Block* result = dynamic_cast<ptree::Block*> (statement);
-        if (!result) {
-            result = new ptree::Block{};
-            result->push_expression(statement);
-        }
-        return result;
-    }
+    
 
 %}
 
@@ -67,11 +46,11 @@
 PROGRAM: BLOCK                            // обработка дерева программы
 ;
                                                                                                     
-BLOCK: OPS                              { tmp = new ptree::Block(std::move(*$1)); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
+BLOCK: OPS                              { tmp = new ptree::Block(std::move(*$1)); delete $1; tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); $$ = tmp;}//unique pointer wiil fit good
 ;
 
 OPS:    OP                              {tmp = new ptree::Block(); tmp->push_expression($1); $$ = tmp;}
-|       OPS OP                          {tmp = new ptree::Block(std::move(*$1)); tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
+|       OPS OP                          {tmp = new ptree::Block(std::move(*$1)); delete $1; tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
 ;
 
 SCOPE: LCB BLOCK RCB                      { $$ = $2; }
@@ -200,6 +179,7 @@ int main(int ac, char* av[]) {
 
     ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
     (blocks.back())->execute(stack);
+    delete stack;
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << std::endl;

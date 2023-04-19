@@ -1,4 +1,4 @@
-n_fact = 10;
+n_fact = ?;
 curr = 1;
 while (curr <= n_fact) {
   res = 1;
