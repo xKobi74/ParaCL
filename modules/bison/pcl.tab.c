@@ -66,7 +66,7 @@
 
 
 /* First part of user prologue.  */
-#line 1 "pcl.y"
+#line 1 "/home/mipt/ParaCL/modules/bison/pcl.y"
 
     #include <iostream>
     #include <list>
@@ -96,7 +96,7 @@
     
 
 
-#line 100 "pcl.tab.c"
+#line 100 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -127,10 +127,7 @@
 # define YYERROR_VERBOSE 0
 #endif
 
-/* Use api.header.include to #include this header
-   instead of duplicating it here.  */
-#ifndef YY_YY_PCL_TAB_H_INCLUDED
-# define YY_YY_PCL_TAB_H_INCLUDED
+
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -185,7 +182,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_PCL_TAB_H_INCLUDED  */
+
 
 
 
@@ -1395,218 +1392,218 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 49 "pcl.y"
+#line 49 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { tmp = new ptree::Block(std::move(*(yyvsp[0].blk))); delete (yyvsp[0].blk); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
-#line 1401 "pcl.tab.c"
+#line 1398 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 4:
-#line 52 "pcl.y"
+#line 52 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         {tmp = new ptree::Block(); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1407 "pcl.tab.c"
+#line 1404 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 5:
-#line 53 "pcl.y"
+#line 53 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         {tmp = new ptree::Block(std::move(*(yyvsp[-1].blk))); delete (yyvsp[-1].blk); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1413 "pcl.tab.c"
+#line 1410 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 6:
-#line 56 "pcl.y"
+#line 56 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.blk) = (yyvsp[-1].blk); }
-#line 1419 "pcl.tab.c"
+#line 1416 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 7:
-#line 58 "pcl.y"
+#line 58 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           {(yyval.oper) = (yyvsp[0].blk);}
-#line 1425 "pcl.tab.c"
+#line 1422 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 8:
-#line 59 "pcl.y"
+#line 59 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
-#line 1431 "pcl.tab.c"
+#line 1428 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 9:
-#line 60 "pcl.y"
+#line 60 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper)));}
-#line 1437 "pcl.tab.c"
+#line 1434 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 10:
-#line 61 "pcl.y"
+#line 61 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper)));}
-#line 1443 "pcl.tab.c"
+#line 1440 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 11:
-#line 64 "pcl.y"
+#line 64 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-2].cnd), nullptr, nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1449 "pcl.tab.c"
+#line 1446 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 12:
-#line 65 "pcl.y"
+#line 65 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper))); }
-#line 1455 "pcl.tab.c"
+#line 1452 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 13:
-#line 66 "pcl.y"
+#line 66 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1461 "pcl.tab.c"
+#line 1458 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 14:
-#line 69 "pcl.y"
+#line 69 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           {(yyval.cnd) = new ptree::Condition(nullptr, (yyvsp[0].oper));}
-#line 1467 "pcl.tab.c"
+#line 1464 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 18:
-#line 74 "pcl.y"
+#line 74 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::Assign(nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1473 "pcl.tab.c"
+#line 1470 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 19:
-#line 75 "pcl.y"
+#line 75 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::Output(nullptr, (yyvsp[0].oper));}
-#line 1479 "pcl.tab.c"
+#line 1476 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 21:
-#line 78 "pcl.y"
+#line 78 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1485 "pcl.tab.c"
+#line 1482 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 22:
-#line 79 "pcl.y"
+#line 79 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_OR, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1491 "pcl.tab.c"
+#line 1488 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 24:
-#line 83 "pcl.y"
+#line 83 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1497 "pcl.tab.c"
+#line 1494 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 25:
-#line 84 "pcl.y"
+#line 84 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1503 "pcl.tab.c"
+#line 1500 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 26:
-#line 85 "pcl.y"
+#line 85 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1509 "pcl.tab.c"
+#line 1506 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 27:
-#line 86 "pcl.y"
+#line 86 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::NON_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1515 "pcl.tab.c"
+#line 1512 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 28:
-#line 87 "pcl.y"
+#line 87 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1521 "pcl.tab.c"
+#line 1518 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 29:
-#line 88 "pcl.y"
+#line 88 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1527 "pcl.tab.c"
+#line 1524 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 31:
-#line 92 "pcl.y"
+#line 92 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::ADDITION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1533 "pcl.tab.c"
+#line 1530 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 32:
-#line 93 "pcl.y"
+#line 93 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::SUBTRACTION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1539 "pcl.tab.c"
+#line 1536 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 34:
-#line 97 "pcl.y"
+#line 97 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MULTIPLICATION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1545 "pcl.tab.c"
+#line 1542 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 35:
-#line 98 "pcl.y"
+#line 98 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1551 "pcl.tab.c"
+#line 1548 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 36:
-#line 99 "pcl.y"
+#line 99 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::REMAINDER, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1557 "pcl.tab.c"
+#line 1554 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 37:
-#line 102 "pcl.y"
+#line 102 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::NameInt(nullptr, 0, (yyvsp[0].str));
                                         }
-#line 1564 "pcl.tab.c"
+#line 1561 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 38:
-#line 105 "pcl.y"
+#line 105 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
-#line 1570 "pcl.tab.c"
+#line 1567 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 39:
-#line 106 "pcl.y"
+#line 106 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-#line 1576 "pcl.tab.c"
+#line 1573 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 40:
-#line 107 "pcl.y"
+#line 107 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1582 "pcl.tab.c"
+#line 1579 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 41:
-#line 108 "pcl.y"
+#line 108 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1588 "pcl.tab.c"
+#line 1585 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 42:
-#line 109 "pcl.y"
+#line 109 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, (yyvsp[-1].oper)); }
-#line 1594 "pcl.tab.c"
+#line 1591 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 43:
-#line 110 "pcl.y"
+#line 110 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
-#line 1600 "pcl.tab.c"
+#line 1597 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
   case 44:
-#line 111 "pcl.y"
+#line 111 "/home/mipt/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1606 "pcl.tab.c"
+#line 1603 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
     break;
 
 
-#line 1610 "pcl.tab.c"
+#line 1607 "/home/mipt/ParaCL/modules/bison/pcl.tab.c"
 
       default: break;
     }
@@ -1838,7 +1835,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 119 "pcl.y"
+#line 119 "/home/mipt/ParaCL/modules/bison/pcl.y"
 
 int main(int ac, char* av[]) { 
     try {

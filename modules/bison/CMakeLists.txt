@@ -28,10 +28,11 @@ if (BISON_FOUND)
     )
 endif(BISON_FOUND)
 
-#add_flex_bison_dependency(scanner parser)
-
-add_executable(${PROJECT_NAME} lex.yy.c pcl.tab.c pcl_bison.cpp)
-set(CMAKE_CXX_STANDARD 17)
+add_executable(${PROJECT_NAME} pcl_bison.cpp lex.yy.c pcl.tab.c)
+add_dependencies(${PROJECT_NAME} bison_target)
+add_dependencies(${PROJECT_NAME} flex_target)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 target_link_libraries(${PROJECT_NAME} PUBLIC
   paracl
   boost
