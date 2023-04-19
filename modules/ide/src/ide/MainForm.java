@@ -31,7 +31,7 @@ public class MainForm extends javax.swing.JFrame
   public static File curFile = null;
 
   //output message to "IDE terminal" in format <prefix>+<message>
-  private synchronized void log(String prefix, String message)
+  private void log(String prefix, String message)
   {
     if (message == null)
     {
@@ -41,7 +41,7 @@ public class MainForm extends javax.swing.JFrame
   }
   
   //output message to "IDE terminal" in format <prefix>+<message>+'\n'
-  private synchronized void logln(String prefix, String message)
+  private void logln(String prefix, String message)
   {
     if (message == null)
     {
@@ -51,7 +51,7 @@ public class MainForm extends javax.swing.JFrame
   }
   
   //output text to "IDE editor" in format <message>
-  private synchronized void output(String text)
+  private void output(String text)
   {
     if (text == null)
     {
@@ -61,19 +61,19 @@ public class MainForm extends javax.swing.JFrame
   }
 
   //output text to "IDE editor" in format <message>+'\n'
-  private synchronized void outputln(String text)
+  private void outputln(String text)
   {
     output(text + '\n');
   }
 
   //clear "IDE editor"
-  private synchronized void outputClear()
+  private void outputClear()
   {
     textAreaInput.setText("");
   }
   
   //return text from editor
-  private synchronized String input()
+  private String input()
   {
     return textAreaInput.getText();
   }
@@ -508,13 +508,10 @@ public class MainForm extends javax.swing.JFrame
       try
       {
         compileCode(input());
-      } catch (IOException | InterruptedException ex)
+      } catch (Exception ex)
       {
         System.out.println(ex);
         logln("Error: ", "Compilation fault");
-      } catch (Exception ex)
-      {
-        Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
       }
     });
     compiler.start();
