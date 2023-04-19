@@ -17,11 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,22 +25,8 @@ import java.util.logging.Logger;
  */
 public class MainForm extends javax.swing.JFrame {
     
-    public class InputQueue {
-      Queue<String> queue;
-      public InputQueue() {
-        queue = new LinkedList<String>();
-      } 
-      public synchronized void clear() {
-        queue.clear();
-      }
-      public synchronized void add(String str) {
-        queue.add(str);
-      } 
-      public synchronized String poll() {
-        return queue.poll();
-      }
-    }
-    InputQueue inputQueue;
+    
+    public static SyncQueue inputQueue;
     public static File curFile = null;
     
     //output message to "IDE terminal" in format <prefix>+<message>
@@ -259,7 +241,7 @@ public class MainForm extends javax.swing.JFrame {
     }
     /** Creates new form MainForm */
     public MainForm() {
-        inputQueue = new InputQueue();
+        inputQueue = new SyncQueue();
         initComponents();
     }
 
