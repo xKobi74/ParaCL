@@ -15,11 +15,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  */
 public class MainForm extends javax.swing.JFrame
 {
-
+  public static String paraclPath = "/home/mipt/ParaCL/modules/bison/test.out";
   public static SyncQueue inputQueue;
   public static File curFile = null;
 
@@ -204,7 +204,7 @@ public class MainForm extends javax.swing.JFrame
     }
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
-    command.add("/home/mipt/ParaCL/modules/bison/test.out");
+    command.add(paraclPath);
     command.add(curFile.toString());
     command.add("--build");
     ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -234,7 +234,7 @@ public class MainForm extends javax.swing.JFrame
     }
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
-    command.add("/home/mipt/ParaCL/modules/bison/test.out");
+    command.add(paraclPath);
     command.add(curFile.toString());
     ProcessBuilder processBuilder = new ProcessBuilder(command);
     Process process = processBuilder.start();
@@ -269,6 +269,9 @@ public class MainForm extends javax.swing.JFrame
    */
   public MainForm()
   {
+    String workingDirectory = Paths.get(".").toAbsolutePath().toString();
+    workingDirectory = workingDirectory.substring(0, workingDirectory.length() - 1);
+    paraclPath = workingDirectory + "../bison/test.out";
     inputQueue = new SyncQueue();
     initComponents();
   }
