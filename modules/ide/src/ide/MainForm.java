@@ -322,6 +322,7 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 102));
     jSplitPane1.setRequestFocusEnabled(false);
 
+    textFieldInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textFieldInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -332,6 +333,7 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane1.setBottomComponent(textFieldInput);
 
     textAreaOutput.setEditable(false);
+    textAreaOutput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textAreaOutput.setText("Attention: view menu does not work\n");
     textAreaOutput.addTextListener(new java.awt.event.TextListener()
     {
@@ -345,6 +347,7 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane.setRightComponent(jSplitPane1);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textAreaInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -589,19 +592,58 @@ public class MainForm extends javax.swing.JFrame
     }
   }//GEN-LAST:event_jMenuFileMenuSelected
 
+static int findLeft(String text, int start, char symbol) 
+{
+  int pos = start;
+  while (pos >= 0 && text.charAt(pos) != symbol) 
+    pos--;
+  return pos;
+}
+static int findRight(String text, int start, char symbol) 
+{
+  int pos = start;
+  int end = text.length();
+  while (pos < end && text.charAt(pos) != symbol) 
+    pos++;
+  return pos;
+}
+  
   private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textAreaInputKeyPressed
   {//GEN-HEADEREND:event_textAreaInputKeyPressed
-    if (!evt.isActionKey())
-    {
-      return;
-    }
     switch (evt.getKeyCode())
     {    
       case KeyEvent.VK_UP:
-        
+      { 
+        int pos = textAreaInput.getCaretPosition();
+        String text = input();
+        int left = findLeft(text, pos - 1, '\n');
+        if (left < 0)
+          break;
+        int offset = pos - left;
+        int newleft = findLeft(text, left - 1, '\n');
+        int newpos = newleft + offset;
+        if (newpos > left)
+          newpos = left;
+        textAreaInput.setCaretPosition(newpos);
         break;
+      }
       case KeyEvent.VK_DOWN:
+      {
+        int pos = textAreaInput.getCaretPosition();
+        String text = input();
+        int end = text.length();
+        int left = findLeft(text, pos - 1, '\n');
+        int offset = pos - left;
+        int right = findRight(text, pos, '\n');
+        int newpos = right + offset;
+        int newright = findRight(text, right + 1, '\n');
+        if (newpos > end)
+          newpos = end;
+        else if (newpos > newright)
+          newpos = newright;
+        textAreaInput.setCaretPosition(newpos);
         break;
+      }
       case KeyEvent.VK_LEFT:
         if (textAreaInput.getCaretPosition() == 0)
           break;
