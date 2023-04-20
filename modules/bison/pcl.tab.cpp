@@ -562,18 +562,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  33
+#define YYFINAL  34
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   96
+#define YYLAST   93
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  34
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  16
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  45
+#define YYNRULES  46
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  80
+#define YYNSTATES  81
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   288
@@ -628,8 +628,8 @@ static const yytype_int8 yyrline[] =
        0,    46,    46,    49,    52,    53,    56,    58,    59,    60,
       61,    64,    65,    66,    69,    71,    71,    73,    74,    75,
       77,    78,    79,    82,    83,    84,    85,    86,    87,    88,
-      91,    92,    93,    96,    97,    98,    99,   102,   105,   106,
-     107,   108,   109,   110,   111,   112
+      91,    92,    93,    96,    97,    98,    99,   102,   104,   105,
+     106,   107,   108,   109,   110,   111,   112
 };
 #endif
 
@@ -660,7 +660,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-61)
+#define YYPACT_NINF (-58)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -674,14 +674,15 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      15,   -19,   -17,    17,   -61,    42,   -61,   -61,    17,    15,
-      42,    29,   -61,    15,   -61,   -61,   -61,   -61,    19,    50,
-      69,   -15,    23,    46,   -61,    17,    17,   -61,    48,   -61,
-      13,    11,   -61,   -61,   -61,   -61,    42,    42,    42,    42,
-      42,    42,    42,    42,    42,    42,    42,    42,    42,   -61,
-     -61,    17,    26,   -61,    28,   -61,   -61,    69,    69,   -15,
-     -15,   -15,   -15,   -15,   -15,    23,    23,   -61,   -61,   -61,
-     -61,    15,    15,    43,   -61,   -61,   -61,    15,   -61,   -61
+      12,   -16,    -9,    35,   -58,    44,   -58,   -58,    35,    12,
+     -14,    20,   -58,    12,   -58,   -58,   -58,   -58,     2,     9,
+      70,    34,     4,    27,   -58,    35,    35,   -58,    48,   -58,
+      10,    21,   -58,   -58,   -58,   -58,   -58,    44,    44,    44,
+      44,    44,    44,    44,    44,    44,    44,    44,    44,    44,
+     -58,   -58,    35,    16,   -58,    37,   -58,   -58,    70,    70,
+      34,    34,    34,    34,    34,    34,     4,     4,   -58,   -58,
+     -58,   -58,    12,    12,    53,   -58,   -58,   -58,    12,   -58,
+     -58
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -691,25 +692,26 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,    39,     0,    38,    37,     0,     0,
        0,     0,     2,     3,     7,    15,    16,     4,     0,    17,
-      20,    23,    30,    45,    33,     0,     0,    19,    45,    41,
-       0,     0,    40,     1,     5,     8,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    42,
-      43,     0,     0,    14,     0,    44,     6,    21,    22,    24,
-      25,    26,    27,    28,    29,    31,    32,    36,    34,    35,
-      18,     0,     0,    15,    11,    10,    13,     0,     9,    12
+      20,    23,    30,    46,    33,     0,     0,    19,    46,    42,
+       0,     0,    41,    40,     1,     5,     8,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      43,    44,     0,     0,    14,     0,    45,     6,    21,    22,
+      24,    25,    26,    27,    28,    29,    31,    32,    36,    34,
+      35,    18,     0,     0,    15,    11,    10,    13,     0,     9,
+      12
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -61,   -61,    45,   -61,   -61,   -60,   -58,    32,   -12,     2,
-     -61,    47,    49,    51,     0,    -3
+     -58,   -58,    65,   -58,   -58,   -40,   -57,    57,   -12,     3,
+     -58,    33,    49,    31,     0,    -3
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,    11,    12,    13,    14,    15,    16,    52,    17,    18,
+       0,    11,    12,    13,    14,    15,    16,    53,    17,    18,
       19,    20,    21,    22,    28,    24
 };
 
@@ -718,30 +720,30 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      23,    34,    29,    23,    25,    27,    26,    32,    23,    23,
-      30,    73,    75,    23,    76,    44,    45,    78,     1,    79,
-       2,     3,     4,     3,     4,    23,    23,    53,    53,    33,
-       5,    46,     5,     6,     7,     6,     7,    55,     8,    56,
-       8,    35,     9,    67,    68,    69,    10,    77,    10,     4,
-      71,    23,    72,    70,    31,    47,    48,     5,    54,    74,
-       6,     7,     0,    36,    37,     8,    49,    50,    49,    50,
-       0,    23,    23,    10,     0,    51,     0,    23,    38,    39,
-      40,    41,     0,    57,    58,    42,    43,    59,    60,    61,
-      62,    63,    64,     0,     0,    65,    66
+      23,    35,    29,    23,    32,     7,    27,    25,    23,    23,
+      33,    30,    47,    23,    26,     1,    77,     2,     3,     4,
+      34,    80,    37,    38,    36,    23,    23,     5,    54,    54,
+       6,     7,    74,    76,    56,     8,    48,    49,    79,     9,
+      72,     3,     4,    10,    68,    69,    70,    50,    51,    57,
+       5,     4,    23,     6,     7,    71,    52,    78,     8,     5,
+      75,    73,     6,     7,    45,    46,    10,     8,    50,    51,
+      58,    59,    23,    23,    31,    10,    66,    67,    23,    39,
+      40,    41,    42,    55,     0,     0,    43,    44,    60,    61,
+      62,    63,    64,    65
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,    13,     5,     3,    23,     3,    23,    10,     8,     9,
-       8,    71,    72,    13,    72,    30,    31,    77,     3,    77,
-       5,     6,     7,     6,     7,    25,    26,    25,    26,     0,
-      15,     8,    15,    18,    19,    18,    19,    24,    23,    28,
-      23,    22,    27,    46,    47,    48,    31,     4,    31,     7,
-      24,    51,    24,    51,     9,    32,    33,    15,    26,    71,
-      18,    19,    -1,    13,    14,    23,    20,    21,    20,    21,
-      -1,    71,    72,    31,    -1,    29,    -1,    77,     9,    10,
-      11,    12,    -1,    36,    37,    16,    17,    38,    39,    40,
-      41,    42,    43,    -1,    -1,    44,    45
+       0,    13,     5,     3,    18,    19,     3,    23,     8,     9,
+      10,     8,     8,    13,    23,     3,    73,     5,     6,     7,
+       0,    78,    13,    14,    22,    25,    26,    15,    25,    26,
+      18,    19,    72,    73,    24,    23,    32,    33,    78,    27,
+      24,     6,     7,    31,    47,    48,    49,    20,    21,    28,
+      15,     7,    52,    18,    19,    52,    29,     4,    23,    15,
+      72,    24,    18,    19,    30,    31,    31,    23,    20,    21,
+      37,    38,    72,    73,     9,    31,    45,    46,    78,     9,
+      10,    11,    12,    26,    -1,    -1,    16,    17,    39,    40,
+      41,    42,    43,    44
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -751,11 +753,12 @@ static const yytype_int8 yystos[] =
        0,     3,     5,     6,     7,    15,    18,    19,    23,    27,
       31,    35,    36,    37,    38,    39,    40,    42,    43,    44,
       45,    46,    47,    48,    49,    23,    23,    43,    48,    49,
-      43,    36,    49,     0,    42,    22,    13,    14,     9,    10,
-      11,    12,    16,    17,    30,    31,     8,    32,    33,    20,
-      21,    29,    41,    43,    41,    24,    28,    45,    45,    46,
-      46,    46,    46,    46,    46,    47,    47,    49,    49,    49,
-      43,    24,    24,    39,    42,    39,    40,     4,    39,    40
+      43,    36,    18,    48,     0,    42,    22,    13,    14,     9,
+      10,    11,    12,    16,    17,    30,    31,     8,    32,    33,
+      20,    21,    29,    41,    43,    41,    24,    28,    45,    45,
+      46,    46,    46,    46,    46,    46,    47,    47,    49,    49,
+      49,    43,    24,    24,    39,    42,    39,    40,     4,    39,
+      40
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -765,7 +768,7 @@ static const yytype_int8 yyr1[] =
       39,    40,    40,    40,    41,    42,    42,    43,    43,    43,
       44,    44,    44,    45,    45,    45,    45,    45,    45,    45,
       46,    46,    46,    47,    47,    47,    47,    48,    49,    49,
-      49,    49,    49,    49,    49,    49
+      49,    49,    49,    49,    49,    49,    49
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -775,7 +778,7 @@ static const yytype_int8 yyr2[] =
        5,     5,     7,     5,     1,     1,     1,     1,     3,     2,
        1,     3,     3,     1,     3,     3,     3,     3,     3,     3,
        1,     3,     3,     1,     3,     3,     3,     1,     1,     1,
-       2,     2,     2,     2,     3,     1
+       2,     2,     2,     2,     2,     3,     1
 };
 
 
@@ -1241,216 +1244,221 @@ yyreduce:
   case 3: /* BLOCK: OPS  */
 #line 49 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { tmp = new ptree::Block(std::move(*(yyvsp[0].blk))); delete (yyvsp[0].blk); tmp->update_blk_info(offset++, blk_num++); blocks.push_back(tmp); (yyval.blk) = tmp;}
-#line 1245 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1248 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 4: /* OPS: OP  */
 #line 52 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         {tmp = new ptree::Block(); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1251 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1254 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 5: /* OPS: OPS OP  */
 #line 53 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         {tmp = new ptree::Block(std::move(*(yyvsp[-1].blk))); delete (yyvsp[-1].blk); tmp->push_expression((yyvsp[0].oper)); (yyval.blk) = tmp;}
-#line 1257 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1260 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 6: /* SCOPE: LCB BLOCK RCB  */
 #line 56 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.blk) = (yyvsp[-1].blk); }
-#line 1263 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1266 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 7: /* OP1: SCOPE  */
 #line 58 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           {(yyval.oper) = (yyvsp[0].blk);}
-#line 1269 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1272 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 8: /* OP1: EXPR SEQUENCE  */
 #line 59 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::Expression(nullptr, (yyvsp[-1].oper));}
-#line 1275 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1278 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 9: /* OP1: IF LPAR COND RPAR OP1 ELSE OP1  */
 #line 60 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper)));}
-#line 1281 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1284 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 10: /* OP1: WHILE LPAR COND RPAR OP1  */
 #line 61 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper)));}
-#line 1287 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1290 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 11: /* OP2: IF LPAR COND RPAR OP  */
 #line 64 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-2].cnd), nullptr, nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1293 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1296 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 12: /* OP2: IF LPAR COND RPAR OP1 ELSE OP2  */
 #line 65 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::IfBlk((yyvsp[-4].cnd), nullptr, wrap_block((yyvsp[0].oper)), wrap_block((yyvsp[-2].oper))); }
-#line 1299 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1302 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 13: /* OP2: WHILE LPAR COND RPAR OP2  */
 #line 66 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::WhileBlk((yyvsp[-2].cnd), nullptr, wrap_block((yyvsp[0].oper))); }
-#line 1305 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1308 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 14: /* COND: EXPR  */
 #line 69 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           {(yyval.cnd) = new ptree::Condition(nullptr, (yyvsp[0].oper));}
-#line 1311 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1314 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 18: /* EXPR: VAR ASSIGN EXPR  */
 #line 74 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::Assign(nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1317 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1320 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 19: /* EXPR: PRINT EXPR  */
 #line 75 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::Output(nullptr, (yyvsp[0].oper));}
-#line 1323 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1326 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 21: /* EXPR1: EXPR1 AND EXPR2  */
 #line 78 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_AND, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1329 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1332 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 22: /* EXPR1: EXPR1 OR EXPR2  */
 #line 79 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                        { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LOG_OR, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1335 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1338 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 24: /* EXPR2: EXPR2 EQ EXPR3  */
 #line 83 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1341 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1344 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 25: /* EXPR2: EXPR2 LE EXPR3  */
 #line 84 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1347 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1350 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 26: /* EXPR2: EXPR2 GE EXPR3  */
 #line 85 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1353 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1356 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 27: /* EXPR2: EXPR2 NE EXPR3  */
 #line 86 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::NON_EQUAL, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1359 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1362 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 28: /* EXPR2: EXPR2 GREAT EXPR3  */
 #line 87 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MORE, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1365 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1368 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 29: /* EXPR2: EXPR2 LESS EXPR3  */
 #line 88 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::LESS, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1371 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1374 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 31: /* EXPR3: EXPR3 PLUS TERM  */
 #line 92 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                          { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::ADDITION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1377 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1380 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 32: /* EXPR3: EXPR3 MINUS TERM  */
 #line 93 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                           { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::SUBTRACTION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1383 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1386 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 34: /* TERM: TERM MUL VAL  */
 #line 97 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::MULTIPLICATION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1389 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1392 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 35: /* TERM: TERM DIV VAL  */
 #line 98 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::DIVISION, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper)); }
-#line 1395 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1398 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 36: /* TERM: TERM MOD VAL  */
 #line 99 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::BinOp(ptree::BinOpType::REMAINDER, nullptr, (yyvsp[-2].oper), (yyvsp[0].oper));}
-#line 1401 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1404 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 37: /* VAR: ID  */
 #line 102 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
-                                        { (yyval.oper) = new ptree::NameInt(nullptr, 0, (yyvsp[0].str));
-                                        }
-#line 1408 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+                                        { (yyval.oper) = new ptree::NameInt(nullptr, 0, (yyvsp[0].str));}
+#line 1410 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 38: /* VAL: NUM  */
-#line 105 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
-                                        { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str))); /*std::cout << $1 << std::endl;*/}
-#line 1414 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 104 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
+                                        { (yyval.oper) = new ptree::Imidiate<int>(nullptr, std::stoi((yyvsp[0].str)));}
+#line 1416 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
   case 39: /* VAL: INPUT  */
-#line 106 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
+#line 105 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-#line 1420 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1422 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
-  case 40: /* VAL: MINUS VAL  */
-#line 107 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
+  case 40: /* VAL: MINUS VAR  */
+#line 106 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, (yyvsp[0].oper));}
-#line 1426 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1428 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
-  case 41: /* VAL: NOT VAL  */
+  case 41: /* VAL: MINUS NUM  */
+#line 107 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
+                                        { (yyval.oper) = new ptree::Imidiate<int>(nullptr, -std::stoi((yyvsp[0].str)));}
+#line 1434 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+    break;
+
+  case 42: /* VAL: NOT VAL  */
 #line 108 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, (yyvsp[0].oper)); }
-#line 1432 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1440 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
-  case 42: /* VAL: VAR P_PLUS  */
+  case 43: /* VAL: VAR P_PLUS  */
 #line 109 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, (yyvsp[-1].oper)); }
-#line 1438 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1446 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
-  case 43: /* VAL: VAR P_MINUS  */
+  case 44: /* VAL: VAR P_MINUS  */
 #line 110 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, (yyvsp[-1].oper)); }
-#line 1444 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1452 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
-  case 44: /* VAL: LPAR EXPR RPAR  */
+  case 45: /* VAL: LPAR EXPR RPAR  */
 #line 111 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.y"
                                         { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1450 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1458 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
     break;
 
 
-#line 1454 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
+#line 1462 "/home/ilya/Документы/GitHub/ParaCL/modules/bison/pcl.tab.cpp"
 
       default: break;
     }

@@ -99,12 +99,12 @@ TERM:   VAL                             // inherit
 |       TERM MOD VAL                    { $$ = new ptree::BinOp(ptree::BinOpType::REMAINDER, nullptr, $1, $3);}
 ;
 
-VAR:    ID                              { $$ = new ptree::NameInt(nullptr, 0, $1);
-                                        }
+VAR:    ID                              { $$ = new ptree::NameInt(nullptr, 0, $1);}
 
-VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1)); /*std::cout << $1 << std::endl;*/}
+VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr, std::stoi($1));}
 |       INPUT                           { $$ = new ptree::Reserved(nullptr, ptree::Reserved::Types::Input);}
-|       MINUS VAL                       { $$ = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, $2);}
+|       MINUS VAR                       { $$ = new ptree::UnOp(ptree::UnOpType::MINUS, nullptr, $2);}
+|       MINUS NUM                       { $$ = new ptree::Imidiate<int>(nullptr, -std::stoi($2));}
 |       NOT VAL                         { $$ = new ptree::UnOp(ptree::UnOpType::NOT, nullptr, $2); }
 |       VAR P_PLUS                      { $$ = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, $1); }
 |       VAR P_MINUS                     { $$ = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, $1); }
