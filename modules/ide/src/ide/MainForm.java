@@ -15,11 +15,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import static java.util.stream.Collectors.toMap;
+import org.ini4j.Ini;
 
 /**
  *
@@ -28,7 +30,9 @@ import java.util.List;
 public class MainForm extends javax.swing.JFrame
 {
   public static String paraclPath;
+  public static String configPath;
   public static SyncQueue inputQueue;
+  Map<String, Map<String, String>> config;
   public static File curFile = null;
 
   //output message to "IDE terminal" in format <prefix>+<message>
@@ -264,6 +268,39 @@ public class MainForm extends javax.swing.JFrame
     writer.close();
   }
 
+private Map<String, Map<String, String>> downloadConfig(String path) {
+  File configFile = new File(path);
+  Ini ini;
+  try
+  {
+    ini = new Ini(configFile);
+    return ini.entrySet().stream()
+      .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+  } catch (IOException ex)
+  {
+    logln("Error: ", "Can't get acess to config file");
+    System.out.println(ex);
+    return null;
+  }
+}
+
+private void uploadConfig(String path, Map<String, Map<String, String>> config) {
+  File configFile = new File(path);
+  Ini ini;
+  try
+  {
+    ini = new Ini();
+    for (String section : config.keySet())
+      for (String param : config.get(section).keySet()) 
+        ini.put(section, param, config.get(section).get(param));
+    ini.store(configFile);
+  } catch (IOException ex)
+  {
+    logln("Error: ", "Can't get acess to config file");
+    System.out.println(ex);
+  }
+}
+
   /**
    * Creates new form MainForm
    */
@@ -272,8 +309,12 @@ public class MainForm extends javax.swing.JFrame
     String workingDirectory = Paths.get(".").toAbsolutePath().toString();
     workingDirectory = workingDirectory.substring(0, workingDirectory.length() - 1);
     paraclPath = workingDirectory + "../../build/modules/bison/pcli";
+    configPath = workingDirectory + "src/config.ini";
     inputQueue = new SyncQueue();
     initComponents();
+    config = downloadConfig(configPath);
+    
+    uploadConfig(configPath, config);
   }
 
   /**
@@ -300,6 +341,8 @@ public class MainForm extends javax.swing.JFrame
     jMenuView = new javax.swing.JMenu();
     jMenuViewFont = new javax.swing.JMenuItem();
     jMenuViewBackground = new javax.swing.JMenuItem();
+    jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
+    jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
     jMenuRun = new javax.swing.JMenu();
     jMenuRunBuild = new javax.swing.JMenuItem();
     jMenuRunExecute = new javax.swing.JMenuItem();
@@ -429,6 +472,14 @@ public class MainForm extends javax.swing.JFrame
 
     jMenuViewBackground.setText("Background");
     jMenuView.add(jMenuViewBackground);
+
+    jCheckBoxMenuItem1.setSelected(true);
+    jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
+    jMenuView.add(jCheckBoxMenuItem1);
+
+    jRadioButtonMenuItem1.setSelected(true);
+    jRadioButtonMenuItem1.setText("jRadioButtonMenuItem1");
+    jMenuView.add(jRadioButtonMenuItem1);
 
     jMenuBar.add(jMenuView);
 
@@ -664,6 +715,7 @@ static int findRight(String text, int start, char symbol)
     }
   }//GEN-LAST:event_textAreaInputKeyPressed
 
+  
   /**
      * @param args the command line arguments
      */
@@ -698,10 +750,11 @@ static int findRight(String text, int start, char symbol)
       java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
     //</editor-fold>
-
+  
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuFile;
@@ -714,6 +767,7 @@ static int findRight(String text, int start, char symbol)
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
+  private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
   private javax.swing.JSplitPane jSplitPane;
   private javax.swing.JSplitPane jSplitPane1;
   private java.awt.TextArea textAreaInput;
