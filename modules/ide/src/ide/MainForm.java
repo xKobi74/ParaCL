@@ -312,6 +312,7 @@ public class MainForm extends javax.swing.JFrame
   
   private void setColor(Color color)
   {
+    return;
     Color brightColor = color.brighter();
     Color darkColor = color.darker();
     textAreaInput.setBackground(color);
