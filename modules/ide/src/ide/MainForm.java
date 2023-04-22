@@ -309,7 +309,39 @@ public class MainForm extends javax.swing.JFrame
       System.out.println(ex);
     }
   }
-
+  
+  private void setColor(Color color)
+  {
+    Color brightColor = color.brighter();
+    Color darkColor = color.darker();
+    textAreaInput.setBackground(color);
+    textFieldInput.setBackground(darkColor);
+    textAreaOutput.setBackground(darkColor);
+    jSplitPane.setForeground(brightColor);
+    jSplitPane1.setForeground(brightColor);
+    jMenuBar.setBackground(brightColor);
+    jColorChooser.setBackground(color);
+    jDialog1.setBackground(color);
+    jFileChooser.setBackground(color);
+    jMenuFile.setBackground(brightColor);
+    jMenuItemFileOpen.setBackground(brightColor);
+    jMenuItemFileSave.setBackground(brightColor);
+    jMenuItemFileSaveAs.setBackground(brightColor);
+    jMenuRun.setBackground(brightColor);
+    jMenuRunBuild.setBackground(brightColor);
+    jMenuRunExecute.setBackground(brightColor);
+    jMenuSettings.setBackground(brightColor);
+    jMenuView.setBackground(brightColor);
+    jMenuViewBackground.setBackground(brightColor);
+    jMenuViewFont.setBackground(brightColor);
+    jCheckBoxMenuLastFile.setBackground(brightColor);
+    for (Component item : this.rootPane.getComponents())
+    {
+      item.setVisible(false);
+      item.setVisible(true);
+    }
+  }
+    
   private void restoreConfig(Map<String, Map<String, String>> config)
   {
      Map<String, String> settings = config.get("settings");
@@ -328,7 +360,8 @@ public class MainForm extends javax.swing.JFrame
      Map<String, String> view = config.get("view");
      String color = view.get("background-color");
      backgroundColor = new Color(Integer.parseInt(color));
-     
+     setColor(backgroundColor);
+
   }
   
   private Map<String, Map<String, String>> storeConfig(Map<String, Map<String, String>> config)
@@ -843,6 +876,7 @@ public class MainForm extends javax.swing.JFrame
   private void jDialog1WindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialog1WindowClosing
   {//GEN-HEADEREND:event_jDialog1WindowClosing
     backgroundColor = jColorChooser.getColor();
+    setColor(backgroundColor);
   }//GEN-LAST:event_jDialog1WindowClosing
 
   /**
