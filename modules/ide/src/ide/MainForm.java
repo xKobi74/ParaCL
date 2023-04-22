@@ -29,6 +29,7 @@ import org.ini4j.Ini;
  */
 public class MainForm extends javax.swing.JFrame
 {
+
   public static String paraclPath;
   public static String configPath;
   public static SyncQueue inputQueue;
@@ -268,38 +269,82 @@ public class MainForm extends javax.swing.JFrame
     writer.close();
   }
 
-private Map<String, Map<String, String>> downloadConfig(String path) {
-  File configFile = new File(path);
-  Ini ini;
-  try
+  private Map<String, Map<String, String>> downloadConfig(String path)
   {
-    ini = new Ini(configFile);
-    return ini.entrySet().stream()
-      .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-  } catch (IOException ex)
-  {
-    logln("Error: ", "Can't get acess to config file");
-    System.out.println(ex);
-    return null;
+    File configFile = new File(path);
+    Ini ini;
+    try
+    {
+      ini = new Ini(configFile);
+      return ini.entrySet().stream()
+        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+    } catch (IOException ex)
+    {
+      logln("Error: ", "Can't get acess to config file");
+      System.out.println(ex);
+      return null;
+    }
   }
-}
 
-private void uploadConfig(String path, Map<String, Map<String, String>> config) {
-  File configFile = new File(path);
-  Ini ini;
-  try
+  private void uploadConfig(String path, Map<String, Map<String, String>> config)
   {
-    ini = new Ini();
-    for (String section : config.keySet())
-      for (String param : config.get(section).keySet()) 
-        ini.put(section, param, config.get(section).get(param));
-    ini.store(configFile);
-  } catch (IOException ex)
-  {
-    logln("Error: ", "Can't get acess to config file");
-    System.out.println(ex);
+    File configFile = new File(path);
+    Ini ini;
+    try
+    {
+      ini = new Ini();
+      for (String section : config.keySet())
+      {
+        for (String param : config.get(section).keySet())
+        {
+          ini.put(section, param, config.get(section).get(param));
+        }
+      }
+      ini.store(configFile);
+    } catch (IOException ex)
+    {
+      logln("Error: ", "Can't get acess to config file");
+      System.out.println(ex);
+    }
   }
-}
+
+  private void restoreConfig(Map<String, Map<String, String>> config)
+  {
+     Map<String, String> settings = config.get("settings");
+     
+     boolean startWithLastFile = "true".equals(settings.get("start-with-last-file"));
+     jCheckBoxMenuLastFile.setState(startWithLastFile);
+     String lastFile = settings.get("last-file");
+     if (startWithLastFile)
+     {
+      if (lastFile.equals(""))
+        curFile = null;
+      else
+        curFile = new File(lastFile);
+      downloadFile(curFile);
+     }
+     
+  }
+  
+  private Map<String, Map<String, String>> storeConfig(Map<String, Map<String, String>> config)
+  {
+     Map<String, String> settings = config.get("settings");
+     
+     boolean startWithLastFile = jCheckBoxMenuLastFile.getState();
+     settings.replace("start-with-last-file", "false"); 
+     if (startWithLastFile)  
+       settings.replace("start-with-last-file", "true");
+     String lastFile;
+     if (curFile == null)
+       lastFile = "";
+     else 
+       lastFile = curFile.toString();
+     settings.replace("last-file", lastFile);
+     
+     config.replace("settings", settings);
+     
+     return config;
+  }
 
   /**
    * Creates new form MainForm
@@ -313,8 +358,7 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     inputQueue = new SyncQueue();
     initComponents();
     config = downloadConfig(configPath);
-    
-    uploadConfig(configPath, config);
+    restoreConfig(config);
   }
 
   /**
@@ -341,8 +385,8 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     jMenuView = new javax.swing.JMenu();
     jMenuViewFont = new javax.swing.JMenuItem();
     jMenuViewBackground = new javax.swing.JMenuItem();
-    jCheckBoxMenuItem1 = new javax.swing.JCheckBoxMenuItem();
-    jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
+    jMenuSettings = new javax.swing.JMenu();
+    jCheckBoxMenuLastFile = new javax.swing.JCheckBoxMenuItem();
     jMenuRun = new javax.swing.JMenu();
     jMenuRunBuild = new javax.swing.JMenuItem();
     jMenuRunExecute = new javax.swing.JMenuItem();
@@ -352,6 +396,13 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setMinimumSize(new java.awt.Dimension(204, 204));
+    addWindowListener(new java.awt.event.WindowAdapter()
+    {
+      public void windowClosing(java.awt.event.WindowEvent evt)
+      {
+        formWindowClosing(evt);
+      }
+    });
 
     jSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane.setResizeWeight(0.8);
@@ -407,7 +458,7 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     {
       public void menuSelected(javax.swing.event.MenuEvent evt)
       {
-        jMenuFileMenuSelected(evt);
+        jMenuSelected(evt);
       }
       public void menuDeselected(javax.swing.event.MenuEvent evt)
       {
@@ -457,7 +508,7 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     {
       public void menuSelected(javax.swing.event.MenuEvent evt)
       {
-        jMenuFileMenuSelected(evt);
+        jMenuSelected(evt);
       }
       public void menuDeselected(javax.swing.event.MenuEvent evt)
       {
@@ -473,22 +524,35 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     jMenuViewBackground.setText("Background");
     jMenuView.add(jMenuViewBackground);
 
-    jCheckBoxMenuItem1.setSelected(true);
-    jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
-    jMenuView.add(jCheckBoxMenuItem1);
-
-    jRadioButtonMenuItem1.setSelected(true);
-    jRadioButtonMenuItem1.setText("jRadioButtonMenuItem1");
-    jMenuView.add(jRadioButtonMenuItem1);
-
     jMenuBar.add(jMenuView);
+
+    jMenuSettings.setText("Settings");
+    jMenuSettings.addMenuListener(new javax.swing.event.MenuListener()
+    {
+      public void menuSelected(javax.swing.event.MenuEvent evt)
+      {
+        jMenuSelected(evt);
+      }
+      public void menuDeselected(javax.swing.event.MenuEvent evt)
+      {
+      }
+      public void menuCanceled(javax.swing.event.MenuEvent evt)
+      {
+      }
+    });
+
+    jCheckBoxMenuLastFile.setSelected(true);
+    jCheckBoxMenuLastFile.setText("Start with last file");
+    jMenuSettings.add(jCheckBoxMenuLastFile);
+
+    jMenuBar.add(jMenuSettings);
 
     jMenuRun.setText("Run");
     jMenuRun.addMenuListener(new javax.swing.event.MenuListener()
     {
       public void menuSelected(javax.swing.event.MenuEvent evt)
       {
-        jMenuFileMenuSelected(evt);
+        jMenuSelected(evt);
       }
       public void menuDeselected(javax.swing.event.MenuEvent evt)
       {
@@ -588,10 +652,12 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     if (evt.getKeyChar() != '\n')
     {
       switch (evt.getKeyCode())
-      {    
+      {
         case KeyEvent.VK_LEFT:
           if (textFieldInput.getCaretPosition() == 0)
+          {
             break;
+          }
           textFieldInput.setCaretPosition(textFieldInput.getCaretPosition() - 1);
           break;
         case KeyEvent.VK_RIGHT:
@@ -633,48 +699,47 @@ private void uploadConfig(String path, Map<String, Map<String, String>> config) 
     textAreaOutput.setCaretPosition(textAreaOutput.getText().length());
   }//GEN-LAST:event_textAreaOutputTextValueChanged
 
-  //action on selection menus that refresh it to show under text editor
-  private void jMenuFileMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuFileMenuSelected
-  {//GEN-HEADEREND:event_jMenuFileMenuSelected
-    for (Component menu : jMenuBar.getComponents())
+  static int findLeft(String text, int start, char symbol)
+  {
+    int pos = start;
+    while (pos >= 0 && text.charAt(pos) != symbol)
     {
-      menu.setVisible(false);
-      menu.setVisible(true);
+      pos--;
     }
-  }//GEN-LAST:event_jMenuFileMenuSelected
+    return pos;
+  }
 
-static int findLeft(String text, int start, char symbol) 
-{
-  int pos = start;
-  while (pos >= 0 && text.charAt(pos) != symbol) 
-    pos--;
-  return pos;
-}
-static int findRight(String text, int start, char symbol) 
-{
-  int pos = start;
-  int end = text.length();
-  while (pos < end && text.charAt(pos) != symbol) 
-    pos++;
-  return pos;
-}
-  
+  static int findRight(String text, int start, char symbol)
+  {
+    int pos = start;
+    int end = text.length();
+    while (pos < end && text.charAt(pos) != symbol)
+    {
+      pos++;
+    }
+    return pos;
+  }
+
   private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textAreaInputKeyPressed
   {//GEN-HEADEREND:event_textAreaInputKeyPressed
     switch (evt.getKeyCode())
-    {    
+    {
       case KeyEvent.VK_UP:
-      { 
+      {
         int pos = textAreaInput.getCaretPosition();
         String text = input();
         int left = findLeft(text, pos - 1, '\n');
         if (left < 0)
+        {
           break;
+        }
         int offset = pos - left;
         int newleft = findLeft(text, left - 1, '\n');
         int newpos = newleft + offset;
         if (newpos > left)
+        {
           newpos = left;
+        }
         textAreaInput.setCaretPosition(newpos);
         break;
       }
@@ -689,15 +754,20 @@ static int findRight(String text, int start, char symbol)
         int newpos = right + offset;
         int newright = findRight(text, right + 1, '\n');
         if (newpos > end)
+        {
           newpos = end;
-        else if (newpos > newright)
+        } else if (newpos > newright)
+        {
           newpos = newright;
+        }
         textAreaInput.setCaretPosition(newpos);
         break;
       }
       case KeyEvent.VK_LEFT:
         if (textAreaInput.getCaretPosition() == 0)
+        {
           break;
+        }
         textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
         break;
       case KeyEvent.VK_RIGHT:
@@ -715,10 +785,24 @@ static int findRight(String text, int start, char symbol)
     }
   }//GEN-LAST:event_textAreaInputKeyPressed
 
-  
+  private void jMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuSelected
+  {//GEN-HEADEREND:event_jMenuSelected
+    for (Component menu : jMenuBar.getComponents())
+    {
+      menu.setVisible(false);
+      menu.setVisible(true);
+    }
+  }//GEN-LAST:event_jMenuSelected
+
+  private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
+  {//GEN-HEADEREND:event_formWindowClosing
+    config = storeConfig(config);
+    uploadConfig(configPath, config);
+  }//GEN-LAST:event_formWindowClosing
+
   /**
-     * @param args the command line arguments
-     */
+   * @param args the command line arguments
+   */
   public static void main(String args[])
   {
     /* Set the Nimbus look and feel */
@@ -750,11 +834,11 @@ static int findRight(String text, int start, char symbol)
       java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
     }
     //</editor-fold>
-  
+
   }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
+  private javax.swing.JCheckBoxMenuItem jCheckBoxMenuLastFile;
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuFile;
@@ -764,10 +848,10 @@ static int findRight(String text, int start, char symbol)
   private javax.swing.JMenu jMenuRun;
   private javax.swing.JMenuItem jMenuRunBuild;
   private javax.swing.JMenuItem jMenuRunExecute;
+  private javax.swing.JMenu jMenuSettings;
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
-  private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
   private javax.swing.JSplitPane jSplitPane;
   private javax.swing.JSplitPane jSplitPane1;
   private java.awt.TextArea textAreaInput;
