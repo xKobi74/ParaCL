@@ -7,6 +7,7 @@ package ide;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,6 +37,7 @@ public class MainForm extends javax.swing.JFrame
   public static SyncQueue inputQueue;
   Map<String, Map<String, String>> config;
   public static Color backgroundColor;
+  public static int curFontSize;
   public static File curFile = null;
 
   //output message to "IDE terminal" in format <prefix>+<message>
@@ -337,6 +339,34 @@ public class MainForm extends javax.swing.JFrame
     for (Component item : this.rootPane.getComponents())
       item.validate();
   }
+  private void setFont(int size)
+  {
+    Font baseFont = textAreaInput.getFont();
+    Font font = new Font(baseFont.getFamily(), 0, size);
+    
+    textAreaInput.setFont(font);
+    textFieldInput.setFont(font);
+    textAreaOutput.setFont(font);
+    jMenuBar.setFont(font);
+    jColorChooser.setFont(font);
+    jDialog1.setFont(font);
+    jFileChooser.setFont(font);
+    jMenuFile.setFont(font);
+    jMenuFileClose.setFont(font);
+    jMenuItemFileOpen.setFont(font);
+    jMenuItemFileSave.setFont(font);
+    jMenuItemFileSaveAs.setFont(font);
+    jMenuRun.setFont(font);
+    jMenuRunBuild.setFont(font);
+    jMenuRunExecute.setFont(font);
+    jMenuSettings.setFont(font);
+    jMenuView.setFont(font);
+    jMenuViewBackground.setFont(font);
+    jMenuViewFont.setFont(font);
+    jCheckBoxMenuLastFile.setFont(font);
+    for (Component item : this.rootPane.getComponents())
+      item.validate();
+  }
     
   private void restoreConfig(Map<String, Map<String, String>> config)
   {
@@ -357,7 +387,9 @@ public class MainForm extends javax.swing.JFrame
      String color = view.get("background-color");
      backgroundColor = new Color(Integer.parseInt(color));
      setColor(backgroundColor);
-
+     String fontSize = view.get("font-size");
+     curFontSize = Integer.parseInt(fontSize);
+     setFont(curFontSize);
   }
   
   private Map<String, Map<String, String>> storeConfig(Map<String, Map<String, String>> config)
@@ -377,6 +409,7 @@ public class MainForm extends javax.swing.JFrame
      
      Map<String, String> view = config.get("view");
      view.replace("background-color", Integer.toString(backgroundColor.getRGB()));
+     view.replace("font-size", Integer.toString(curFontSize));
      config.replace("view", view);
      
      return config;
@@ -450,6 +483,7 @@ public class MainForm extends javax.swing.JFrame
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setMinimumSize(new java.awt.Dimension(204, 204));
+    setPreferredSize(new java.awt.Dimension(800, 600));
     addWindowListener(new java.awt.event.WindowAdapter()
     {
       public void windowClosing(java.awt.event.WindowEvent evt)
@@ -466,11 +500,13 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane1.setResizeWeight(1.0);
     jSplitPane1.setToolTipText("");
+    jSplitPane1.setMinimumSize(new java.awt.Dimension(102, 100));
     jSplitPane1.setName(""); // NOI18N
     jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 102));
     jSplitPane1.setRequestFocusEnabled(false);
 
     textFieldInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
+    textFieldInput.setName(""); // NOI18N
     textFieldInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -492,10 +528,12 @@ public class MainForm extends javax.swing.JFrame
     });
     jSplitPane1.setTopComponent(textAreaOutput);
 
-    jSplitPane.setRightComponent(jSplitPane1);
+    jSplitPane.setBottomComponent(jSplitPane1);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
+    textAreaInput.setMinimumSize(new java.awt.Dimension(100, 100));
+    textAreaInput.setPreferredSize(new java.awt.Dimension(100, 100));
     textAreaInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -503,7 +541,7 @@ public class MainForm extends javax.swing.JFrame
         textAreaInputKeyPressed(evt);
       }
     });
-    jSplitPane.setLeftComponent(textAreaInput);
+    jSplitPane.setTopComponent(textAreaInput);
 
     getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
 
