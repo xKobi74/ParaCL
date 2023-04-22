@@ -236,6 +236,11 @@
   <SubComponents>
     <Container class="javax.swing.JSplitPane" name="jSplitPane">
       <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="Editor"/>
+          </Border>
+        </Property>
         <Property name="orientation" type="int" value="0"/>
         <Property name="resizeWeight" type="double" value="0.8"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
@@ -250,6 +255,11 @@
       <SubComponents>
         <Container class="javax.swing.JSplitPane" name="jSplitPaneTerminal">
           <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Terminal: top - output, bottom - input"/>
+              </Border>
+            </Property>
             <Property name="dividerSize" type="int" value="8"/>
             <Property name="orientation" type="int" value="0"/>
             <Property name="resizeWeight" type="double" value="1.0"/>

@@ -514,10 +514,12 @@ public class MainForm extends javax.swing.JFrame
       }
     });
 
+    jSplitPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Editor"));
     jSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPane.setResizeWeight(0.8);
     jSplitPane.setToolTipText("");
 
+    jSplitPaneTerminal.setBorder(javax.swing.BorderFactory.createTitledBorder("Terminal: top - output, bottom - input"));
     jSplitPaneTerminal.setDividerSize(8);
     jSplitPaneTerminal.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
     jSplitPaneTerminal.setResizeWeight(1.0);
