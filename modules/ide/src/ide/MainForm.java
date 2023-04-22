@@ -75,7 +75,7 @@ public class MainForm extends javax.swing.JFrame
   }
 
   //clear "IDE editor"
-  private void outputClear()
+  private void inputClear()
   {
     textAreaInput.setText("");
   }
@@ -317,13 +317,12 @@ public class MainForm extends javax.swing.JFrame
     textAreaInput.setBackground(color);
     textFieldInput.setBackground(darkColor);
     textAreaOutput.setBackground(darkColor);
-    jSplitPane.setForeground(brightColor);
-    jSplitPane1.setForeground(brightColor);
     jMenuBar.setBackground(brightColor);
     jColorChooser.setBackground(color);
     jDialog1.setBackground(color);
     jFileChooser.setBackground(color);
     jMenuFile.setBackground(brightColor);
+    jMenuFileClose.setBackground(brightColor);
     jMenuItemFileOpen.setBackground(brightColor);
     jMenuItemFileSave.setBackground(brightColor);
     jMenuItemFileSaveAs.setBackground(brightColor);
@@ -336,10 +335,7 @@ public class MainForm extends javax.swing.JFrame
     jMenuViewFont.setBackground(brightColor);
     jCheckBoxMenuLastFile.setBackground(brightColor);
     for (Component item : this.rootPane.getComponents())
-    {
-      item.setVisible(false);
-      item.setVisible(true);
-    }
+      item.validate();
   }
     
   private void restoreConfig(Map<String, Map<String, String>> config)
@@ -424,6 +420,7 @@ public class MainForm extends javax.swing.JFrame
     jMenuItemFileOpen = new javax.swing.JMenuItem();
     jMenuItemFileSave = new javax.swing.JMenuItem();
     jMenuItemFileSaveAs = new javax.swing.JMenuItem();
+    jMenuFileClose = new javax.swing.JMenuItem();
     jMenuView = new javax.swing.JMenu();
     jMenuViewFont = new javax.swing.JMenuItem();
     jMenuViewBackground = new javax.swing.JMenuItem();
@@ -447,6 +444,8 @@ public class MainForm extends javax.swing.JFrame
         jDialog1WindowClosing(evt);
       }
     });
+
+    jColorChooser.setBorder(javax.swing.BorderFactory.createTitledBorder("Close dialog to apply color"));
     jDialog1.getContentPane().add(jColorChooser, java.awt.BorderLayout.CENTER);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -556,6 +555,16 @@ public class MainForm extends javax.swing.JFrame
     });
     jMenuFile.add(jMenuItemFileSaveAs);
 
+    jMenuFileClose.setText("Close");
+    jMenuFileClose.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuFileCloseActionPerformed(evt);
+      }
+    });
+    jMenuFile.add(jMenuFileClose);
+
     jMenuBar.add(jMenuFile);
 
     jMenuView.setText("View");
@@ -658,7 +667,7 @@ public class MainForm extends javax.swing.JFrame
     jFileChooser.showOpenDialog(this);
     File iFile = jFileChooser.getSelectedFile();
     String reserve = input();
-    outputClear();
+    inputClear();
     if (downloadFile(iFile))
     {
       curFile = iFile;
@@ -879,6 +888,14 @@ public class MainForm extends javax.swing.JFrame
     setColor(backgroundColor);
   }//GEN-LAST:event_jDialog1WindowClosing
 
+  private void jMenuFileCloseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFileCloseActionPerformed
+  {//GEN-HEADEREND:event_jMenuFileCloseActionPerformed
+    if (!(curFile == null))
+      uploadFile(curFile);
+    curFile = null;
+    inputClear();
+  }//GEN-LAST:event_jMenuFileCloseActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -923,6 +940,7 @@ public class MainForm extends javax.swing.JFrame
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuFile;
+  private javax.swing.JMenuItem jMenuFileClose;
   private javax.swing.JMenuItem jMenuItemFileOpen;
   private javax.swing.JMenuItem jMenuItemFileSave;
   private javax.swing.JMenuItem jMenuItemFileSaveAs;
