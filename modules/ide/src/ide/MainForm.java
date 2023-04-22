@@ -5,6 +5,7 @@
  */
 package ide;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -34,6 +35,7 @@ public class MainForm extends javax.swing.JFrame
   public static String configPath;
   public static SyncQueue inputQueue;
   Map<String, Map<String, String>> config;
+  public static Color backgroundColor;
   public static File curFile = null;
 
   //output message to "IDE terminal" in format <prefix>+<message>
@@ -311,7 +313,6 @@ public class MainForm extends javax.swing.JFrame
   private void restoreConfig(Map<String, Map<String, String>> config)
   {
      Map<String, String> settings = config.get("settings");
-     
      boolean startWithLastFile = "true".equals(settings.get("start-with-last-file"));
      jCheckBoxMenuLastFile.setState(startWithLastFile);
      String lastFile = settings.get("last-file");
@@ -324,12 +325,15 @@ public class MainForm extends javax.swing.JFrame
       downloadFile(curFile);
      }
      
+     Map<String, String> view = config.get("view");
+     String color = view.get("background-color");
+     backgroundColor = new Color(Integer.parseInt(color));
+     
   }
   
   private Map<String, Map<String, String>> storeConfig(Map<String, Map<String, String>> config)
   {
      Map<String, String> settings = config.get("settings");
-     
      boolean startWithLastFile = jCheckBoxMenuLastFile.getState();
      settings.replace("start-with-last-file", "false"); 
      if (startWithLastFile)  
@@ -340,8 +344,11 @@ public class MainForm extends javax.swing.JFrame
      else 
        lastFile = curFile.toString();
      settings.replace("last-file", lastFile);
-     
      config.replace("settings", settings);
+     
+     Map<String, String> view = config.get("view");
+     view.replace("background-color", Integer.toString(backgroundColor.getRGB()));
+     config.replace("view", view);
      
      return config;
   }
@@ -372,6 +379,8 @@ public class MainForm extends javax.swing.JFrame
   {
 
     jFileChooser = new javax.swing.JFileChooser();
+    jDialog1 = new javax.swing.JDialog();
+    jColorChooser = new javax.swing.JColorChooser();
     jSplitPane = new javax.swing.JSplitPane();
     jSplitPane1 = new javax.swing.JSplitPane();
     textFieldInput = new java.awt.TextField();
@@ -393,6 +402,19 @@ public class MainForm extends javax.swing.JFrame
 
     jFileChooser.setToolTipText("");
     jFileChooser.setName(""); // NOI18N
+
+    jDialog1.addWindowListener(new java.awt.event.WindowAdapter()
+    {
+      public void windowOpened(java.awt.event.WindowEvent evt)
+      {
+        jDialog1WindowOpened(evt);
+      }
+      public void windowClosing(java.awt.event.WindowEvent evt)
+      {
+        jDialog1WindowClosing(evt);
+      }
+    });
+    jDialog1.getContentPane().add(jColorChooser, java.awt.BorderLayout.CENTER);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setMinimumSize(new java.awt.Dimension(204, 204));
@@ -522,6 +544,13 @@ public class MainForm extends javax.swing.JFrame
     jMenuView.add(jMenuViewFont);
 
     jMenuViewBackground.setText("Background");
+    jMenuViewBackground.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuViewBackgroundActionPerformed(evt);
+      }
+    });
     jMenuView.add(jMenuViewBackground);
 
     jMenuBar.add(jMenuView);
@@ -800,6 +829,22 @@ public class MainForm extends javax.swing.JFrame
     uploadConfig(configPath, config);
   }//GEN-LAST:event_formWindowClosing
 
+  private void jMenuViewBackgroundActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuViewBackgroundActionPerformed
+  {//GEN-HEADEREND:event_jMenuViewBackgroundActionPerformed
+    jDialog1.setVisible(true);
+    jDialog1.pack();
+  }//GEN-LAST:event_jMenuViewBackgroundActionPerformed
+
+  private void jDialog1WindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialog1WindowOpened
+  {//GEN-HEADEREND:event_jDialog1WindowOpened
+    jColorChooser.setColor(backgroundColor);
+  }//GEN-LAST:event_jDialog1WindowOpened
+
+  private void jDialog1WindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialog1WindowClosing
+  {//GEN-HEADEREND:event_jDialog1WindowClosing
+    backgroundColor = jColorChooser.getColor();
+  }//GEN-LAST:event_jDialog1WindowClosing
+
   /**
    * @param args the command line arguments
    */
@@ -839,6 +884,8 @@ public class MainForm extends javax.swing.JFrame
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JCheckBoxMenuItem jCheckBoxMenuLastFile;
+  private javax.swing.JColorChooser jColorChooser;
+  private javax.swing.JDialog jDialog1;
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuFile;
