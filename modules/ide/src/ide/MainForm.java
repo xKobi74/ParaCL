@@ -321,7 +321,7 @@ public class MainForm extends javax.swing.JFrame
     textAreaOutput.setBackground(darkColor);
     jMenuBar.setBackground(brightColor);
     jColorChooser.setBackground(color);
-    jDialog1.setBackground(color);
+    jDialogColor.setBackground(color);
     jFileChooser.setBackground(color);
     jMenuFile.setBackground(brightColor);
     jMenuFileClose.setBackground(brightColor);
@@ -349,7 +349,7 @@ public class MainForm extends javax.swing.JFrame
     textAreaOutput.setFont(font);
     jMenuBar.setFont(font);
     jColorChooser.setFont(font);
-    jDialog1.setFont(font);
+    jDialogColor.setFont(font);
     jFileChooser.setFont(font);
     jMenuFile.setFont(font);
     jMenuFileClose.setFont(font);
@@ -441,10 +441,13 @@ public class MainForm extends javax.swing.JFrame
   {
 
     jFileChooser = new javax.swing.JFileChooser();
-    jDialog1 = new javax.swing.JDialog();
+    jDialogColor = new javax.swing.JDialog();
     jColorChooser = new javax.swing.JColorChooser();
+    jDialogFont = new javax.swing.JDialog();
+    jPanelFont = new javax.swing.JPanel();
+    jTextPaneFontSize = new javax.swing.JTextPane();
     jSplitPane = new javax.swing.JSplitPane();
-    jSplitPane1 = new javax.swing.JSplitPane();
+    jSplitPaneTerminal = new javax.swing.JSplitPane();
     textFieldInput = new java.awt.TextField();
     textAreaOutput = new java.awt.TextArea();
     textAreaInput = new java.awt.TextArea();
@@ -466,20 +469,39 @@ public class MainForm extends javax.swing.JFrame
     jFileChooser.setToolTipText("");
     jFileChooser.setName(""); // NOI18N
 
-    jDialog1.addWindowListener(new java.awt.event.WindowAdapter()
+    jDialogColor.addWindowListener(new java.awt.event.WindowAdapter()
     {
       public void windowOpened(java.awt.event.WindowEvent evt)
       {
-        jDialog1WindowOpened(evt);
+        jDialogColorWindowOpened(evt);
       }
       public void windowClosing(java.awt.event.WindowEvent evt)
       {
-        jDialog1WindowClosing(evt);
+        jDialogColorWindowClosing(evt);
       }
     });
 
     jColorChooser.setBorder(javax.swing.BorderFactory.createTitledBorder("Close dialog to apply color"));
-    jDialog1.getContentPane().add(jColorChooser, java.awt.BorderLayout.CENTER);
+    jDialogColor.getContentPane().add(jColorChooser, java.awt.BorderLayout.CENTER);
+
+    jDialogFont.setPreferredSize(new java.awt.Dimension(400, 100));
+    jDialogFont.addWindowListener(new java.awt.event.WindowAdapter()
+    {
+      public void windowClosing(java.awt.event.WindowEvent evt)
+      {
+        jDialogFontWindowClosing(evt);
+      }
+    });
+
+    jPanelFont.setBorder(javax.swing.BorderFactory.createTitledBorder("Close dialog to apply font"));
+    jPanelFont.setPreferredSize(new java.awt.Dimension(200, 59));
+    jPanelFont.setLayout(new java.awt.BorderLayout());
+
+    jTextPaneFontSize.setBorder(javax.swing.BorderFactory.createTitledBorder("font size"));
+    jTextPaneFontSize.setPreferredSize(new java.awt.Dimension(200, 37));
+    jPanelFont.add(jTextPaneFontSize, java.awt.BorderLayout.PAGE_START);
+
+    jDialogFont.getContentPane().add(jPanelFont, java.awt.BorderLayout.CENTER);
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setMinimumSize(new java.awt.Dimension(204, 204));
@@ -496,14 +518,14 @@ public class MainForm extends javax.swing.JFrame
     jSplitPane.setResizeWeight(0.8);
     jSplitPane.setToolTipText("");
 
-    jSplitPane1.setDividerSize(8);
-    jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-    jSplitPane1.setResizeWeight(1.0);
-    jSplitPane1.setToolTipText("");
-    jSplitPane1.setMinimumSize(new java.awt.Dimension(102, 100));
-    jSplitPane1.setName(""); // NOI18N
-    jSplitPane1.setPreferredSize(new java.awt.Dimension(102, 102));
-    jSplitPane1.setRequestFocusEnabled(false);
+    jSplitPaneTerminal.setDividerSize(8);
+    jSplitPaneTerminal.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+    jSplitPaneTerminal.setResizeWeight(1.0);
+    jSplitPaneTerminal.setToolTipText("");
+    jSplitPaneTerminal.setMinimumSize(new java.awt.Dimension(102, 100));
+    jSplitPaneTerminal.setName(""); // NOI18N
+    jSplitPaneTerminal.setPreferredSize(new java.awt.Dimension(102, 102));
+    jSplitPaneTerminal.setRequestFocusEnabled(false);
 
     textFieldInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textFieldInput.setName(""); // NOI18N
@@ -514,11 +536,10 @@ public class MainForm extends javax.swing.JFrame
         textFieldInputKeyPressed(evt);
       }
     });
-    jSplitPane1.setBottomComponent(textFieldInput);
+    jSplitPaneTerminal.setBottomComponent(textFieldInput);
 
     textAreaOutput.setEditable(false);
     textAreaOutput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
-    textAreaOutput.setText("Attention: view menu does not work\n");
     textAreaOutput.addTextListener(new java.awt.event.TextListener()
     {
       public void textValueChanged(java.awt.event.TextEvent evt)
@@ -526,9 +547,9 @@ public class MainForm extends javax.swing.JFrame
         textAreaOutputTextValueChanged(evt);
       }
     });
-    jSplitPane1.setTopComponent(textAreaOutput);
+    jSplitPaneTerminal.setTopComponent(textAreaOutput);
 
-    jSplitPane.setBottomComponent(jSplitPane1);
+    jSplitPane.setBottomComponent(jSplitPaneTerminal);
 
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
@@ -621,6 +642,13 @@ public class MainForm extends javax.swing.JFrame
     });
 
     jMenuViewFont.setText("Font");
+    jMenuViewFont.addActionListener(new java.awt.event.ActionListener()
+    {
+      public void actionPerformed(java.awt.event.ActionEvent evt)
+      {
+        jMenuViewFontActionPerformed(evt);
+      }
+    });
     jMenuView.add(jMenuViewFont);
 
     jMenuViewBackground.setText("Background");
@@ -911,20 +939,20 @@ public class MainForm extends javax.swing.JFrame
 
   private void jMenuViewBackgroundActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuViewBackgroundActionPerformed
   {//GEN-HEADEREND:event_jMenuViewBackgroundActionPerformed
-    jDialog1.setVisible(true);
-    jDialog1.pack();
+    jDialogColor.setVisible(true);
+    jDialogColor.pack();
   }//GEN-LAST:event_jMenuViewBackgroundActionPerformed
 
-  private void jDialog1WindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialog1WindowOpened
-  {//GEN-HEADEREND:event_jDialog1WindowOpened
+  private void jDialogColorWindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogColorWindowOpened
+  {//GEN-HEADEREND:event_jDialogColorWindowOpened
     jColorChooser.setColor(backgroundColor);
-  }//GEN-LAST:event_jDialog1WindowOpened
+  }//GEN-LAST:event_jDialogColorWindowOpened
 
-  private void jDialog1WindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialog1WindowClosing
-  {//GEN-HEADEREND:event_jDialog1WindowClosing
+  private void jDialogColorWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogColorWindowClosing
+  {//GEN-HEADEREND:event_jDialogColorWindowClosing
     backgroundColor = jColorChooser.getColor();
     setColor(backgroundColor);
-  }//GEN-LAST:event_jDialog1WindowClosing
+  }//GEN-LAST:event_jDialogColorWindowClosing
 
   private void jMenuFileCloseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFileCloseActionPerformed
   {//GEN-HEADEREND:event_jMenuFileCloseActionPerformed
@@ -933,6 +961,18 @@ public class MainForm extends javax.swing.JFrame
     curFile = null;
     inputClear();
   }//GEN-LAST:event_jMenuFileCloseActionPerformed
+
+  private void jMenuViewFontActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuViewFontActionPerformed
+  {//GEN-HEADEREND:event_jMenuViewFontActionPerformed
+    jDialogFont.setVisible(true);
+    jDialogFont.pack();
+  }//GEN-LAST:event_jMenuViewFontActionPerformed
+
+  private void jDialogFontWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogFontWindowClosing
+  {//GEN-HEADEREND:event_jDialogFontWindowClosing
+    curFontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
+    setFont(curFontSize);
+  }//GEN-LAST:event_jDialogFontWindowClosing
 
   /**
    * @param args the command line arguments
@@ -974,7 +1014,8 @@ public class MainForm extends javax.swing.JFrame
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JCheckBoxMenuItem jCheckBoxMenuLastFile;
   private javax.swing.JColorChooser jColorChooser;
-  private javax.swing.JDialog jDialog1;
+  private javax.swing.JDialog jDialogColor;
+  private javax.swing.JDialog jDialogFont;
   private javax.swing.JFileChooser jFileChooser;
   private javax.swing.JMenuBar jMenuBar;
   private javax.swing.JMenu jMenuFile;
@@ -989,8 +1030,10 @@ public class MainForm extends javax.swing.JFrame
   private javax.swing.JMenu jMenuView;
   private javax.swing.JMenuItem jMenuViewBackground;
   private javax.swing.JMenuItem jMenuViewFont;
+  private javax.swing.JPanel jPanelFont;
   private javax.swing.JSplitPane jSplitPane;
-  private javax.swing.JSplitPane jSplitPane1;
+  private javax.swing.JSplitPane jSplitPaneTerminal;
+  private javax.swing.JTextPane jTextPaneFontSize;
   private java.awt.TextArea textAreaInput;
   private java.awt.TextArea textAreaOutput;
   private java.awt.TextField textFieldInput;
