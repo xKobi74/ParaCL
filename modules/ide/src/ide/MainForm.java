@@ -556,7 +556,6 @@ public class MainForm extends javax.swing.JFrame
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textAreaInput.setMinimumSize(new java.awt.Dimension(100, 100));
-    textAreaInput.setPreferredSize(new java.awt.Dimension(100, 100));
     textAreaInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -972,8 +971,23 @@ public class MainForm extends javax.swing.JFrame
 
   private void jDialogFontWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogFontWindowClosing
   {//GEN-HEADEREND:event_jDialogFontWindowClosing
-    curFontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
+    try
+    {
+    int fontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
+    if (fontSize < 8) 
+    { 
+      logln("Error: ", "font size is too small " + jTextPaneFontSize.getText().trim());
+      jTextPaneFontSize.setText(Integer.toString(curFontSize));
+      return;
+    }
+    curFontSize = fontSize;
     setFont(curFontSize);
+    }
+    catch (NumberFormatException ex) 
+    {
+      logln("Error: ", "incorrect font size format " + jTextPaneFontSize.getText().trim());
+      jTextPaneFontSize.setText(Integer.toString(curFontSize));
+    }
   }//GEN-LAST:event_jDialogFontWindowClosing
 
   /**
