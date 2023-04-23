@@ -4,7 +4,7 @@
 Use commands from the project root
 * mkdir build
 * cd build
-* cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake
+* cmake ..
 * make
 And use next line to run the project
 * .modules/bison/pcli
