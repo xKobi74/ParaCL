@@ -32,6 +32,7 @@ import org.ini4j.Ini;
 public class MainForm extends javax.swing.JFrame
 {
 
+  //"global" variables
   public static String paraclPath;
   public static String configPath;
   public static SyncQueue inputQueue;
@@ -273,6 +274,7 @@ public class MainForm extends javax.swing.JFrame
     writer.close();
   }
 
+  //read .ini file by its path and return map with sections map of parameters
   private Map<String, Map<String, String>> downloadConfig(String path)
   {
     File configFile = new File(path);
@@ -290,6 +292,7 @@ public class MainForm extends javax.swing.JFrame
     }
   }
 
+  //take config map and write it in the ini file by path
   private void uploadConfig(String path, Map<String, Map<String, String>> config)
   {
     File configFile = new File(path);
@@ -311,7 +314,8 @@ public class MainForm extends javax.swing.JFrame
       System.out.println(ex);
     }
   }
-  
+
+  //take color and set its to all components
   private void setColor(Color color)
   {
     Color brightColor = color.brighter();
@@ -337,13 +341,17 @@ public class MainForm extends javax.swing.JFrame
     jMenuViewFont.setBackground(brightColor);
     jCheckBoxMenuLastFile.setBackground(brightColor);
     for (Component item : this.rootPane.getComponents())
+    {
       item.validate();
+    }
   }
+
+  //take font size and set it to all components
   private void setFont(int size)
   {
     Font baseFont = textAreaInput.getFont();
     Font font = new Font(baseFont.getFamily(), 0, size);
-    
+
     textAreaInput.setFont(font);
     textFieldInput.setFont(font);
     textAreaOutput.setFont(font);
@@ -365,54 +373,66 @@ public class MainForm extends javax.swing.JFrame
     jMenuViewFont.setFont(font);
     jCheckBoxMenuLastFile.setFont(font);
     for (Component item : this.rootPane.getComponents())
+    {
       item.validate();
+    }
   }
-    
+
+  //take config map and apply all parameters to form
   private void restoreConfig(Map<String, Map<String, String>> config)
   {
-     Map<String, String> settings = config.get("settings");
-     boolean startWithLastFile = "true".equals(settings.get("start-with-last-file"));
-     jCheckBoxMenuLastFile.setState(startWithLastFile);
-     String lastFile = settings.get("last-file");
-     if (startWithLastFile)
-     {
+    Map<String, String> settings = config.get("settings");
+    boolean startWithLastFile = "true".equals(settings.get("start-with-last-file"));
+    jCheckBoxMenuLastFile.setState(startWithLastFile);
+    String lastFile = settings.get("last-file");
+    if (startWithLastFile)
+    {
       if (lastFile.equals(""))
+      {
         curFile = null;
-      else
+      } else
+      {
         curFile = new File(lastFile);
+      }
       downloadFile(curFile);
-     }
-     
-     Map<String, String> view = config.get("view");
-     String color = view.get("background-color");
-     backgroundColor = new Color(Integer.parseInt(color));
-     setColor(backgroundColor);
-     String fontSize = view.get("font-size");
-     curFontSize = Integer.parseInt(fontSize);
-     setFont(curFontSize);
+    }
+
+    Map<String, String> view = config.get("view");
+    String color = view.get("background-color");
+    backgroundColor = new Color(Integer.parseInt(color));
+    setColor(backgroundColor);
+    String fontSize = view.get("font-size");
+    curFontSize = Integer.parseInt(fontSize);
+    setFont(curFontSize);
   }
-  
+
+  //take the old config map and return the new one with parameters that have been updated
   private Map<String, Map<String, String>> storeConfig(Map<String, Map<String, String>> config)
   {
-     Map<String, String> settings = config.get("settings");
-     boolean startWithLastFile = jCheckBoxMenuLastFile.getState();
-     settings.replace("start-with-last-file", "false"); 
-     if (startWithLastFile)  
-       settings.replace("start-with-last-file", "true");
-     String lastFile;
-     if (curFile == null)
-       lastFile = "";
-     else 
-       lastFile = curFile.toString();
-     settings.replace("last-file", lastFile);
-     config.replace("settings", settings);
-     
-     Map<String, String> view = config.get("view");
-     view.replace("background-color", Integer.toString(backgroundColor.getRGB()));
-     view.replace("font-size", Integer.toString(curFontSize));
-     config.replace("view", view);
-     
-     return config;
+    Map<String, String> settings = config.get("settings");
+    boolean startWithLastFile = jCheckBoxMenuLastFile.getState();
+    settings.replace("start-with-last-file", "false");
+    if (startWithLastFile)
+    {
+      settings.replace("start-with-last-file", "true");
+    }
+    String lastFile;
+    if (curFile == null)
+    {
+      lastFile = "";
+    } else
+    {
+      lastFile = curFile.toString();
+    }
+    settings.replace("last-file", lastFile);
+    config.replace("settings", settings);
+
+    Map<String, String> view = config.get("view");
+    view.replace("background-color", Integer.toString(backgroundColor.getRGB()));
+    view.replace("font-size", Integer.toString(curFontSize));
+    config.replace("view", view);
+
+    return config;
   }
 
   /**
@@ -837,6 +857,7 @@ public class MainForm extends javax.swing.JFrame
     textAreaOutput.setCaretPosition(textAreaOutput.getText().length());
   }//GEN-LAST:event_textAreaOutputTextValueChanged
 
+  //return position of the first char that equals symbol and to the left from start or -1 if there is no such symbol
   static int findLeft(String text, int start, char symbol)
   {
     int pos = start;
@@ -846,7 +867,8 @@ public class MainForm extends javax.swing.JFrame
     }
     return pos;
   }
-
+  
+  //return position of the first char that equals symbol and to the right from start or text length if there is no such symbol
   static int findRight(String text, int start, char symbol)
   {
     int pos = start;
@@ -857,7 +879,8 @@ public class MainForm extends javax.swing.JFrame
     }
     return pos;
   }
-
+  
+  //moves caret position in editor window
   private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textAreaInputKeyPressed
   {//GEN-HEADEREND:event_textAreaInputKeyPressed
     switch (evt.getKeyCode())
@@ -923,6 +946,7 @@ public class MainForm extends javax.swing.JFrame
     }
   }//GEN-LAST:event_textAreaInputKeyPressed
 
+  //update menu items to show them than menu bar is selected 
   private void jMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuSelected
   {//GEN-HEADEREND:event_jMenuSelected
     for (Component menu : jMenuBar.getComponents())
@@ -931,59 +955,67 @@ public class MainForm extends javax.swing.JFrame
       menu.setVisible(true);
     }
   }//GEN-LAST:event_jMenuSelected
-
+  
+  //save config parameters than window is closing
   private void formWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowClosing
   {//GEN-HEADEREND:event_formWindowClosing
     config = storeConfig(config);
     uploadConfig(configPath, config);
   }//GEN-LAST:event_formWindowClosing
-
+  
+  //show color choose dialog than view->background is typed
   private void jMenuViewBackgroundActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuViewBackgroundActionPerformed
   {//GEN-HEADEREND:event_jMenuViewBackgroundActionPerformed
     jDialogColor.setVisible(true);
     jDialogColor.pack();
   }//GEN-LAST:event_jMenuViewBackgroundActionPerformed
-
+  
+  //prepare color choose dialog than it appears
   private void jDialogColorWindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogColorWindowOpened
   {//GEN-HEADEREND:event_jDialogColorWindowOpened
     jColorChooser.setColor(backgroundColor);
   }//GEN-LAST:event_jDialogColorWindowOpened
-
+  
+  //aplly new parameteres than color choose dialog is closing
   private void jDialogColorWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogColorWindowClosing
   {//GEN-HEADEREND:event_jDialogColorWindowClosing
     backgroundColor = jColorChooser.getColor();
     setColor(backgroundColor);
   }//GEN-LAST:event_jDialogColorWindowClosing
 
+  //action on close menu item that saves current file, close it and clear editor
   private void jMenuFileCloseActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFileCloseActionPerformed
   {//GEN-HEADEREND:event_jMenuFileCloseActionPerformed
     if (!(curFile == null))
+    {
       uploadFile(curFile);
+    }
     curFile = null;
     inputClear();
   }//GEN-LAST:event_jMenuFileCloseActionPerformed
 
+  //show dialog for entering font size
   private void jMenuViewFontActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuViewFontActionPerformed
   {//GEN-HEADEREND:event_jMenuViewFontActionPerformed
     jDialogFont.setVisible(true);
     jDialogFont.pack();
   }//GEN-LAST:event_jMenuViewFontActionPerformed
-
+  
+  //apply new font parameteres than dialog is closing
   private void jDialogFontWindowClosing(java.awt.event.WindowEvent evt)//GEN-FIRST:event_jDialogFontWindowClosing
   {//GEN-HEADEREND:event_jDialogFontWindowClosing
     try
     {
-    int fontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
-    if (fontSize < 8) 
-    { 
-      logln("Error: ", "font size is too small " + jTextPaneFontSize.getText().trim());
-      jTextPaneFontSize.setText(Integer.toString(curFontSize));
-      return;
-    }
-    curFontSize = fontSize;
-    setFont(curFontSize);
-    }
-    catch (NumberFormatException ex) 
+      int fontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
+      if (fontSize < 8)
+      {
+        logln("Error: ", "font size is too small " + jTextPaneFontSize.getText().trim());
+        jTextPaneFontSize.setText(Integer.toString(curFontSize));
+        return;
+      }
+      curFontSize = fontSize;
+      setFont(curFontSize);
+    } catch (NumberFormatException ex)
     {
       logln("Error: ", "incorrect font size format " + jTextPaneFontSize.getText().trim());
       jTextPaneFontSize.setText(Integer.toString(curFontSize));
