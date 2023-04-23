@@ -7,6 +7,7 @@ package ide;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
@@ -39,6 +40,8 @@ public class MainForm extends javax.swing.JFrame
   public static Color backgroundColor;
   public static int curFontSize;
   public static File curFile = null;
+  public static int curWindowSizeX;
+  public static int curWindowSizeY;
 
   //output message to "IDE terminal" in format <prefix>+<message>
   private void log(String prefix, String message)
@@ -382,6 +385,11 @@ public class MainForm extends javax.swing.JFrame
         curFile = new File(lastFile);
       downloadFile(curFile);
      }
+     String windowSizeX = settings.get("window-size-x");
+     String windowSizeY = settings.get("window-size-y");
+     curWindowSizeX = Integer.parseInt(windowSizeX);
+     curWindowSizeY = Integer.parseInt(windowSizeY);
+     this.setSize(curWindowSizeX, curWindowSizeY);
      
      Map<String, String> view = config.get("view");
      String color = view.get("background-color");
@@ -405,6 +413,8 @@ public class MainForm extends javax.swing.JFrame
      else 
        lastFile = curFile.toString();
      settings.replace("last-file", lastFile);
+     settings.replace("window-size-x", Integer.toString(curWindowSizeX));
+     settings.replace("window-size-y", Integer.toString(curWindowSizeY));
      config.replace("settings", settings);
      
      Map<String, String> view = config.get("view");
@@ -484,7 +494,6 @@ public class MainForm extends javax.swing.JFrame
     jColorChooser.setBorder(javax.swing.BorderFactory.createTitledBorder("Close dialog to apply color"));
     jDialogColor.getContentPane().add(jColorChooser, java.awt.BorderLayout.CENTER);
 
-    jDialogFont.setPreferredSize(new java.awt.Dimension(400, 100));
     jDialogFont.addWindowListener(new java.awt.event.WindowAdapter()
     {
       public void windowClosing(java.awt.event.WindowEvent evt)
@@ -506,6 +515,13 @@ public class MainForm extends javax.swing.JFrame
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
     setMinimumSize(new java.awt.Dimension(204, 204));
     setPreferredSize(new java.awt.Dimension(800, 600));
+    addComponentListener(new java.awt.event.ComponentAdapter()
+    {
+      public void componentResized(java.awt.event.ComponentEvent evt)
+      {
+        formComponentResized(evt);
+      }
+    });
     addWindowListener(new java.awt.event.WindowAdapter()
     {
       public void windowClosing(java.awt.event.WindowEvent evt)
@@ -556,7 +572,6 @@ public class MainForm extends javax.swing.JFrame
     textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
     textAreaInput.setMinimumSize(new java.awt.Dimension(100, 100));
-    textAreaInput.setPreferredSize(new java.awt.Dimension(100, 100));
     textAreaInput.addKeyListener(new java.awt.event.KeyAdapter()
     {
       public void keyPressed(java.awt.event.KeyEvent evt)
@@ -975,6 +990,13 @@ public class MainForm extends javax.swing.JFrame
     curFontSize = Integer.parseInt(jTextPaneFontSize.getText().trim());
     setFont(curFontSize);
   }//GEN-LAST:event_jDialogFontWindowClosing
+
+  private void formComponentResized(java.awt.event.ComponentEvent evt)//GEN-FIRST:event_formComponentResized
+  {//GEN-HEADEREND:event_formComponentResized
+     Dimension dim = this.getSize();
+     curWindowSizeX = dim.width;
+     curWindowSizeY = dim.height;
+  }//GEN-LAST:event_formComponentResized
 
   /**
    * @param args the command line arguments
