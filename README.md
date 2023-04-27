@@ -1,5 +1,8 @@
 # ParaCL
 
+## Project description on russian
+https://docs.google.com/document/d/1gfWAsuOsdjPZoHkJ9sqVkvb7ycgv49zcBurZ4_SvTuQ/
+
 # How to build the project
 Use commands from the project root
 * mkdir build
