@@ -3,6 +3,7 @@
 extern int yylineno;
 
 ptree::Block* wrap_block(ptree::PTree* statement) {
+  if (statement == nullptr) return nullptr;
   ptree::Block* result = dynamic_cast<ptree::Block*> (statement);
   if (!result) {
       result = new ptree::Block{};

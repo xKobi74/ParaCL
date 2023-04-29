@@ -36,7 +36,8 @@
 
 %type<str> NUM ID
 %type<oper>  OP1 OP2 OP
-%type<oper> EXPR EXPR1 EXPR2 EXPR3 TERM VAL VAR
+%type<oper> EXPR EXPR1 EXPR2 EXPR3 TERM VAL 
+%type<lval> VAR
 %type<blk> BLOCK SCOPE OPS
 %type<cnd> COND
 
@@ -53,7 +54,8 @@ OPS:    OP                              {tmp = new ptree::Block(); tmp->push_exp
 |       OPS OP                          {tmp = new ptree::Block(std::move(*$1)); delete $1; tmp->push_expression($2); $$ = tmp;} //here just a version of block, which provides compilation
 ;
 
-SCOPE: LCB BLOCK RCB                      { $$ = $2; }
+SCOPE:   LCB RCB                          { $$ = new ptree::Block();}
+|        LCB BLOCK RCB                    { $$ = $2; }
 
 OP1:    SCOPE                             {$$ = $1;}
 |       EXPR SEQUENCE                     { $$ = new ptree::Expression(nullptr, $1);}
@@ -109,7 +111,7 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 |       VAR P_PLUS                      { $$ = new ptree::UnOp(ptree::UnOpType::POST_ADDITION, nullptr, $1); }
 |       VAR P_MINUS                     { $$ = new ptree::UnOp(ptree::UnOpType::POST_SUBTRACTION, nullptr, $1); }
 |       LPAR EXPR RPAR                  { $$ = $2; }
-|       VAR
+|       VAR                             { $$ = $1;}
 
 ;
 

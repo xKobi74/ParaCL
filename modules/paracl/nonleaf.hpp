@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ptree.hpp"
+#include "leaf.hpp"
 
 
 #include <string>
@@ -161,9 +162,11 @@ class Block: public NonLeaf {
 //HACK: left pointer is assignable object, right pointer is objects to assign
 class Assign : public Operation {
   public:
-  Assign(PTree* parent = nullptr, PTree* left = nullptr, PTree* right = nullptr): Operation(parent, left, right) {};
+  NameInt *lval;
+  Assign(PTree* parent = nullptr, NameInt* left = nullptr, PTree* right = nullptr): Operation(parent, nullptr, right), lval(left) {};
   
   std::string dump() const override;
+
 
   std::unique_ptr<PTree> execute(Stack* stack) const override;
 };

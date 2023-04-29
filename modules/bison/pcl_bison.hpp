@@ -12,6 +12,7 @@ typedef struct {
         ptree::PTree* oper;
         ptree::Block* blk;
         ptree::Condition* cnd;
+        ptree::NameInt* lval;
         
     } YYSTYPE;
     #define YYSTYPE YYSTYPE

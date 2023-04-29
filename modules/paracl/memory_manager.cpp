@@ -79,7 +79,7 @@ void manage_mem(PTree *unit, MemManager &memfunc) {
 	}
 	Assign *assign = dynamic_cast<Assign *>(unit);
 	if (assign) {
-		NameInt *nameint = dynamic_cast<NameInt *>(assign->getleft());
+		NameInt *nameint = assign->lval;
 		nameint->setoffset(memfunc.getnameoffset(nameint->getvarname()));
 		if (nameint->getoffset() < 0)
 			nameint->setoffset(memfunc(nameint->getvarname()));

@@ -249,15 +249,16 @@ std::unique_ptr<PTree> Block::execute(Stack *stack) const {
 std::string Assign::dump() const {
   std::string res;
   res += get_chld_dump();
+  res += lval->dump();
 
   res += getname() + "[shape = record, label=\"{Assignation (a = b) \\n |" +
-         "{ " + get_addr(getleft()) + "\\n (a) | " + get_addr(getright()) +
+         "{ " + get_addr(lval) + "\\n (a) | " + get_addr(getright()) +
          "\\n(b)}}\"]\n";
 
   // HACK: no get_links() here, because nodes should be colorized and with
   // caption
-  if (getleft() != nullptr)
-    res += getname() + " -> " + getleft()->getname() +
+  if (lval != nullptr)
+    res += getname() + " -> " + lval->getname() +
            "[color=\"black\", label=\"assignable\"]\n";
   if (getright() != nullptr)
     res += getname() + " -> " + getright()->getname() +
@@ -271,11 +272,11 @@ std::unique_ptr<PTree> Assign::execute(Stack *stack) const {
   std::cout << "Assign execute" << std::endl;
 #endif
   // I`m so sorry for using dynamic cast here, maybe should use typeid + static_cast
-  NameInt *var = dynamic_cast<NameInt *>(getleft());
+  //TODO: make here NameInt pointer to avoid dynamic cast
   std::unique_ptr<PTree> executed = getright()->execute(stack);
   const Imidiate<int> *to_assign =
       dynamic_cast<Imidiate<int> *>(executed.get());
-  var->setvalue(to_assign->getvalue(), stack);
+  lval->setvalue(to_assign->getvalue(), stack);
   return executed;
 }
 
@@ -336,6 +337,7 @@ std::unique_ptr<PTree> IfBlk::execute(Stack *stack) const {
 #ifdef DBG_CALL
   std::cout << "If execute" << std::endl;
 #endif
+  //TODO: remove condidition == nullptr to throw
   if (condition_ == nullptr)
     return std::unique_ptr<PTree>{};
 
@@ -370,6 +372,7 @@ std::unique_ptr<PTree> WhileBlk::execute(Stack *stack) const {
 #ifdef DBG_CALL
   std::cout << "While execute" << std::endl;
 #endif
+  //TODO: remove condition == nullptr
   if (condition_ == nullptr)
     return std::unique_ptr<PTree>{};
 
