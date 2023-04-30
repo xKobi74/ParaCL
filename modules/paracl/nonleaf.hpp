@@ -14,7 +14,7 @@
 #ifdef CPP20
 #include <format>
 #endif
-
+//TODO: implement yyerrok option to provide more complicated error catching
 /*
 class structure:
 1) NonLeaf - not for direct call, contains all nonleafs classes

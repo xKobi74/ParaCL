@@ -1,6 +1,10 @@
 #include "nonleaf.hpp"
 #include "leaf.hpp"
 
+#include <stdexcept>
+#include <exception>
+
+
 namespace ptree {
 std::string NonLeaf::get_links() const {
   std::string res{""};
@@ -271,8 +275,6 @@ std::unique_ptr<PTree> Assign::execute(Stack *stack) const {
 #ifdef DBG_CALL
   std::cout << "Assign execute" << std::endl;
 #endif
-  // I`m so sorry for using dynamic cast here, maybe should use typeid + static_cast
-  //TODO: make here NameInt pointer to avoid dynamic cast
   std::unique_ptr<PTree> executed = getright()->execute(stack);
   const Imidiate<int> *to_assign =
       dynamic_cast<Imidiate<int> *>(executed.get());
@@ -338,8 +340,10 @@ std::unique_ptr<PTree> IfBlk::execute(Stack *stack) const {
   std::cout << "If execute" << std::endl;
 #endif
   //TODO: remove condidition == nullptr to throw
-  if (condition_ == nullptr)
+  if (condition_ == nullptr) {
+    throw std::logic_error{"Missing condition in if block"};
     return std::unique_ptr<PTree>{};
+  }
 
   if (condition_->is_true(stack)) {
     if (getright() != nullptr)
@@ -372,9 +376,11 @@ std::unique_ptr<PTree> WhileBlk::execute(Stack *stack) const {
 #ifdef DBG_CALL
   std::cout << "While execute" << std::endl;
 #endif
-  //TODO: remove condition == nullptr
-  if (condition_ == nullptr)
+
+  if (condition_ == nullptr){
+    throw std::logic_error("No condition in while cycle");
     return std::unique_ptr<PTree>{};
+  }
 
   while (condition_->is_true(stack))
     getleft()->execute(stack);
