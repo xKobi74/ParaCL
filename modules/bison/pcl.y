@@ -5,6 +5,7 @@
     #include <vector>
     #include <typeinfo>
     #include <type_traits>
+    #include <chrono>
 
     #include "pcl_bison.hpp"
     #include "../paracl/memory_manager.hpp"
@@ -13,6 +14,10 @@
     namespace po = boost::program_options;
     #include <iterator>
     #include <fstream>
+
+    using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
+    using std::chrono::milliseconds;
    
     extern int yylineno;
     extern int yylex();
@@ -119,7 +124,11 @@ VAL:    NUM                             { $$ = new ptree::Imidiate<int>(nullptr,
 
 
 %%
+
+
+
 int main(int ac, char* av[]) { 
+    bool opt_time = false;
     try {
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -128,6 +137,7 @@ int main(int ac, char* av[]) {
         ("build, b", "only builds program without execute")
         ("dump-tree, d", "dumps built tree to file default: out.dot")
         ("dump-out", po::value<std::string>(), "sets output file name")
+        ("time-stamp", "makes time measurements on building and execution")
         ("input-file", po::value<std::string>(), "input file")
     ;
     po::positional_options_description p;
@@ -142,7 +152,7 @@ int main(int ac, char* av[]) {
         return 0;
     }
     if (vm.count("version")) {
-        std::cout << "ParaCL interpreter 1.0.1"<< std::endl;
+        std::cout << "ParaCL interpreter 1.0.2"<< std::endl;
         std::cout << "Authors: Ilya Gavrilin and Eugene Bogdanov" << std::endl;
         std::cout <<  std::endl;
         std::cout << "This is free software;There is NO warranty;" << std::endl;
@@ -150,15 +160,27 @@ int main(int ac, char* av[]) {
         return 0;
     }
 
+    if (vm.count("time-stamp")) {
+        opt_time = true;
+    }
+    
+
     if (!vm.count("input-file")) {
         std::cout << "No input file provided" << std::endl;
         return -1;
     }
     FILE* fh;
     if ((fh = fopen(vm["input-file"].as<std::string>().c_str(), "r"))) yyin = fh;
-    
+    auto tstart = high_resolution_clock::now();
     int res = yyparse();
     ptree::MemManager  memfunc = ptree::manage_tree_mem(blocks.back());
+    auto tfin = high_resolution_clock::now();
+    
+    if (opt_time) {
+        std::cout << "Build finished, elapsed time: " << duration_cast<milliseconds>(tfin - tstart).count()
+           << " ms" << std::endl;
+    }
+
     if (vm.count("dump-tree")) {
         std::string dump = "digraph G {\n";
         dump += (blocks.back())->dump();
@@ -179,9 +201,18 @@ int main(int ac, char* av[]) {
         return 0;
     } 
 
+    tstart = high_resolution_clock::now();
     ptree::Stack* stack = new ptree::Stack{memfunc.getmaxstacksize()};
     (blocks.back())->execute(stack);
+    tfin = high_resolution_clock::now();
+
+    if (opt_time) {
+        std::cout << "Execute finished, elapsed time: " << duration_cast<milliseconds>(tfin - tstart).count()
+            << " ms" << std::endl;
+    }
+
     delete stack;
+    
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << std::endl;

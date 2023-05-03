@@ -3,7 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mipt/ParaCL/modules/ide/src/ide/MainForm.java</file>
+            <file>file:/home/ilya/Документы/GitHub/ParaCL/modules/ide/src/config.ini</file>
+            <file>file:/home/ilya/Документы/GitHub/ParaCL/modules/ide/src/ide/MainForm.java</file>
+            <file>file:/home/ilya/Документы/GitHub/ParaCL/modules/ide/src/ide/SyncQueue.java</file>
+            <file>file:/home/ilya/Документы/GitHub/ParaCL/modules/ide/src/ide/Ide.java</file>
+            <file>file:/home/ilya/Документы/GitHub/ParaCL/modules/ide/src/ide/Printable.java</file>
         </group>
     </open-files>
 </project-private>
