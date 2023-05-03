@@ -118,7 +118,7 @@ public class MainForm extends javax.swing.JFrame
       int c;
       while ((c = reader.read(buf)) > 0)
       {
-        if (c < 256)
+        if (c <= 256)
         {
           buf = Arrays.copyOf(buf, c);
           output(new String(buf));
@@ -217,7 +217,18 @@ public class MainForm extends javax.swing.JFrame
   private void addOpts(List<String> args) {
       checkOpts();
       if (opt_time) args.add("--time-stamp");
-      if (opt_dump) args.add("--dump");
+      if (opt_dump) args.add("--dump-tree");
+  }
+  
+  private void drawGraph(String fname) throws Exception {
+      List<String> command = new ArrayList<String>();
+      command.add("dot");
+      command.add("-Tpng");
+      command.add(fname);
+      command.add("-o");
+      command.add(fname+".png");
+      ProcessBuilder processBuilder = new ProcessBuilder(command);
+      processBuilder.start();
   }
 
     //compile String code with ParaCL
@@ -233,6 +244,7 @@ public class MainForm extends javax.swing.JFrame
     command.add(paraclPath);
     command.add(curFile.toString());
     command.add("--build");
+    
     addOpts(command);
     
     ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -250,6 +262,7 @@ public class MainForm extends javax.swing.JFrame
     readBuf(errorReader);
     reader.close();
     errorReader.close();
+    if (opt_dump) drawGraph("out.dot");
   }
 
   //compile String code with ParaCL
@@ -293,6 +306,7 @@ public class MainForm extends javax.swing.JFrame
     reader.close();
     errorReader.close();
     writer.close();
+    if (opt_dump) drawGraph("out.dot");
   }
 
   private Map<String, Map<String, String>> downloadConfig(String path)
