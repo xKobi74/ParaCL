@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toMap;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.ini4j.Ini;
 
 /**
@@ -43,7 +45,8 @@ public class MainForm extends javax.swing.JFrame
   public static int curWindowSizeX;
   public static int curWindowSizeY;
   public static boolean opt_dump = false;
-  public static boolean opt_time = false;
+  public static boolean opt_time = true;
+  public UndoManager undoManager; 
 
   //output message to "IDE terminal" in format <prefix>+<message>
   private void log(String prefix, String message)
@@ -475,10 +478,22 @@ public class MainForm extends javax.swing.JFrame
     configPath = workingDirectory + "src/config.ini";
     inputQueue = new SyncQueue();
     initComponents();
+    initUndoManager();
     config = downloadConfig(configPath);
     restoreConfig(config);
   }
-
+  
+  private void initUndoManager() {
+    undoManager = new UndoManager();
+    undoManager.addChangeListener(new ChangeListener() {
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        jUndo.setEnabled(undoManager.canUndo());
+        jRedo.setEnabled(undoManager.canRedo());
+    }
+    });
+    textAreaInput.getDocument().addUndoableEditListener(undoManager);
+  }
   /**
    * This method is called from within the constructor to initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is always
@@ -498,7 +513,8 @@ public class MainForm extends javax.swing.JFrame
         jSplitPaneTerminal = new javax.swing.JSplitPane();
         textFieldInput = new java.awt.TextField();
         textAreaOutput = new java.awt.TextArea();
-        textAreaInput = new java.awt.TextArea();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textAreaInput = new javax.swing.JTextArea();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -508,6 +524,8 @@ public class MainForm extends javax.swing.JFrame
         jMenuView = new javax.swing.JMenu();
         jMenuViewFont = new javax.swing.JMenuItem();
         jMenuViewBackground = new javax.swing.JMenuItem();
+        jUndo = new javax.swing.JMenuItem();
+        jRedo = new javax.swing.JMenuItem();
         jMenuSettings = new javax.swing.JMenu();
         jCheckBoxMenuLastFile = new javax.swing.JCheckBoxMenuItem();
         jMenuOptions = new javax.swing.JMenu();
@@ -596,15 +614,19 @@ public class MainForm extends javax.swing.JFrame
 
         jSplitPane.setBottomComponent(jSplitPaneTerminal);
 
-        textAreaInput.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        textAreaInput.setFont(new java.awt.Font("Ubuntu Mono", 0, 14)); // NOI18N
-        textAreaInput.setMinimumSize(new java.awt.Dimension(100, 100));
+        jScrollPane1.setBackground(new java.awt.Color(223, 223, 223));
+
+        textAreaInput.setBackground(new java.awt.Color(223, 223, 223));
+        textAreaInput.setColumns(20);
+        textAreaInput.setRows(5);
         textAreaInput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 textAreaInputKeyPressed(evt);
             }
         });
-        jSplitPane.setTopComponent(textAreaInput);
+        jScrollPane1.setViewportView(textAreaInput);
+
+        jSplitPane.setLeftComponent(jScrollPane1);
 
         getContentPane().add(jSplitPane, java.awt.BorderLayout.CENTER);
 
@@ -682,6 +704,24 @@ public class MainForm extends javax.swing.JFrame
             }
         });
         jMenuView.add(jMenuViewBackground);
+
+        jUndo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jUndo.setText("Undo");
+        jUndo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jUndoActionPerformed(evt);
+            }
+        });
+        jMenuView.add(jUndo);
+
+        jRedo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        jRedo.setText("Redo");
+        jRedo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRedoActionPerformed(evt);
+            }
+        });
+        jMenuView.add(jRedo);
 
         jMenuBar.add(jMenuView);
 
@@ -888,71 +928,6 @@ public class MainForm extends javax.swing.JFrame
     return pos;
   }
 
-  private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt)//GEN-FIRST:event_textAreaInputKeyPressed
-  {//GEN-HEADEREND:event_textAreaInputKeyPressed
-    switch (evt.getKeyCode())
-    {
-      case KeyEvent.VK_UP:
-      {
-        int pos = textAreaInput.getCaretPosition();
-        String text = input();
-        int left = findLeft(text, pos - 1, '\n');
-        if (left < 0)
-        {
-          break;
-        }
-        int offset = pos - left;
-        int newleft = findLeft(text, left - 1, '\n');
-        int newpos = newleft + offset;
-        if (newpos > left)
-        {
-          newpos = left;
-        }
-        textAreaInput.setCaretPosition(newpos);
-        break;
-      }
-      case KeyEvent.VK_DOWN:
-      {
-        int pos = textAreaInput.getCaretPosition();
-        String text = input();
-        int end = text.length();
-        int left = findLeft(text, pos - 1, '\n');
-        int offset = pos - left;
-        int right = findRight(text, pos, '\n');
-        int newpos = right + offset;
-        int newright = findRight(text, right + 1, '\n');
-        if (newpos > end)
-        {
-          newpos = end;
-        } else if (newpos > newright)
-        {
-          newpos = newright;
-        }
-        textAreaInput.setCaretPosition(newpos);
-        break;
-      }
-      case KeyEvent.VK_LEFT:
-        if (textAreaInput.getCaretPosition() == 0)
-        {
-          break;
-        }
-        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
-        break;
-      case KeyEvent.VK_RIGHT:
-        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
-        break;
-      case KeyEvent.VK_AGAIN:
-      case KeyEvent.VK_UNDO:
-      case KeyEvent.VK_COPY:
-      case KeyEvent.VK_PASTE:
-      case KeyEvent.VK_CUT:
-      case KeyEvent.VK_FIND:
-      case KeyEvent.VK_PROPS:
-      case KeyEvent.VK_STOP:
-        break;
-    }
-  }//GEN-LAST:event_textAreaInputKeyPressed
-
   private void jMenuSelected(javax.swing.event.MenuEvent evt)//GEN-FIRST:event_jMenuSelected
   {//GEN-HEADEREND:event_jMenuSelected
     for (Component menu : jMenuBar.getComponents())
@@ -1020,6 +995,78 @@ public class MainForm extends javax.swing.JFrame
         opt_time = jCheckBoxMenuTime.getState();
     }//GEN-LAST:event_jCheckBoxMenuTimeActionPerformed
 
+    private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaInputKeyPressed
+        switch (evt.getKeyCode())
+    {
+      case KeyEvent.VK_UP:
+      {
+        int pos = textAreaInput.getCaretPosition();
+        String text = input();
+        int left = findLeft(text, pos - 1, '\n');
+        if (left < 0)
+        {
+          break;
+        }
+        int offset = pos - left;
+        int newleft = findLeft(text, left - 1, '\n');
+        int newpos = newleft + offset;
+        if (newpos > left)
+        {
+          newpos = left;
+        }
+        textAreaInput.setCaretPosition(newpos);
+        break;
+      }
+      case KeyEvent.VK_DOWN:
+      {
+        int pos = textAreaInput.getCaretPosition();
+        String text = input();
+        int end = text.length();
+        int left = findLeft(text, pos - 1, '\n');
+        int offset = pos - left;
+        int right = findRight(text, pos, '\n');
+        int newpos = right + offset;
+        int newright = findRight(text, right + 1, '\n');
+        if (newpos > end)
+        {
+          newpos = end;
+        } else if (newpos > newright)
+        {
+          newpos = newright;
+        }
+        textAreaInput.setCaretPosition(newpos);
+        break;
+      }
+      case KeyEvent.VK_LEFT:
+        if (textAreaInput.getCaretPosition() == 0)
+        {
+          break;
+        }
+        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
+        break;
+      case KeyEvent.VK_RIGHT:
+        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
+        break;
+      case KeyEvent.VK_AGAIN:
+      case KeyEvent.VK_UNDO:
+      case KeyEvent.VK_COPY:
+      case KeyEvent.VK_PASTE:
+      case KeyEvent.VK_CUT:
+      case KeyEvent.VK_FIND:
+      case KeyEvent.VK_PROPS:
+      case KeyEvent.VK_STOP:
+        break;
+    }
+    }//GEN-LAST:event_textAreaInputKeyPressed
+
+    private void jUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUndoActionPerformed
+        undoManager.undo();
+    }//GEN-LAST:event_jUndoActionPerformed
+
+    private void jRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRedoActionPerformed
+        undoManager.redo();
+    }//GEN-LAST:event_jRedoActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -1080,10 +1127,13 @@ public class MainForm extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuViewBackground;
     private javax.swing.JMenuItem jMenuViewFont;
     private javax.swing.JPanel jPanelFont;
+    private javax.swing.JMenuItem jRedo;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane;
     private javax.swing.JSplitPane jSplitPaneTerminal;
     private javax.swing.JTextPane jTextPaneFontSize;
-    private java.awt.TextArea textAreaInput;
+    private javax.swing.JMenuItem jUndo;
+    private javax.swing.JTextArea textAreaInput;
     private java.awt.TextArea textAreaOutput;
     private java.awt.TextField textFieldInput;
     // End of variables declaration//GEN-END:variables
