@@ -26,6 +26,9 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoManager;
 import org.ini4j.Ini;
 
 /**
@@ -46,7 +49,7 @@ public class MainForm extends javax.swing.JFrame
   public static int curWindowSizeY;
   public static boolean opt_dump = false;
   public static boolean opt_time = true;
-  public UndoManager undoManager; 
+  public MyUndoableEditListener undoManager; 
 
   //output message to "IDE terminal" in format <prefix>+<message>
   private void log(String prefix, String message)
@@ -134,7 +137,8 @@ public class MainForm extends javax.swing.JFrame
       return false;
     }
     System.out.println("menu->file->open->" + iFile);
-    logln("Message: ", "File " + iFile + " sucessfully downlad");
+    logln("Message: ", "File " + iFile + " sucessfully download");
+    undoManager.discardAllEdits();
     return true;
   }
 
@@ -374,6 +378,8 @@ public class MainForm extends javax.swing.JFrame
     jMenuSettings.setBackground(brightColor);
     jMenuView.setBackground(brightColor);
     jMenuViewBackground.setBackground(brightColor);
+    jUndo.setBackground(brightColor);
+    jRedo.setBackground(brightColor);
     jMenuViewFont.setBackground(brightColor);
     jCheckBoxMenuLastFile.setBackground(brightColor);
     jCheckBoxMenuDump.setBackground(brightColor);
@@ -409,6 +415,8 @@ public class MainForm extends javax.swing.JFrame
     jMenuOptions.setFont(font);
     jCheckBoxMenuDump.setFont(font);
     jCheckBoxMenuTime.setFont(font);
+    jUndo.setFont(font);
+    jRedo.setFont(font);
     for (Component item : this.rootPane.getComponents())
       item.validate();
   }
@@ -483,17 +491,28 @@ public class MainForm extends javax.swing.JFrame
     restoreConfig(config);
   }
   
+
   private void initUndoManager() {
-    undoManager = new UndoManager();
-    undoManager.addChangeListener(new ChangeListener() {
-    @Override
-    public void stateChanged(ChangeEvent e) {
+    undoManager = new MyUndoableEditListener();
+    undoManager. addChangeListener( new ChangeListener() {
+         @Override
+         public void stateChanged(ChangeEvent e) {
         jUndo.setEnabled(undoManager.canUndo());
         jRedo.setEnabled(undoManager.canRedo());
     }
-    });
+    }
+    );
     textAreaInput.getDocument().addUndoableEditListener(undoManager);
   }
+  
+ /* private void updateUndoManager() {
+      //jUndo.getParent().validate();
+      //jRedo.getParent().validate();
+      System.out.println(undoManager.canUndo());
+      jUndo.setEnabled(undoManager.canUndo());
+      jRedo.setEnabled(undoManager.canRedo());
+  
+  }*/
   /**
    * This method is called from within the constructor to initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is always
@@ -996,6 +1015,7 @@ public class MainForm extends javax.swing.JFrame
     }//GEN-LAST:event_jCheckBoxMenuTimeActionPerformed
 
     private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaInputKeyPressed
+        
         switch (evt.getKeyCode())
     {
       case KeyEvent.VK_UP:
@@ -1045,7 +1065,8 @@ public class MainForm extends javax.swing.JFrame
         textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
         break;
       case KeyEvent.VK_RIGHT:
-        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
+          if (textAreaInput.getCaretPosition() + 1 > input().length()) break;
+          textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
         break;
       case KeyEvent.VK_AGAIN:
       case KeyEvent.VK_UNDO:
@@ -1060,6 +1081,8 @@ public class MainForm extends javax.swing.JFrame
     }//GEN-LAST:event_textAreaInputKeyPressed
 
     private void jUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUndoActionPerformed
+        System.out.println("Undo called");
+        
         undoManager.undo();
     }//GEN-LAST:event_jUndoActionPerformed
 

@@ -22,7 +22,7 @@ import javax.swing.undo.UndoableEdit;
  * @author ilya
  */
 
-public class UndoManager extends AbstractUndoableEdit implements UndoableEditListener {
+public class MyUndoManager extends AbstractUndoableEdit implements UndoableEditListener {
     private String lastEditName = null;
     private List<MergeComponentEdit> edits = new ArrayList<MergeComponentEdit>(32);
     private MergeComponentEdit current;
@@ -159,3 +159,4 @@ public class UndoManager extends AbstractUndoableEdit implements UndoableEditLis
 
     }
 }
+
