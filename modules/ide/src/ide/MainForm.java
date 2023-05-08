@@ -28,6 +28,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 import org.ini4j.Ini;
 
@@ -71,14 +73,24 @@ public class MainForm extends javax.swing.JFrame
     log(prefix, message + '\n');
   }
 
-  //output text to "IDE editor" in format <message>
+  
+
+public void append(String s, javax.swing.JTextPane pane){
+   try {
+      Document doc = pane.getDocument();
+      doc.insertString(doc.getLength(), s, null);
+   } catch(BadLocationException exc) {
+      exc.printStackTrace();
+   }
+}
+//output text to "IDE editor" in format <message>
   private void output(String text)
   {
     if (text == null)
     {
       return;
     }
-    textAreaInput.append(text);
+    append(text, textAreaInput);
   }
 
   //output text to "IDE editor" in format <message>+'\n'
@@ -533,7 +545,7 @@ public class MainForm extends javax.swing.JFrame
         textFieldInput = new java.awt.TextField();
         textAreaOutput = new java.awt.TextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
-        textAreaInput = new javax.swing.JTextArea();
+        textAreaInput = new ide.syntaxPane.JSyntaxTextPane();
         jMenuBar = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemFileOpen = new javax.swing.JMenuItem();
@@ -636,13 +648,6 @@ public class MainForm extends javax.swing.JFrame
         jScrollPane1.setBackground(new java.awt.Color(223, 223, 223));
 
         textAreaInput.setBackground(new java.awt.Color(223, 223, 223));
-        textAreaInput.setColumns(20);
-        textAreaInput.setRows(5);
-        textAreaInput.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                textAreaInputKeyPressed(evt);
-            }
-        });
         jScrollPane1.setViewportView(textAreaInput);
 
         jSplitPane.setLeftComponent(jScrollPane1);
@@ -1014,72 +1019,6 @@ public class MainForm extends javax.swing.JFrame
         opt_time = jCheckBoxMenuTime.getState();
     }//GEN-LAST:event_jCheckBoxMenuTimeActionPerformed
 
-    private void textAreaInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaInputKeyPressed
-        
-        switch (evt.getKeyCode())
-    {
-      case KeyEvent.VK_UP:
-      {
-        int pos = textAreaInput.getCaretPosition();
-        String text = input();
-        int left = findLeft(text, pos - 1, '\n');
-        if (left < 0)
-        {
-          break;
-        }
-        int offset = pos - left;
-        int newleft = findLeft(text, left - 1, '\n');
-        int newpos = newleft + offset;
-        if (newpos > left)
-        {
-          newpos = left;
-        }
-        textAreaInput.setCaretPosition(newpos);
-        break;
-      }
-      case KeyEvent.VK_DOWN:
-      {
-        int pos = textAreaInput.getCaretPosition();
-        String text = input();
-        int end = text.length();
-        int left = findLeft(text, pos - 1, '\n');
-        int offset = pos - left;
-        int right = findRight(text, pos, '\n');
-        int newpos = right + offset;
-        int newright = findRight(text, right + 1, '\n');
-        if (newpos > end)
-        {
-          newpos = end;
-        } else if (newpos > newright)
-        {
-          newpos = newright;
-        }
-        textAreaInput.setCaretPosition(newpos);
-        break;
-      }
-      case KeyEvent.VK_LEFT:
-        if (textAreaInput.getCaretPosition() == 0)
-        {
-          break;
-        }
-        textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() - 1);
-        break;
-      case KeyEvent.VK_RIGHT:
-          if (textAreaInput.getCaretPosition() + 1 > input().length()) break;
-          textAreaInput.setCaretPosition(textAreaInput.getCaretPosition() + 1);
-        break;
-      case KeyEvent.VK_AGAIN:
-      case KeyEvent.VK_UNDO:
-      case KeyEvent.VK_COPY:
-      case KeyEvent.VK_PASTE:
-      case KeyEvent.VK_CUT:
-      case KeyEvent.VK_FIND:
-      case KeyEvent.VK_PROPS:
-      case KeyEvent.VK_STOP:
-        break;
-    }
-    }//GEN-LAST:event_textAreaInputKeyPressed
-
     private void jUndoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jUndoActionPerformed
         System.out.println("Undo called");
         
@@ -1156,7 +1095,7 @@ public class MainForm extends javax.swing.JFrame
     private javax.swing.JSplitPane jSplitPaneTerminal;
     private javax.swing.JTextPane jTextPaneFontSize;
     private javax.swing.JMenuItem jUndo;
-    private javax.swing.JTextArea textAreaInput;
+    private ide.syntaxPane.JSyntaxTextPane textAreaInput;
     private java.awt.TextArea textAreaOutput;
     private java.awt.TextField textFieldInput;
     // End of variables declaration//GEN-END:variables

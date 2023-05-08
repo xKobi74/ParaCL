@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent.EventType;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.text.AbstractDocument;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 
 /**
  *
@@ -35,10 +38,19 @@ class MyUndoableEditListener implements UndoableEditListener {
     
     @Override
     public void undoableEditHappened(UndoableEditEvent e) {
-        System.out.println("Undoable event");
+
+        UndoableEdit  evt = e.getEdit();
+        if (evt instanceof AbstractDocument.DefaultDocumentEvent) {
+                AbstractDocument.DefaultDocumentEvent event = (AbstractDocument.DefaultDocumentEvent) evt;
+                EventType type = event.getType();
+                if (type == EventType.INSERT || type == EventType.REMOVE) {
+                    System.out.println("Undoable event happened");
+                    undoManager.undoableEditHappened(e);
+                    OpStateChanged();
+                }
+        }        
         //Remember the edit and update the menus
-        undoManager.undoableEditHappened(e);
-        OpStateChanged();
+        
     }
     
     protected void OpStateChanged() {
