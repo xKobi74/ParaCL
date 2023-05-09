@@ -1,5 +1,8 @@
+// example from default ParaCL examples
+// tests work with empty blocks
 a = -1;
 if (?)
+  //empty block creation
   if (?) {}
 else
   a = 1;

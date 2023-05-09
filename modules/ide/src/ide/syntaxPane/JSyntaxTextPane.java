@@ -44,13 +44,18 @@ public class JSyntaxTextPane extends JTextPane {
     AttributeSet defaultForeground = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.black);
     AttributeSet defaultNumbers = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, new Color(115, 214, 34));
     AttributeSet defaultComment = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.gray);
+    private boolean isStyled = true;
     
     
+    public void setStyled(boolean styled) {
+        isStyled = styled;
+    }
     public JSyntaxTextPane () {
         // Styler
         DefaultStyledDocument doc = new DefaultStyledDocument() {
+            
             private void highlightComments() throws BadLocationException{
-            String text = getText(0, getLength());
+            String text = addTerminate(getText(0, getLength()));
 
             Pattern pattern = Pattern.compile("//.*");
             Matcher matcher = pattern.matcher(text);
@@ -62,10 +67,9 @@ public class JSyntaxTextPane extends JTextPane {
             }
             
             }
-            public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
-                super.insertString(offset, getDeveloperShortcuts(str), a);
-
-                String text = getText(0, getLength());
+            
+            private void highlightInsert(int offset, String str, AttributeSet a) throws BadLocationException {
+                String text = addTerminate(getText(0, getLength()));
                 int before = findLastNonWordChar(text, offset);
                 if (before < 0) before = 0;
                 int after = findFirstNonWordChar(text, offset + str.length());
@@ -76,12 +80,6 @@ public class JSyntaxTextPane extends JTextPane {
                     if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
                         // Colors words in appropriate style, if nothing matches, make it default black
                         boolean matchFound = false;
-                        
-                        
-                        if (text.substring(wordL, wordR).matches("(\\W)*(\\/\\/.*)")) {
-                            setCharacterAttributes(wordL, wordR - wordL, defaultComment, false);
-                            matchFound = true;
-                        }
                         
                         for (KeyWord keyWord : keyWords) {
                             if (text.substring(wordL, wordR).matches("(\\W)*("+keyWord.getWords()+")")) {
@@ -95,14 +93,7 @@ public class JSyntaxTextPane extends JTextPane {
                             setCharacterAttributes(wordL, wordR - wordL, defaultNumbers, false);
                             matchFound = true;
                         }
-                        
                        
-                        
-                        // ================ ANY ADDITIONAL HIGHLIGHTING LOGIC MAY BE ADDED HERE
-                        // Ideas: highlighting a comment; highlighting method calls;
-                        
-                        // ================
-                        
                         // If no match found, make text default colored
                         if(!matchFound) {
                             setCharacterAttributes(wordL, wordR - wordL, defaultForeground, false);
@@ -113,23 +104,26 @@ public class JSyntaxTextPane extends JTextPane {
                     
                     wordR++;
                 }
-                highlightComments();
             }
-
-            public void remove (int offs, int len) throws BadLocationException {
-                super.remove(offs, len);
-
-                String text = getText(0, getLength());
+            @Override
+            public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
+                super.insertString(offset, getDeveloperShortcuts(str), a);
+                if (isStyled) {
+                    highlightInsert(offset, str, a);
+                    highlightComments();
+                } else {
+                    setCharacterAttributes(0, getLength(), defaultForeground, false);
+                }
+            }
+            
+            private void highlightRemove(int offs, int len) throws BadLocationException {
+                String text = addTerminate(getText(0, getLength()));
                 int before = findLastNonWordChar(text, offs);
                 if (before < 0) before = 0;
                 int after = findFirstNonWordChar(text, offs);
 
                 // Colors words in appropriate style, if nothing matches, make it default black
                 boolean matchFound = false;
-                if (text.substring(before, after).matches("(\\W)*(\\/\\/.*)")) {
-                            setCharacterAttributes(before, after - before, defaultComment, false);
-                            matchFound = true;
-                        }
                 for (KeyWord keyWord : keyWords) {
                     if (text.substring(before, after).matches("(\\W)*("+keyWord.getWords()+")")) {
                         setCharacterAttributes(before, after - before, keyWord.getColorAttribute(), false);
@@ -142,21 +136,28 @@ public class JSyntaxTextPane extends JTextPane {
                         matchFound = true;
                     }
                     
-                    
-                    // ================ ANY ADDITIONAL HIGHLIGHTING LOGIC MAY BE ADDED HERE
-                    // Ideas: highlighting a comment; highlighting method calls;
-                    
-                    // ================
-            
                     if(!matchFound) {
                         setCharacterAttributes(before, after - before, defaultForeground, false);
                     }
                 }
-                highlightComments();
+            }
+            @Override
+            public void remove (int offs, int len) throws BadLocationException {
+                super.remove(offs, len);
+                if (isStyled) {
+                    highlightRemove(offs, len);
+                    highlightComments();
+                } else {
+                    setCharacterAttributes(0, getLength(), defaultForeground, false);
+                }
+                
             }
         };
         
        
+        
+        
+        
         
         setStyledDocument(doc);
         
@@ -165,6 +166,13 @@ public class JSyntaxTextPane extends JTextPane {
 
         // THIS PART APPLIES DEFAULT SYNTAX HIGHLIGHTER BEHAVIOUR
         initializeSyntaxHighlighter();
+    }
+    
+    private String addTerminate(String text) {
+        if (!text.endsWith("\n")) {
+            text += "\n";
+        }
+        return text;
     }
     
     private int findLastNonWordChar (String text, int index) {
@@ -195,12 +203,12 @@ public class JSyntaxTextPane extends JTextPane {
     private String getDeveloperShortcuts(String str) {
         // Add ending parenthesis when it is open
         if(str.equals("(")) {
-            return "()";
+            return "( )";
         }
         
         // Add ending braces when it is open
         if(str.equals("{")) {
-            return "{\n\n}";
+            return "{ }";
         }
         
         return str;
@@ -304,57 +312,36 @@ public class JSyntaxTextPane extends JTextPane {
      */
     public void initializeSyntaxHighlighter() {
         // Set background color
-        setBackground(Color.white);
+        //setBackground(new Color(61, 60, 63));
         
-        // Java keywords
-        addKeyWord(Color.pink,
-                "\\!="
         
-                );
-        addKeyWord(new Color(224, 168, 65),
+        addKeyWord(new Color(191, 103, 47),
                "while",
                "if",
                "else",
                "print"
                 );
         
-        addKeyWord(new Color(190, 56, 230),
+        addKeyWord(new Color(30, 134, 186),
                 "\\?",
-                "="
+                "\\=",
+                "\\<",
+                "\\>",
+                "\\?",
+                "\\*",
+                "\\+",
+                "\\-",
+                "\\/",
+                "\\!"
                 );
-        
+        addKeyWord(new Color(222, 90, 83),
+                "\\&",
+                "\\|"
+                );
         
         
     }
     
-    /**
-     * Demo for testing purposes
-     */
-    /*public static void main(String[] args) {
-        // Our Component
-        JSyntaxTextPane textPane = new JSyntaxTextPane();
-        
-        textPane.setText("public class Test {\r\n"
-                + " int age = 18;\r\n"
-                + " String name = \"Gerald\";\r\n"
-                + " Long life = 100.50;\r\n"
-                + " boolean alive = true;\r\n"
-                + " boolean happy = false;\r\n"
-                + " \r\n"
-                + " // Comment Example\r\n"
-                + " public static void shout(int loudness) {\r\n"
-                + "     System.out.println(loudness);\r\n"
-                + " };\r\n"
-                + "\r\n"
-                + "};");
-        
-        // JFrame
-        JFrame frame = new JFrame("Test");
-        frame.getContentPane().add(textPane);
-        frame.pack();
-        frame.setSize(350, 350);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }*/
+    
 
 }

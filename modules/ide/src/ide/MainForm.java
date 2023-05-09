@@ -5,6 +5,7 @@
  */
 package ide;
 
+import com.sun.org.apache.xerces.internal.impl.xs.opti.DefaultDocument;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,7 +33,16 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.UndoManager;
 import org.ini4j.Ini;
-
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 /**
  *
  * @author mipt
@@ -369,7 +379,8 @@ public void append(String s, javax.swing.JTextPane pane){
   
   private void setColor(Color color)
   {
-    Color brightColor = color.brighter();
+    
+      Color brightColor = color.brighter();
     Color darkColor = color.darker();
     textAreaInput.setBackground(color);
     textFieldInput.setBackground(darkColor);
@@ -396,8 +407,10 @@ public void append(String s, javax.swing.JTextPane pane){
     jCheckBoxMenuLastFile.setBackground(brightColor);
     jCheckBoxMenuDump.setBackground(brightColor);
     jCheckBoxMenuTime.setBackground(brightColor);
+    jCheckBoxMenuHighlight.setBackground(brightColor);
     for (Component item : this.rootPane.getComponents())
       item.validate();
+    
   }
   private void setFont(int size)
   {
@@ -427,6 +440,7 @@ public void append(String s, javax.swing.JTextPane pane){
     jMenuOptions.setFont(font);
     jCheckBoxMenuDump.setFont(font);
     jCheckBoxMenuTime.setFont(font);
+    jCheckBoxMenuHighlight.setFont(font);
     jUndo.setFont(font);
     jRedo.setFont(font);
     for (Component item : this.rootPane.getComponents())
@@ -499,6 +513,8 @@ public void append(String s, javax.swing.JTextPane pane){
     inputQueue = new SyncQueue();
     initComponents();
     initUndoManager();
+    //HACK: color picker turned off to prvent changes
+    jMenuViewBackground.setEnabled(false);
     config = downloadConfig(configPath);
     restoreConfig(config);
   }
@@ -559,6 +575,7 @@ public void append(String s, javax.swing.JTextPane pane){
         jRedo = new javax.swing.JMenuItem();
         jMenuSettings = new javax.swing.JMenu();
         jCheckBoxMenuLastFile = new javax.swing.JCheckBoxMenuItem();
+        jCheckBoxMenuHighlight = new javax.swing.JCheckBoxMenuItem();
         jMenuOptions = new javax.swing.JMenu();
         jCheckBoxMenuDump = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuTime = new javax.swing.JCheckBoxMenuItem();
@@ -645,9 +662,7 @@ public void append(String s, javax.swing.JTextPane pane){
 
         jSplitPane.setBottomComponent(jSplitPaneTerminal);
 
-        jScrollPane1.setBackground(new java.awt.Color(223, 223, 223));
-
-        textAreaInput.setBackground(new java.awt.Color(223, 223, 223));
+        jScrollPane1.setBackground(new java.awt.Color(61, 60, 63));
         jScrollPane1.setViewportView(textAreaInput);
 
         jSplitPane.setLeftComponent(jScrollPane1);
@@ -763,6 +778,15 @@ public void append(String s, javax.swing.JTextPane pane){
         jCheckBoxMenuLastFile.setSelected(true);
         jCheckBoxMenuLastFile.setText("Start with last file");
         jMenuSettings.add(jCheckBoxMenuLastFile);
+
+        jCheckBoxMenuHighlight.setSelected(true);
+        jCheckBoxMenuHighlight.setText("Code highlight");
+        jCheckBoxMenuHighlight.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuHighlightActionPerformed(evt);
+            }
+        });
+        jMenuSettings.add(jCheckBoxMenuHighlight);
 
         jMenuBar.add(jMenuSettings);
 
@@ -1029,6 +1053,13 @@ public void append(String s, javax.swing.JTextPane pane){
         undoManager.redo();
     }//GEN-LAST:event_jRedoActionPerformed
 
+    private void jCheckBoxMenuHighlightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuHighlightActionPerformed
+        textAreaInput.setStyled(jCheckBoxMenuHighlight.getState());
+        uploadFile(curFile);
+        inputClear();
+        downloadFile(curFile);    
+    }//GEN-LAST:event_jCheckBoxMenuHighlightActionPerformed
+
   /**
    * @param args the command line arguments
    */
@@ -1068,6 +1099,7 @@ public void append(String s, javax.swing.JTextPane pane){
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuDump;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuHighlight;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuLastFile;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuTime;
     private javax.swing.JColorChooser jColorChooser;

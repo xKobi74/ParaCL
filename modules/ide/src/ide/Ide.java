@@ -5,6 +5,8 @@
  */
 package ide;
 
+import javax.swing.UIManager;
+
 /**
  *
  * @author mipt
