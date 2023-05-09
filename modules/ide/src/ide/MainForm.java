@@ -268,6 +268,7 @@ public void append(String s, javax.swing.JTextPane pane){
       logln("Error: ", "Save code to file for execution");
       return;
     }
+    setRunEnabled(false);
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
     command.add(paraclPath);
@@ -291,6 +292,7 @@ public void append(String s, javax.swing.JTextPane pane){
     readBuf(errorReader);
     reader.close();
     errorReader.close();
+    setRunEnabled(true);
     if (opt_dump) drawGraph("out.dot");
   }
 
@@ -302,6 +304,7 @@ public void append(String s, javax.swing.JTextPane pane){
       logln("Error: ", "Save code to file for execution");
       return;
     }
+    setRunEnabled(false);
     uploadFile(curFile);
     List<String> command = new ArrayList<>();
     command.add(paraclPath);
@@ -335,6 +338,7 @@ public void append(String s, javax.swing.JTextPane pane){
     reader.close();
     errorReader.close();
     writer.close();
+    setRunEnabled(true);
     if (opt_dump) drawGraph("out.dot");
   }
 
@@ -380,7 +384,7 @@ public void append(String s, javax.swing.JTextPane pane){
   private void setColor(Color color)
   {
     
-      Color brightColor = color.brighter();
+    Color brightColor = color.brighter();
     Color darkColor = color.darker();
     textAreaInput.setBackground(color);
     textFieldInput.setBackground(darkColor);
@@ -514,7 +518,7 @@ public void append(String s, javax.swing.JTextPane pane){
     initComponents();
     initUndoManager();
     //HACK: color picker turned off to prvent changes
-    jMenuViewBackground.setEnabled(false);
+    //jMenuViewBackground.setEnabled(false);
     config = downloadConfig(configPath);
     restoreConfig(config);
   }
@@ -884,6 +888,10 @@ public void append(String s, javax.swing.JTextPane pane){
     uploadFile(curFile);
   }//GEN-LAST:event_jMenuItemFileSaveAsActionPerformed
 
+  private void setRunEnabled(boolean enable) {
+      jMenuRunBuild.setEnabled(enable);
+    jMenuRunExecute.setEnabled(enable);
+  }
   //action on menu item Build that saves and builds current file
   private void jMenuRunBuildActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuRunBuildActionPerformed
   {//GEN-HEADEREND:event_jMenuRunBuildActionPerformed
